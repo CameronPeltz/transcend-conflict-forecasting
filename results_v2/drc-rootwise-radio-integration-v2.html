@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRC Radio Integration v2 — Expanded Data Checkpoint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:66ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:78ch; font-size:0.98rem; margin-top:0.6rem;}
+  .banner{background:var(--wire-soft); border-bottom:1px solid var(--wire); padding:0.9rem clamp(1.2rem,4vw,3rem); font-size:0.92rem; color:#3d3260;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1060px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.45rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results td.best{color:var(--good); font-weight:600;}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  footer{max-width:1060px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Checkpoint, not final</span>
+    <span>Real expanded Rootwise data · generated 2026-08-07</span>
+  </div>
+  <h1>DRC radio integration, round 2: more real data, and a real (if still small) improvement</h1>
+  <p class="dek">This supersedes results_v2/drc-rootwise-radio-integration.html's numbers, not its conclusions. Same honest constraints apply. What changed: a second real Rootwise export was combined with the first, and the entire test was rerun from scratch on the larger set.</p>
+</div>
+
+<div class="banner">⚠ This is explicitly a checkpoint. A screenshot from the live Rootwise dashboard (provided after this analysis was run) confirms 10,000+ real clips exist for this station set across May 1 – August 7, 2026 — roughly 3x the date span and 1.5x the clip volume analyzed here. That fuller export is in progress and will supersede this page again. Read the numbers below as "best available right now," not final.</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> What Changed</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Results</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Still True</button>
+</div>
+
+<main>
+
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, verified</span><h2>The dataset grew — and a second export revealed the first was a skewed sample</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">6,828</div><div class="l">unique clips (was 5,000)</div></div>
+      <div class="stat"><div class="n">37.6 days</div><div class="l">span (was 27.5)</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">calendar weeks with radio coverage (was 5)</div></div>
+      <div class="stat"><div class="n">+1</div><div class="l">new station found: CONAFOHD Radio</div></div>
+    </div>
+    <p>A second real export (5,000 more clips, most recent window through Aug 7) was deduplicated against the first by Clip ID — 3,172 clips overlapped, 1,828 were genuinely new, extending coverage forward to Aug 3 and backward-filling density in the already-covered weeks. Combined date range: July 1 – Aug 7, 2026.</p>
+    <div class="callout"><strong>Real finding worth flagging on its own:</strong> the live dashboard's station breakdown (Radio Okapi dominant, ~5,500+ clips of 10,000+ total) looks meaningfully different from either individual export's station mix. Both 5,000-row exports appear to be a capped, non-representative subset of a much larger real pool — not a random sample. Conclusions from either export alone, including this page's, should be read with that in mind until the fuller export is in hand.</div>
+  </div>
+</div>
+
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Rerun from scratch</span><h2>Same 30-configuration sweep, larger data, better result</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">30 / 30</div><div class="l">configurations improved (was 24/30)</div></div>
+      <div class="stat"><div class="n">15 / 15</div><div class="l">relevance-filtered configs improved (was 15/15)</div></div>
+      <div class="stat"><div class="n">15 / 15</div><div class="l">unfiltered configs improved (was 10/15)</div></div>
+    </div>
+    <div class="callout good"><strong>The real, honest headline: with more data, the earlier gap between "filter to high-relevance clips first" and "use everything" mostly closed.</strong> Before, unfiltered configurations only helped 10 of 15 times — some were worse than the no-radio baseline. Now every single configuration tested, filtered or not, reduced prediction error relative to baseline. The most likely honest explanation: more clips per week means keyword-based aggregate features average out noise better even without pre-filtering, which is exactly the kind of thing more data should do.</div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>Baseline MSE</th><th>Radio-augmented MSE</th><th>Change</th></tr>
+        <tr><td class="best">Best: diplomacy-only, relevance ≥ 2</td><td>0.1032</td><td class="best">0.0835</td><td class="best">−19.1%</td></tr>
+        <tr><td>Actor+violence, relevance ≥ 2</td><td>0.1032</td><td>0.0835</td><td>−19.1%</td></tr>
+        <tr><td>All combined, relevance ≥ 2</td><td>0.1032</td><td>0.0862</td><td>−16.5%</td></tr>
+        <tr><td>All combined, unfiltered (every clip)</td><td>0.1032</td><td>0.0876</td><td>−15.2%</td></tr>
+        <tr><td>Weakest improvement: actor-only, unfiltered</td><td>0.1032</td><td>0.0907</td><td>−12.1%</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.88rem; color:var(--ink-soft)">Note the "weakest" result here (−12.1%) is still an improvement — a genuinely different picture from the first pass, where the weakest configurations were net negative. Full logs: <code>data/drc/radio_sweep_log.jsonl</code>.</p>
+  </div>
+</div>
+
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Unchanged, and this is the important part</span><h2>What still hasn't been proven — more data didn't fix this</h2></div>
+    <p><strong>Zero real escalations occurred anywhere in the radio-covered window</strong>, checked directly against the GDELT-derived label across every week from late June through early August. Real DRC event volume actually trended down over this exact period even as conflict-related radio chatter stayed high (40–60% of clips). That means everything in tab 02 is still, honestly, a measure of reduced false-alarm tendency on confirmed-quiet weeks — not evidence the system would catch a real escalation. That distinction doesn't go away with more data; it only goes away with a radio-covered window that actually contains an escalation to test against.</p>
+    <div class="callout wire">Recommendation unchanged from the first round: this is real, positive, worth reporting progress — and still not a defensible new precision claim for the formal proposal. The May–August expansion in progress (10,000+ clips, 99 days) meaningfully improves the odds of finally covering a real escalation, which is the actual blocker to a rigorous claim, not feature engineering.</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Supersedes results_v2/drc-rootwise-radio-integration.html's numbers (not superseded itself — see banner). Built from the combined, deduplicated "Rootwise DRC combined.csv" (6,828 clips). Will be superseded again once the full May–August export (10,000+ clips) is combined in.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>
