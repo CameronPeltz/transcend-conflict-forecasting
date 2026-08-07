@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criterion 2 Evidence Deep-Dive — What a Reviewer Will Find</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:64ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:78ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1040px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.5rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.76rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.66rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.45rem 0.55rem; border-bottom:1px solid var(--line);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .verdict-list{list-style:none; padding:0; margin:0;}
+  .verdict-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.8rem 0; border-bottom:1px solid var(--line);}
+  .verdict-item:last-child{border-bottom:none;}
+  .verdict-item .mark{font-size:1.2rem;}
+  .verdict-item.true .mark{color:var(--good);}
+  .verdict-item.caveat .mark{color:#a0791f;}
+  .case-card{border:1px solid var(--line); border-left:4px solid var(--signal); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:1.2rem 1.4rem; margin-bottom:1.2rem;}
+  .case-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.6rem;}
+  .case-head h3{margin:0; font-size:1.02rem;}
+  .case-prob{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--good); font-size:1.1rem;}
+  .evidence-quote{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; font-size:0.85rem; color:var(--ink-soft); margin:0.6rem 0; font-family:'IBM Plex Mono',monospace;}
+  footer{max-width:1040px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Pre-submission verification</span>
+    <span>Written before DARPA reviewers check the evidence themselves</span>
+    <span>Generated 2026-08-07</span>
+  </div>
+  <h1>Criterion 2's "84.0% precision" claim: the underlying data, the model, the case studies, and an honest read on what a skeptical reviewer will find</h1>
+  <p class="dek">This document exists for one reason: to independently re-verify every number in the proposal's Criterion 2 claim <em>before</em> DARPA does, using nothing but the raw saved prediction data — not by re-describing what the proposal already says. Every number below was recomputed from scratch from <code>results_v2/precision_validation_track_c_predictions.csv</code> while writing this page. Where that re-check surfaced something the proposal doesn't spell out, it's flagged here directly, not smoothed over.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> The Test Set</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Model &amp; Pipeline</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Performance, Re-Verified</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Case Studies</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Honest Verdict</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Source</span><h2>Where the 858 test predictions actually come from</h2></div>
+    <p>The ground truth is UCDP GED v25.1 (Uppsala Conflict Data Program, Georeferenced Event Dataset) — a real, hand-curated, fatality-coded conflict-event dataset published by Uppsala University, downloaded with no authentication from <code>ucdp.uu.se</code>. It is <strong>not</strong> a Kaggle dataset and was not scraped from anywhere unusual; it's the primary academic source most secondary "conflict prediction" datasets are themselves built from. The full download is 385,918 real events across 124 countries, 1989–2024. This evaluation uses a 19-country subset (see below), aggregated to one row per country per week, with a real fatality count, event count, and dyad (armed-actor-pair) count per row.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">858</div><div class="l">real predictions in the held-out window</div></div>
+      <div class="stat"><div class="n">324</div><div class="l">real positive labels (escalation weeks) — not 325</div></div>
+      <div class="stat"><div class="n">72</div><div class="l">calendar weeks, 2023-08-14 to 2024-12-23</div></div>
+      <div class="stat"><div class="n">37.8%</div><div class="l">base rate in this specific window (see caveat below)</div></div>
+    </div>
+    <div class="callout good"><strong>One thing checked and cleared:</strong> the submitted document itself says "324 real escalations" correctly, in both places it appears in the Criterion 2 text (verified directly against the .docx while writing this page). 324 is the real, correct count — a reviewer counting rows in the CSV will get the same number the proposal already states. No correction needed here.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Disclosure</span><h2>Not all 19 named countries actually appear in this test set — and that's a real, explainable data fact, not an error</h2></div>
+    <p>The panel is built from a 19-country list spanning DARPA's three named regions. But UCDP only records events where real armed conflict actually happened — a country with no recent conflict activity contributes no rows once its trailing window runs dry. Checking directly:</p>
+    <ul>
+      <li><strong>Uzbekistan (UZ):</strong> UCDP records events there only 1999–2009. Zero rows after 2021 — real conflict activity, just from over a decade before this test window.</li>
+      <li><strong>Nicaragua (NU):</strong> UCDP records events there only 1988–1990 (the Contra war era). Zero rows after 2021 for the same reason.</li>
+      <li><strong>Eritrea, Tajikistan, Kyrgyzstan, Bolivia:</strong> present in the earlier (threshold-selection) window but their recorded conflict activity ends before the 2023-08-14 holdout window begins, so they contribute zero rows to the 858 held-out predictions specifically.</li>
+    </ul>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Country</th><th>Rows in holdout</th><th>Real escalation weeks</th></tr>
+        <tr><td>Afghanistan (AF)</td><td>72</td><td>0</td></tr>
+        <tr><td>Myanmar (BM)</td><td>72</td><td>60</td></tr>
+        <tr><td>Colombia (CO)</td><td>72</td><td>2</td></tr>
+        <tr><td>Ecuador (EC)</td><td>72</td><td>50</td></tr>
+        <tr><td>Ethiopia (ET)</td><td>72</td><td>55</td></tr>
+        <tr><td>Pakistan (PK)</td><td>72</td><td>48</td></tr>
+        <tr><td>Somalia (SO)</td><td>72</td><td>5</td></tr>
+        <tr><td>Sudan (SU)</td><td>72</td><td>60</td></tr>
+        <tr><td>Haiti (HA)</td><td>71</td><td>35</td></tr>
+        <tr><td>South Sudan (OD)</td><td>71</td><td>2</td></tr>
+        <tr><td>Kenya (KE)</td><td>69</td><td>6</td></tr>
+        <tr><td>Venezuela (VE)</td><td>68</td><td>1</td></tr>
+        <tr><td>Peru (PE)</td><td>3</td><td>0</td></tr>
+      </table>
+    </div>
+    <div class="callout"><strong>The honest read on this:</strong> the proposal's Criterion 2 text doesn't spell out that only 13 of the 19-country list actually appear in this specific holdout, or that Peru contributes only 3 rows. A reviewer who pulls the CSV (as this page's numbers were independently recomputed from) will see this immediately. It doesn't change the reported metrics — they're computed honestly over whatever real rows exist — but it should be stated plainly rather than left for the reviewer to discover unannounced, which is exactly what this page is doing now.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Disclosure</span><h2>The 37.8% base rate in this window is elevated, not representative</h2></div>
+    <p>324 of 858 real predictions are true escalations — a 37.8% base rate. That's much higher than the roughly 15–17% base rate cited elsewhere in this project for UCDP broadly. Why: this specific 17-month holdout window (August 2023 – December 2024) happens to fall during genuinely intense, real, concurrent conflicts in several of the 13 countries present — Sudan's civil war (since April 2023), Myanmar's post-coup civil war, Ethiopia's Amhara/Oromia conflicts, and Ecuador's 2024 gang-violence emergency all overlap this window. That's not a data-selection artifact — the holdout window is fixed by the temporal split, not chosen to land on a favorable period — but it does mean <strong>84% precision against a 37.8% base rate is a smaller relative improvement over "always guess yes" than 84% precision would be against a 15% base rate</strong>, and a reviewer should read the number with that context, not against an assumed global baseline.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2 ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Model</span><h2>What's actually making these predictions</h2></div>
+    <p>A three-way ensemble — the simple average of a gradient-boosted tree model (XGBoost, 150 trees, max depth 3), a random forest (300 trees, max depth 4), and a logistic regression, each retrained from scratch at every rolling-origin fold. This is <strong>not</strong> the in-context-learning/LLM forecaster described under Criterion 1 — it's a standard tabular ensemble. That distinction matters for tab 04: this model doesn't produce natural-language reasoning the way the LLM-based forecaster does, so every "explanation" in the case studies below is this document's own post-hoc analysis of the real feature values, not something the model itself generated or "said."</p>
+    <div class="card">
+      <h3 style="font-size:0.95rem;">The eleven real features (plus country identity)</h3>
+      <p style="font-size:0.9rem;">Per country-week: event count and total UCDP-recorded fatalities, each as a 1-week lag, 2-week lag, and week-over-week delta; fatalities-per-event, state-based-violence share, and distinct-armed-dyad count, each as a 1-week lag and delta. Country is included as a one-hot categorical feature (see tab 05 for why that matters to how this result should be read).</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Precisely</span><h2>What "predicting a week ahead" actually means here, stated exactly</h2></div>
+    <p>Each row's features reflect everything known through the end of week <code>W</code> — including week <code>W</code>'s own fully-realized event and fatality counts, which is legitimate (by the end of week <code>W</code>, week <code>W</code> has already happened) and not a leak. The label being predicted for that row is whether week <code>W+1</code> — the <em>following</em> week — sees a statistically unusual spike, defined precisely as: that country's own event count <em>or</em> fatality count in week <code>W+1</code> exceeding its trailing historical average by more than one standard deviation. This is a relative, per-country statistical threshold, not an absolute casualty count — a country already averaging heavy weekly casualties (like Sudan) needs a real jump in its <em>own</em> recent pattern to trigger a positive label, not just a high raw number. Tab 04 shows exactly why this distinction matters for reading the case studies correctly.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Verified</span><h2>The temporal-integrity check, re-run independently for this page</h2></div>
+    <p>Re-read directly from <code>scripts/precision_threshold_validation.py</code> while writing this page: at every fold, <code>train = panel[panel.week &lt; cutoff]</code> — a strict less-than, real calendar time, no exceptions. The alert threshold itself (0.867 on the model's raw probability output) was chosen using <em>only</em> the earlier 1,627 predictions (2021-08-02 through 2023-08-07), then frozen and applied unchanged to the 858 later predictions this page is about. Independently re-deriving that threshold from the raw CSV during this review reproduced the identical value (0.8672483082014172) to 10 decimal places — the threshold-selection step is exactly reproducible, not something written down after the fact.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3 ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Recomputed from raw data, not copied from the proposal</span><h2>Every Criterion 2 number, re-verified</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Metric</th><th>Proposal text</th><th>Independently recomputed here</th><th>Match?</th></tr>
+        <tr><td>Precision</td><td>84.0%</td><td>84.02% (184/219 flagged)</td><td>✓ exact</td></tr>
+        <tr><td>Recall</td><td>56.8%</td><td>56.79% (184/324 actual positives caught)</td><td>✓ exact</td></tr>
+        <tr><td>Specificity</td><td>93.4%</td><td>93.45% (499/534 actual negatives correctly left unflagged)</td><td>✓ exact</td></tr>
+        <tr><td>Accuracy</td><td>79.6%</td><td>79.60% (683/858 correct overall)</td><td>✓ exact</td></tr>
+        <tr><td>n / n_pos</td><td>858 / 324</td><td>858 / 324</td><td>✓ exact</td></tr>
+      </table>
+    </div>
+    <div class="callout good"><strong>Bottom line on the numbers themselves: no hallucination.</strong> All five headline figures are exactly reproducible from the saved, real prediction data — recomputing them from scratch for this page, independent of any prior calculation, landed on the identical values. (A "325" figure came up in conversation when this page was requested; it doesn't appear anywhere in the actual submitted document, which correctly says 324 throughout — checked directly against the .docx, not assumed.)</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The full confusion matrix</span><h2>What the 858 predictions actually break down to</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th></th><th>Predicted: escalation</th><th>Predicted: quiet</th></tr>
+        <tr><td><strong>Actual: escalation (324)</strong></td><td>184 (true positive)</td><td>140 (missed — false negative)</td></tr>
+        <tr><td><strong>Actual: quiet (534)</strong></td><td>35 (false alarm)</td><td>499 (correctly quiet)</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.9rem; color:var(--ink-soft)">The system flags 219 of 858 weeks (25.5% of all country-weeks) as high-risk. Of those 219 flags, 184 were real — the 84.0% precision figure. It misses 140 real escalations entirely (43.2% of all real escalations go unflagged at this threshold) — the direct cost of tuning for high precision. Tab 05 discusses this tradeoff plainly.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Not cherry-picked</span><h2>Selection-window vs. holdout-window, side by side</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th></th><th>Selection window (threshold chosen here)</th><th>Holdout window (threshold only applied here)</th></tr>
+        <tr><td>Precision</td><td>80.3%</td><td class="best">84.0%</td></tr>
+        <tr><td>Recall</td><td>54.0%</td><td>56.8%</td></tr>
+        <tr><td>n / n_pos</td><td>1,627 / 354</td><td>858 / 324</td></tr>
+      </table>
+    </div>
+    <p>Precision <em>rose</em> from the selection window to the holdout window rather than falling — real evidence the threshold wasn't overfit to the earlier data, since overfitting would show up as a drop when applied to new data, not an improvement.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4 ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, checked against real news events</span><h2>Three true positives, with the actual UCDP events behind them</h2></div>
+    <p class="lede">Each case: the model's input was everything known through week <code>W</code>; the target was whether week <code>W+1</code> would spike. All three below are real true positives from the 858-row holdout — high-confidence correct calls, cross-checked here against the actual raw UCDP event records (not just the aggregated panel) for what happened in the predicted week.</p>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Ethiopia — input week of 2024-10-07, predicting the week of 2024-10-14</h3><span class="case-prob">p = 0.978</span></div>
+      <p><strong>What triggered the real label:</strong> not a fatality spike — an <em>incident-count</em> spike. Week of 10/14 saw 29 distinct UCDP-recorded violent incidents against a trailing baseline of ~2.7/week (z = 4.79). Fatalities that week (90) were actually unremarkable against Ethiopia's own volatile baseline (z = −0.04) — this is the honest nuance: the real signal here was <em>how many separate violent incidents occurred</em>, not total deaths.</p>
+      <div class="evidence-quote">Real UCDP events, week of 2024-10-14: 9 Government-vs-civilian incidents, 9 Government-vs-OLA (Oromo Liberation Army) incidents, 8 Government-vs-Fano (Amhara militia) incidents — three simultaneous, separate conflict fronts active in the same week. Source: UCDP GED v25.1, dyad_name field, cross-checked directly against results_v2/precision_validation_track_c_predictions.csv for this page.</div>
+      <p style="font-size:0.87rem; color:var(--ink-soft)">What the model actually saw going in: the input week (10/07) already showed a jump to 31 incidents/220 deaths from the prior week's 19/90 — a real, large week-over-week increase that plausibly carried forward into elevated risk.</p>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Myanmar — input week of 2023-11-06, predicting the week of 2023-11-13</h3><span class="case-prob">p = 0.977</span></div>
+      <p><strong>What triggered the real label:</strong> both signals at once — event count z = 5.06 <em>and</em> fatality count z = 2.84, the cleanest of the three cases. This week falls squarely inside the real, globally reported "Operation 1027" period, when multiple ethnic armed organizations launched coordinated offensives against Myanmar's post-coup military government.</p>
+      <div class="evidence-quote">Real UCDP events, week of 2023-11-13: fighting recorded against the Kachin Independence Organization (Tigyaing area), the Karenni National Progressive Party (Loikaw — including 34 deaths in one recorded incident in Loikaw town itself, part of the real, documented siege of Loikaw that November), and the Karen National Union. 48 total incidents, 179 total fatalities that week.</div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Sudan — input week of 2024-06-03, predicting the week of 2024-06-10</h3><span class="case-prob">p = 0.960</span></div>
+      <p><strong>What triggered the real label:</strong> event-count spike again (z = 2.10), not fatalities (z = 0.06) — Sudan's own baseline is so consistently severe (trailing mean ~59 deaths/week) that a 70-death week doesn't statistically stand out, even though it's a real, terrible week by any absolute measure. The incident-count rise is the genuine early-warning signal.</p>
+      <div class="evidence-quote">Real UCDP events, week of 2024-06-10: continued RSF (Rapid Support Forces) vs. Sudanese Armed Forces fighting concentrated in El Fasher, North Darfur — including a single incident on 6/11 recorded across "Tambasi, the Grand Market vicinity, Basharia, Baringia, Awlad al-Reef, al-Thawra, and Mukarka" neighborhoods (35 deaths), plus fighting reaching Sinnar (20 deaths, 6/13) and Khartoum. This is the real, documented siege of El Fasher, still ongoing as of the most recent UCDP data used in this project.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Also real, and just as important to show</span><h2>Two false alarms — where the model was wrong with high confidence</h2></div>
+    <p>35 of the 219 flagged weeks were false alarms. The two highest-confidence wrong calls: Ethiopia, week of 2024-12-23, p = 0.967 (no real spike materialized that week); Myanmar, week of 2024-11-11, p = 0.965 (same). No attempt was made to find a flattering explanation for these — they are simply real instances where a currently-volatile country's recent pattern suggested continued escalation and it didn't materialize that particular week. This is exactly what the 84.0%-not-100% precision figure already discloses; these are two concrete instances of it.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5 ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Direct answer</span><h2>Was anything in the Criterion 2 claim a hallucination or a lie?</h2></div>
+    <ul class="verdict-list">
+      <li class="verdict-item true"><span class="mark">✓</span><div><strong>The core numbers (precision, recall, specificity, accuracy, n) are real and independently reproducible.</strong> Recomputed from scratch from the raw prediction CSV for this page, with no reference to prior calculations — they matched to two decimal places.</div></li>
+      <li class="verdict-item true"><span class="mark">✓</span><div><strong>The no-leakage, frozen-threshold methodology is real and verified as described.</strong> The training cutoff is a strict less-than on calendar week; the threshold was independently re-derivable from only the earlier window and matched exactly.</div></li>
+      <li class="verdict-item true"><span class="mark">✓</span><div><strong>The case studies are real, specific, and cross-checked against the underlying raw UCDP event records</strong> (dyad names, locations, individual incident fatality counts) — not just the aggregated panel numbers, and not invented illustrative examples.</div></li>
+      <li class="verdict-item caveat"><span class="mark">△</span><div><strong>Not disclosed in the proposal text itself, though not hidden either:</strong> only 13 of the 19 named countries appear in this specific holdout window (6 have no UCDP-recorded conflict activity extending into it), and the 37.8% base rate in this window is elevated relative to the ~15–17% typically cited elsewhere in this project. Both are visible to anyone who opens the CSV, but neither is stated in the proposal's own prose — a reviewer who checks closely will notice the gap between what's said and what's shown.</div></li>
+      <li class="verdict-item caveat"><span class="mark">△</span><div><strong>"Independently validated" needs to be read precisely, not loosely.</strong> This is temporally out-of-sample self-validation with real, reproducible methodology and an independently-produced ground-truth label source (UCDP, not the proposer) — not a third-party audit. The proposal itself says this explicitly in the Criterion 2 text; this page confirms that framing is accurate and shouldn't be allowed to drift toward implying more than that in conversation or a verbal pitch.</div></li>
+      <li class="verdict-item caveat"><span class="mark">△</span><div><strong>Country identity is a model input.</strong> Because the model sees which country it's looking at, part of its precision plausibly reflects "this country is already a known active conflict zone" rather than pure week-to-week signal. The proposal's separate Criterion 4 (leave-one-country-out testing, country identity deliberately excluded) is the correct place to look for evidence the model has genuine transferable signal beyond country-level base rates — this page's result and that one answer different questions and shouldn't be conflated.</div></li>
+      <li class="verdict-item caveat"><span class="mark">△</span><div><strong>The case-study "explanations" are this document's own post-hoc analysis of real feature values, not model-generated reasoning.</strong> This is a tabular ensemble (GBM + random forest + logistic regression), not the LLM-based forecaster from Criterion 1. It outputs a number, not a rationale — anywhere a write-up describes "why" a prediction was made for this model, that's an analyst's interpretation of the real underlying data, and should be labeled as such, which this page does.</div></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Net assessment</span><h2>What a rigorous DARPA reviewer will conclude</h2></div>
+    <p>That the headline number holds up under direct inspection — the precision, recall, and methodology are exactly what they're claimed to be, recomputed independently and matched. What they'll also find, because it's genuinely there to find: two country-coverage/base-rate framing points the proposal's prose doesn't spell out even though the underlying data doesn't hide them, plus the standard, honestly-unavoidable caveats about what "independently validated" does and doesn't mean at this stage. None of that is a lie or a hallucination. All of it is exactly the kind of thing worth stating more plainly in the proposal itself before submission rather than leaving for a reviewer to surface first.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Written as an independent, from-scratch re-verification of the Criterion 2 claim in Transcend_DARPA_SBIR_Volume_2_DRAFT.docx, using only results_v2/precision_validation_track_c_predictions.csv and data/pure_ucdp/GEDEvent_v25_1.csv as source data. Every number on this page was recomputed while writing it, not copied from the proposal or from memory.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>
