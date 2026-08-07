@@ -16,7 +16,7 @@ REPO = "github.com/CameronPeltz/transcend-conflict-forecasting"
 # ============================================================ PART ONE
 
 EXEC_SUMMARY = [
-    "Transcend is a conflict early-warning forecasting pipeline built by AP Peace Strategies in response to a Direct-to-Phase-II Small Business Innovation Research (SBIR, the federal program this solicitation is issued under; widely used across DoD -- Department of Defense -- proposals) opportunity, DARPA topic DPA26BZ04-DV015. Its core requirement: an in-context-learning (ICL, a way of getting a large language model to produce useful answers by giving it examples and context at the moment of the question, rather than retraining the model itself) forecasting mechanism that runs over a temporal knowledge graph (TKG, a database that tracks not just who-did-what-to-whom but when, so relationships can change over time) without retraining. That mechanism is built, running, and evidenced in this proposal against real, open-source conflict-event data — not a design concept.",
+    "Transcend (missiontranscend.ai) builds AI decision-support tools for peace, security, and geopolitical risk; this proposal's conflict early-warning forecasting pipeline is a direct extension of that existing mission, built in response to a Direct-to-Phase-II Small Business Innovation Research (SBIR, the federal program this solicitation is issued under; widely used across DoD -- Department of Defense -- proposals) opportunity, DARPA topic DPA26BZ04-DV015. Its core requirement: an in-context-learning (ICL, a way of getting a large language model to produce useful answers by giving it examples and context at the moment of the question, rather than retraining the model itself) forecasting mechanism that runs over a temporal knowledge graph (TKG, a database that tracks not just who-did-what-to-whom but when, so relationships can change over time) without retraining. That mechanism is built, running, and evidenced in this proposal against real, open-source conflict-event data — not a design concept.",
     "Phase I feasibility work, performed by the proposer, produced a working prototype tested across three independent, non-overlapping datasets, more than 1,150 real backtested model configurations, two graph-native model families built from scratch, and a rigorous, temporally out-of-sample validation of forecast precision. On the strongest of the three datasets — the Uppsala Conflict Data Program's Georeferenced Event Dataset (UCDP GED, a real, hand-curated, fatality-coded conflict record maintained by Uppsala University, independent of the proposer), used here as an unmerged, pure comparison set — a threshold chosen only on earlier data and then applied, unchanged, to a strictly later holdout period reached 84.0% precision at 56.8% recall. That meets the topic's own stated ~80% current-state-of-the-art precision benchmark under an honest, disclosed, reproducible validation method, with a credible, evidenced path toward the Phase II 90% target described in Part Two.",
     "Phase II purpose: extend this validated forecasting core with the topic's actual novel-signal requirement — multilingual radio ingestion and automatic speech recognition (ASR, converting spoken audio into text a model can read), delivered in partnership with Rootwise, a radio-listening data aggregation company, and coordinated internationally with support from Applied Peace Strategies for on-the-ground evidence gathering. The forecasting core, graph architecture, and validation discipline built in Phase I do not need to be re-invented for this — they need a new signal source connected to them, which is what Phase II funds.",
     "Dual-use transition potential is direct: the same forecasting core applies to humanitarian early warning, insurance and reinsurance catastrophe modeling, supply-chain risk monitoring, and journalism/non-governmental-organization (NGO, a widely used term for a nonprofit, non-state organization -- in this context, humanitarian and human-rights groups operating in the same regions this topic names) field-safety planning, none of which require export-controlled components. Part Two, Section 11 details the commercialization path.",
@@ -83,7 +83,7 @@ FOUNDATION_PUBLICATIONS = [
 ]
 
 COMMERCIALIZATION_MARKETING = [
-    "AP Peace Strategies' present team is technical and domain-focused rather than marketing-focused. Commercial go-to-market expertise will be brought in through [Insert: specific advisor, contractor, or hire — the proposer should name a specific plan here rather than leave this generic] ahead of the Phase II option period, when the transition and commercialization strategy in Section 11 moves from planning to execution.",
+    "Transcend's present team is technical and domain-focused rather than marketing-focused. Commercial go-to-market expertise will be brought in through [Insert: specific advisor, contractor, or hire — the proposer should name a specific plan here rather than leave this generic] ahead of the Phase II option period, when the transition and commercialization strategy in Section 11 moves from planning to execution.",
 ]
 
 COMMERCIALIZATION_POTENTIAL = [
@@ -113,9 +113,9 @@ SECTION_3_INTRO = [
 ]
 
 TASK_1 = [
-    "Task 1 — Radio Collection and Ingestion Engine (Months 1-6, lead: AP Peace Strategies technical team; support: Rootwise).",
+    "Task 1 — Radio Collection and Ingestion Engine (Months 1-6, lead: Transcend technical team; support: Rootwise).",
     "Objective: stand up streaming and store-and-forward ingestion from Rootwise's existing radio-listening data aggregation capability for the first tranche of target-region languages, normalized into the same event-record schema the Phase I temporal knowledge graph already consumes.",
-    "Technical approach: Rootwise provides the collection layer (online streaming plus offline software-defined-radio station capture, per the topic's own described architecture); AP Peace Strategies builds the normalization and ingestion adapter mapping Rootwise's raw audio/metadata feed into the existing graph schema (Actor, Location, Event, Source, Claim nodes) validated in Phase I.",
+    "Technical approach: Rootwise provides the collection layer (online streaming plus offline software-defined-radio station capture, per the topic's own described architecture); Transcend builds the normalization and ingestion adapter mapping Rootwise's raw audio/metadata feed into the existing graph schema (Actor, Location, Event, Source, Claim nodes) validated in Phase I.",
     "Inputs/data: Rootwise radio feeds; Applied Peace Strategies' regional/language prioritization guidance.",
     "Dependencies: Rootwise subcontract execution (Section 9); language prioritization from Task 6.",
     "Risks/mitigations: radio signal quality in contested or low-infrastructure areas is variable; mitigation is prioritizing station-level redundancy where Rootwise has existing multi-station coverage, and disclosing per-station data-quality flags to the forecasting layer rather than silently treating all input as equally reliable.",
@@ -124,7 +124,7 @@ TASK_1 = [
 ]
 
 TASK_2 = [
-    "Task 2 — ASR, Language Coverage, and Synthetic-Data Strategy (Months 2-9, lead: AP Peace Strategies technical team).",
+    "Task 2 — ASR, Language Coverage, and Synthetic-Data Strategy (Months 2-9, lead: Transcend technical team).",
     "Objective: fine-tune automatic speech recognition for target-region languages, using a documented, cost-disclosed mix of real annotated audio and synthetic augmentation.",
     "Technical approach: fine-tune an open, pre-trained speech model (e.g., Whisper Large-v3, an existing open-source ASR model with strong multilingual baseline performance) per target language, using native-speaker-annotated audio for the initial real-data tranche, then run a real ablation sweeping the ratio of real-to-synthetic training audio to find the most cost-effective mix for each language's available data volume.",
     "Inputs/data: Rootwise radio audio; native-speaker annotation (budgeted per DoD SBIR guidance at approximately market rate per annotated hour); synthetic speech generation for underrepresented languages, scoped strictly to training-data augmentation and never distributed or used to impersonate a real identifiable speaker, consistent with the disclosure standard set in Phase I's dangerous-ideas log.",
@@ -135,7 +135,7 @@ TASK_2 = [
 ]
 
 TASK_3 = [
-    "Task 3 — Forecasting Integration at Expanded Scale (Months 1-12, lead: AP Peace Strategies technical team).",
+    "Task 3 — Forecasting Integration at Expanded Scale (Months 1-12, lead: Transcend technical team).",
     "Objective: extend the validated Phase I forecasting core (in-context-learning forecaster, hypergraph neural network, graph-based label spreading) to consume the Task 1/2 radio-derived event stream alongside the existing GDELT/UCDP tracks, and re-run the Phase I precision and generalization validation methodology (Part One, Criteria 2 and 4) on the expanded data.",
     "Technical approach: no forecasting architecture changes are required for new-source integration by design — every Phase I model class consumes a common event-record schema, evidenced by the same code already running unmodified across three structurally different Phase I data sources. This task is primarily a scaling and re-validation effort, not a re-design.",
     "Inputs/data: Task 1/2 outputs; existing Phase I GDELT/UCDP tracks (retained as a continuity baseline).",
@@ -146,7 +146,7 @@ TASK_3 = [
 ]
 
 TASK_4 = [
-    "Task 4 — Paralinguistic Feature Extraction (Months 12-18, lead: AP Peace Strategies technical team).",
+    "Task 4 — Paralinguistic Feature Extraction (Months 12-18, lead: Transcend technical team).",
     "Objective: extend the audio pipeline beyond transcription to prosodic and affective signal — pitch, energy, speaking rate, and indicators of emotional arousal and agitation on the air — and test by ablation whether that signal anticipates events the transcribed words alone do not.",
     "Technical approach: stand up a paralinguistic feature-extraction layer alongside the Task 2 ASR pipeline (a distinct, parallel pipeline over the same audio, not an extension of transcription); combine these features with the existing textual event stream in the Task 3 forecasting core; run a direct ablation (forecasting performance with versus without paralinguistic features) to test the topic's own stated hypothesis rather than assume it holds.",
     "Dependencies: Task 1 (audio), Task 2 (aligned transcription for feature-timestamp alignment).",
@@ -156,7 +156,7 @@ TASK_4 = [
 ]
 
 TASK_5 = [
-    "Task 5 — Validation, Independent Audit Readiness, and Live Demonstration (Months 3-18, lead: AP Peace Strategies technical team; ongoing throughout).",
+    "Task 5 — Validation, Independent Audit Readiness, and Live Demonstration (Months 3-18, lead: Transcend technical team; ongoing throughout).",
     "Objective: maintain and extend the Phase I validation discipline (rolling-origin backtesting, temporally out-of-sample threshold selection, leave-one-country-out generalization testing) across every Phase II milestone, and prepare the pipeline for an external, third-party evaluation the proposer's own team has not seen in advance.",
     "Technical approach: every milestone deliverable in this Statement of Work is reported using the same never-look-ahead validation methodology demonstrated in Part One, with results published to the same public repository evaluators already have access to; Month 9 specifically includes preparing a held-out evaluation protocol DARPA (or a DARPA-designated evaluator) can run independently, directly closing the \"not yet third-party audited\" limitation stated plainly in Part One, Criterion 2.",
     "Measurable success criteria: Month 12 live or recent-scenario end-to-end demonstration; Month 9 independent-audit-ready evaluation protocol delivered.",
@@ -173,11 +173,11 @@ TASK_6 = [
 ]
 
 OPTION_SOW = [
-    "Phase II Option Statement of Work (6 months, if exercised). Two directions, per the topic's own framing, both building directly on Phase II base-period deliverables rather than new development: (1) Operational pilot and transition — run a sustained, live forecasting feed for a single theater alongside an operational user for the six-month option period, measuring real-world warning value and producing a formal transition package, led by AP Peace Strategies with Applied Peace Strategies coordinating the operational-user relationship; (2) Rapid language onboarding — demonstrate standing up a new crisis language in weeks rather than a full collection cycle, using the Task 2 real-versus-synthetic ablation findings to minimize new-language annotation cost, proving a surge capability for contingencies, led by AP Peace Strategies with Rootwise providing rapid new-station/new-language collection capacity. Measurable completion criteria and final deliverable are specified per whichever direction DARPA selects at option exercise; both are evaluated using the identical rolling-origin, never-look-ahead validation methodology used throughout the base period.",
+    "Phase II Option Statement of Work (6 months, if exercised). Two directions, per the topic's own framing, both building directly on Phase II base-period deliverables rather than new development: (1) Operational pilot and transition — run a sustained, live forecasting feed for a single theater alongside an operational user for the six-month option period, measuring real-world warning value and producing a formal transition package, led by Transcend with Applied Peace Strategies coordinating the operational-user relationship; (2) Rapid language onboarding — demonstrate standing up a new crisis language in weeks rather than a full collection cycle, using the Task 2 real-versus-synthetic ablation findings to minimize new-language annotation cost, proving a surge capability for contingencies, led by Transcend with Rootwise providing rapid new-station/new-language collection capacity. Measurable completion criteria and final deliverable are specified per whichever direction DARPA selects at option exercise; both are evaluated using the identical rolling-origin, never-look-ahead validation methodology used throughout the base period.",
 ]
 
 SECTION_4_RELATED_WORK = [
-    "The proposer's own Phase I work, described fully in Part One, is the most directly related prior activity: four internal technical rounds (literature review, corrected model battery, first 1,150-iteration search, and the present feasibility validation) performed entirely by the proposer, documented in the public repository, with no external client or completion date since this was proposer-funded feasibility work rather than a delivered engagement.",
+    "Two directly related bodies of prior work, both the proposer's own. First, and most directly: the Phase I feasibility work described fully in Part One -- four internal technical rounds (literature review, corrected model battery, first 1,150-iteration search, and the present feasibility validation) performed entirely by the proposer, documented in the public repository, with no external client or completion date since this was internally funded feasibility work rather than a delivered engagement. Second, and broader in scope: Transcend's existing AI decision-support platform (strategic decision synthesis, agentic multi-perspective analysis, and an expert-curated knowledge base, per the company's public description at missiontranscend.ai), including the United Nations' first AI agent deployment and market access through a Carahsoft federal contract-vehicle partnership plus AWS Activate and NVIDIA Inception program participation -- cited here as directly relevant institutional and technical context for team capability and market access (Section 11), not as Phase I feasibility evidence for the conflict-forecasting-specific criteria in Part One, which is evaluated strictly on its own merits.",
     "The proposer is aware of the broader state of the art this topic sits within: automated event-coding systems (GDELT and ICEWS, the Integrated Crisis Early Warning System -- another automated, machine-coded event dataset with a similar role to GDELT's) and hand-curated conflict datasets (UCDP and ACLED, the Armed Conflict Location & Event Data Project -- a widely used, hand-coded conflict-event dataset comparable to UCDP) as the two dominant ground-truth traditions in computational conflict forecasting; ensemble and machine-learning approaches from the ViEWS (Violence Early-Warning System) research program as a relevant academic precedent for ensemble diversity and rolling-window validation; and graph neural network approaches to event forecasting as an active but, per the proposer's own Phase I literature review, not yet widely operationally deployed research direction — one reason the hypergraph architecture in this proposal was built and empirically tested rather than assumed to work from the literature alone.",
     "Rootwise's radio-listening data aggregation work and Applied Peace Strategies' international evidence-gathering coordination work both predate this proposal and are independent of it; [Insert: a short description of each partner's own directly relevant prior engagement, client/contact, and completion date, per the template's required format, to be supplied by Rootwise and Applied Peace Strategies respectively for Table 2 below].",
 ]
@@ -199,8 +199,8 @@ FACILITIES_EQUIPMENT = [
 ]
 
 SUBCONTRACTORS = [
-    "Rootwise (radio-listening data aggregation), point of contact David Cyprian, is proposed as a Phase II subcontractor for Task 1 (radio collection and ingestion) and supporting Task 2 (audio for ASR fine-tuning) and the Option Period's rapid-onboarding track. Rootwise's existing radio-monitoring infrastructure is the direct, evidenced answer to this topic's \"radio data collection engine\" requirement — the proposer is not proposing to build station-level radio collection from zero. [Insert: Rootwise's proposed workshare as a percentage of direct and indirect Phase II cost, reconciled with the Cost Volume's Cost Breakdown Structure, and confirmation that at least 50% of total research/analytical work remains with AP Peace Strategies as the proposing small business, per DoD SBIR Direct-to-Phase-II requirements.]",
-    "Applied Peace Strategies, point of contact Megan Jeans, coordinates international evidence-gathering (Task 6): prioritizing target-region languages and locations and supporting native-speaker annotator network access. [Insert: Applied Peace Strategies' proposed role structure — subcontractor, consultant, or (if Applied Peace Strategies is itself the proposing firm under the template's Table 0 entry \"AP Peace Strategies\") key personnel rather than a separate subcontractor entry, whichever is factually accurate, since the template's cover-sheet proposer name and this partner's company name should be reconciled before submission — see the note under Section 6, Key Personnel.]",
+    "Rootwise (radio-listening data aggregation), point of contact David Cyprian, is proposed as a Phase II subcontractor for Task 1 (radio collection and ingestion) and supporting Task 2 (audio for ASR fine-tuning) and the Option Period's rapid-onboarding track. Rootwise's existing radio-monitoring infrastructure is the direct, evidenced answer to this topic's \"radio data collection engine\" requirement — the proposer is not proposing to build station-level radio collection from zero. [Insert: Rootwise's proposed workshare as a percentage of direct and indirect Phase II cost, reconciled with the Cost Volume's Cost Breakdown Structure, and confirmation that at least 50% of total research/analytical work remains with Transcend as the proposing small business, per DoD SBIR Direct-to-Phase-II requirements.]",
+    "Applied Peace Strategies, point of contact Megan Jeans, coordinates international evidence-gathering (Task 6) as a Transcend subcontractor: prioritizing target-region languages and locations and supporting native-speaker annotator network access. [Insert: Applied Peace Strategies' proposed workshare as a percentage of direct and indirect Phase II cost, reconciled with the Cost Volume.]",
 ]
 
 PRIOR_SUPPORT = [
@@ -214,7 +214,8 @@ DATA_RIGHTS = [
 # ============================================================ SECTION 11
 
 S11_A = [
-    "Phase I activity was entirely internal feasibility validation (Part One) — no external transition or commercialization activity has yet been conducted, and this document states that plainly rather than describing marketing activity that did not happen. Current Technology Readiness Level (TRL) is assessed at TRL 3-4: a validated proof-of-concept with real, disclosed performance metrics (Part One), not yet integrated into an operational environment. The market is early-stage: no dominant commercial vendor currently offers an independently-validated, precision-first conflict/instability forecasting product at the country-week granularity and precision level demonstrated here; the closest comparators are academic systems (ViEWS) not packaged as a commercial or operational product, and higher-level political-risk consultancies that do not publish backtested precision/recall figures at all. Key Phase II milestones advancing toward product: prototype integration with real radio signal (Months 1-9), independent-audit-ready validation (Month 9), live/recent-scenario demonstration (Month 12), and a final benchmark suite (Month 18) — see Part Two, Section 3 for full detail.",
+    "Transcend is not a pre-revenue concept team: the company's existing AI decision-support platform (strategic decision synthesis across diplomatic, military, intelligence, economic, and humanitarian data; an agentic, multi-perspective analysis workflow; and an expert-curated knowledge base) is already in use, per the company's own public description at missiontranscend.ai, including the United Nations' first AI agent deployment, and reaches the federal market today through a Carahsoft contract-vehicle partnership plus AWS Activate and NVIDIA Inception program participation. This Phase I effort is a focused, conflict-early-warning-specific extension of that existing platform and team, not a new company's first product.",
+    "Within that broader context, the conflict-forecasting capability specifically evidenced in Part One is newer: Technology Readiness Level (TRL) for this specific forecasting core is assessed at TRL 3-4 — a validated proof-of-concept with real, disclosed performance metrics (Part One), not yet integrated into Transcend's operational platform or a live monitoring environment. The market for independently-validated, precision-first conflict/instability forecasting specifically (as distinct from Transcend's broader decision-support product) is early-stage: the closest comparators are academic systems (ViEWS) not packaged as a commercial product, and political-risk consultancies that do not publish backtested precision/recall figures at all. Key Phase II milestones advancing this capability toward integration with Transcend's existing platform: prototype integration with real radio signal (Months 1-9), independent-audit-ready validation (Month 9), live/recent-scenario demonstration (Month 12), and a final benchmark suite (Month 18) — see Part Two, Section 3 for full detail.",
 ]
 
 S11_B = [
@@ -226,15 +227,15 @@ S11_C = [
 ]
 
 S11_D = [
-    "Primary hypothesis: a hybrid model — direct government contract/licensing for the DoD/Federal forecasting feed (the Phase III path this SBIR directly funds), alongside a commercial API/subscription product for the insurance, supply-chain, and NGO segments. Revenue generation: subscription/API-usage fees for the commercial product; a delivered contract vehicle for the government product, informed by the Option Period's operational-pilot track. Resources needed: a small commercial go-to-market function (Part One's Commercialization Potential Summary) and continued Rootwise/Applied Peace Strategies partnership for signal supply and international coordination respectively — both already under this proposal's cost structure rather than requiring separate resourcing to stand up. Supply-chain/differentiation: the proposer's core differentiator against both academic and commercial-risk-consultancy competitors is the disclosed, reproducible, rolling-origin-validated precision figure itself (Part One) — a form of transparency competitors in this space do not currently publish, and one DARPA's own funding of an independent audit (Task 5) would further strengthen as a market differentiator.",
+    "Primary hypothesis: this forecasting capability is a new module on Transcend's existing go-to-market motion, not a business model to invent from zero. Government/Federal access already runs through Transcend's Carahsoft contract-vehicle partnership; the Phase III path (direct government contract/licensing for the forecasting feed) uses that existing channel. Commercial access (insurance, supply-chain, NGO segments) is a subscription/API product alongside Transcend's existing decision-support offering. Resources needed: a small commercial go-to-market function specific to the forecasting product (Part One's Commercialization Potential Summary) and continued Rootwise/Applied Peace Strategies partnership for signal supply and international coordination respectively — both already under this proposal's cost structure. Differentiation: the core differentiator against both academic and commercial-risk-consultancy competitors is the disclosed, reproducible, rolling-origin-validated precision figure itself (Part One) — a form of transparency competitors in this space do not currently publish, strengthened by Transcend's existing UN and Carahsoft relationships as credibility and access DARPA's funding of an independent audit (Task 5) would compound rather than have to build from scratch.",
 ]
 
 S11_E = [
-    "Target market: government early-warning/intelligence customers (a small number of large, high-value contracts) plus a broader commercial base across insurance, extractives/supply-chain risk, and humanitarian/NGO field safety (many smaller subscription customers). [Insert: quantified addressable-market sizing — the proposer should supply real, cited market-size figures for parametric conflict/political-risk insurance and for humanitarian-sector risk-analytics spend before submission rather than leave this unquantified]. Competing technologies: political-risk consultancies (qualitative, not backtested); academic systems like ViEWS (rigorous, not a maintained commercial product); a small number of commercial geopolitical-risk-analytics vendors, none of which, to the proposer's knowledge based on Phase I's own literature review, publish a rolling-origin-validated precision figure comparable to Part One's. Market validation to date is the Phase I technical validation itself (Part One) plus Applied Peace Strategies' existing relationships (Section 11.C); formal customer discovery is proposed as an early Phase II activity rather than claimed as already complete.",
+    "Target market: government early-warning/intelligence customers (a small number of large, high-value contracts, reachable today through Transcend's existing Carahsoft federal contract-vehicle relationship) plus a broader commercial base across insurance, extractives/supply-chain risk, and humanitarian/NGO field safety (many smaller subscription customers, a segment Transcend's UN engagement and Applied Peace Strategies' relationships already touch). [Insert: quantified addressable-market sizing — the proposer should supply real, cited market-size figures for parametric conflict/political-risk insurance and for humanitarian-sector risk-analytics spend before submission rather than leave this unquantified]. Competing technologies: political-risk consultancies (qualitative, not backtested); academic systems like ViEWS (rigorous, not a maintained commercial product); a small number of commercial geopolitical-risk-analytics vendors, none of which, to the proposer's knowledge based on Phase I's own literature review, publish a rolling-origin-validated precision figure comparable to Part One's. Market validation to date is the Phase I technical validation itself (Part One) plus Transcend's existing UN/Carahsoft relationships and Applied Peace Strategies' existing relationships (Section 11.C); formal customer discovery specific to the forecasting product is proposed as an early Phase II activity rather than claimed as already complete.",
 ]
 
 S11_F = [
-    "[Insert: AP Peace Strategies' actual funding history — amount and source of any external financing raised to date — and planned future funding sources (internal revenue, loans, angel, venture capital, or reliance on SBIR/STTR -- Small Business Technology Transfer, a sibling federal non-dilutive funding program to SBIR -- as the primary near-term source). This section requires real, specific, verifiable company financial information the drafter of this document does not have access to; do not submit with this bracketed placeholder still present.]",
+    "[Insert: Transcend's actual funding history — amount and source of any external financing raised to date — and planned future funding sources (internal revenue, loans, angel, venture capital, or reliance on SBIR/STTR -- Small Business Technology Transfer, a sibling federal non-dilutive funding program to SBIR -- as the primary near-term source). This section requires real, specific, verifiable company financial information the drafter of this document does not have access to; do not submit with this bracketed placeholder still present.]",
 ]
 
 S11_G = [
@@ -242,7 +243,7 @@ S11_G = [
 ]
 
 S11_H = [
-    "AP Peace Strategies' technical team performed all Phase I work described in Part One: the forecasting architecture, the graph-native modeling (hypergraph neural network and label spreading, both built from scratch), the 1,150-iteration validation search, and the temporally out-of-sample precision and generalization testing in this proposal. [Insert: specific technical/management team member names, titles, and relevant background beyond the Key Personnel already detailed in Part Two, Section 6, plus an honest statement of financial history/health (cash position, revenue, if any) as the template requires — do not submit without this.] This team has not previously taken a comparable product to market; go-to-market expertise will be added per the plan named in Part One's Commercialization Potential Summary and Section 11.G above.",
+    "Transcend's technical team performed all Phase I work described in Part One: the forecasting architecture, the graph-native modeling (hypergraph neural network and label spreading, both built from scratch), the 1,150-iteration validation search, and the temporally out-of-sample precision and generalization testing in this proposal. [Insert: specific technical/management team member names, titles, and relevant background beyond the Key Personnel already detailed in Part Two, Section 6, plus an honest statement of financial history/health (cash position, revenue, if any) as the template requires — do not submit without this.] This team has not previously taken a comparable product to market; go-to-market expertise will be added per the plan named in Part One's Commercialization Potential Summary and Section 11.G above.",
 ]
 
 S11_I = [
@@ -251,7 +252,7 @@ S11_I = [
 
 
 SECTION_6_LEAD_IN = [
-    "Two key personnel are named for the Phase II effort: Megan Jeans (Applied Peace Strategies) and David Cyprian (Rootwise), detailed in Table 3 below. [Insert: any additional AP Peace Strategies technical/management personnel who will be directly involved in Phase II beyond the personnel already named in Part One and this table.]",
+    "Two key personnel are named for the Phase II effort: Megan Jeans (Applied Peace Strategies) and David Cyprian (Rootwise), detailed in Table 3 below. [Insert: any additional Transcend technical/management personnel who will be directly involved in Phase II beyond the personnel already named in Part One and this table.]",
 ]
 
 HUMAN_ANIMAL_SUBJECTS = [
@@ -421,6 +422,11 @@ def build():
 def fill_tables(doc):
     from docx_fill_lib import fill_table_cell, add_table_row
 
+    # Table 0: Proposer cover -- template shipped with an incorrect
+    # placeholder proposer name; corrected to the real proposing firm.
+    t0 = doc.tables[0]
+    fill_table_cell(t0, 1, 0, "Transcend")
+
     # Table 1: Milestones -- fill Measurable Success Criteria / Deliverable columns (2, 3)
     t1 = doc.tables[1]
     milestone_fill = {
@@ -448,21 +454,46 @@ def fill_tables(doc):
     # Table 2: Related Work
     t2 = doc.tables[2]
     fill_table_cell(t2, 1, 0, "Phase I feasibility validation (this proposal's own Part One work)")
-    fill_table_cell(t2, 1, 1, "AP Peace Strategies (proposer) -- direct foundation for this Phase II proposal")
+    fill_table_cell(t2, 1, 1, "Transcend (proposer) -- direct foundation for this Phase II proposal")
     fill_table_cell(t2, 1, 2, "N/A -- internally funded feasibility work, no external client")
     fill_table_cell(t2, 1, 3, "2026 (ongoing)")
+    add_table_row(t2, [
+        "Transcend's existing AI decision-support platform (strategic decision platform, agentic multi-perspective workflow, expert-curated knowledge base) -- publicly described at missiontranscend.ai",
+        "Transcend (proposer) -- shared underlying agentic/knowledge-base architecture; broader scope than this proposal's conflict-forecasting-specific work, cited here for team/platform maturity context, not as Phase I feasibility evidence itself",
+        "United Nations (per Transcend's own public description, first UN AI agent); Carahsoft (federal contract vehicle partner) -- [Insert Government point of contact and phone/email per template requirement]",
+        "Ongoing",
+    ])
 
-    # Table 3: Key Personnel -- fill with what's actually known; leave bracketed
-    # placeholders for biographical facts not supplied to the drafter, rather
-    # than inventing credentials.
+    # Table 3: Key Personnel -- fill with what's actually known from
+    # Transcend's public site (missiontranscend.ai); leave bracketed
+    # placeholders for biographical facts (degrees, dates, % commitment)
+    # not supplied to the drafter, rather than inventing credentials.
     t3 = doc.tables[3]
-    fill_table_cell(t3, 1, 0, "Megan Jeans -- Principal Investigator [CONFIRM TITLE]\n\n[School, Degree, Year -- insert]")
-    fill_table_cell(t3, 1, 1, "Applied Peace Strategies")
+    fill_table_cell(t3, 1, 0, "Ola Mohajer -- Founder & CEO [CONFIRM AS PI OR NAME ALTERNATE PI]\n\n[School, Degree, Year -- insert]")
+    fill_table_cell(t3, 1, 1, "Transcend")
     fill_table_cell(t3, 1, 2, "[Insert % or hours]")
-    fill_table_cell(t3, 1, 3, "International evidence-gathering coordination; leads Task 6 (Part Two, Section 3). [Insert additional relevant technical/domain experience.]")
+    fill_table_cell(t3, 1, 3, "Former U.S. Institute of Peace and UN collaborator; overall program leadership. [Insert additional relevant experience/publications.]")
+    add_table_row(t3, [
+        "Sam Hopkins -- Chief Technology Officer\n\n[School, Degree, Year -- insert]",
+        "Transcend",
+        "[Insert % or hours]",
+        "AI systems engineering; technical lead for forecasting architecture, hypergraph/ICL implementation (Part Two, Section 3, Tasks 3-5). [Insert additional relevant experience.]",
+    ])
+    add_table_row(t3, [
+        "Frank Aum -- Peace & Security Strategist\n\n[School, Degree, Year -- insert]",
+        "Transcend",
+        "[Insert % or hours]",
+        "Defense and conflict analysis; supports regional/domain validation of forecasting outputs. [Insert additional relevant experience.]",
+    ])
+    add_table_row(t3, [
+        "Megan Jeans -- Key Personnel, International Coordination Lead [CONFIRM TITLE]\n\n[School, Degree, Year -- insert]",
+        "Applied Peace Strategies (subcontractor)",
+        "[Insert % or hours]",
+        "International evidence-gathering coordination; leads Task 6 (Part Two, Section 3). [Insert additional relevant technical/domain experience.]",
+    ])
     add_table_row(t3, [
         "David Cyprian -- Key Personnel, Radio Data Lead [CONFIRM TITLE]\n\n[School, Degree, Year -- insert]",
-        "Rootwise",
+        "Rootwise (subcontractor)",
         "[Insert % or hours]",
         "Leads radio-listening data aggregation and collection (Task 1, Part Two Section 3); Rootwise point of contact. [Insert additional relevant technical background.]",
     ])
