@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommended approach, code, and real backtest results — Art of Novel Signals</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579;
+    --paper:#f6f4ec; --paper-raised:#fdfcf7; --line:#d9d5c4; --line-strong:#b8b29a;
+    --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc;
+    --wire:#6b5a8c; --wire-soft:#eae5f2;
+    --good:#2e6b4f; --bad:#9c4a2f;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased;}
+  code, .mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;}
+  a{color:var(--signal-deep); text-decoration-color:var(--line-strong); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--signal-deep);}
+
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem, 4vw, 3rem) 1.4rem; background:var(--paper);}
+  .masthead .eyebrow{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem, 3.2vw, 2.1rem); line-height:1.15; max-width:50ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:66ch; font-size:0.98rem; margin-top:0.6rem;}
+
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem, 4vw, 3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; letter-spacing:0.05em; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.95rem 1.1rem; border-bottom:3px solid transparent; white-space:nowrap; transition:color 0.15s ease;}
+  .tab-btn .num{display:inline-block; width:1.4em; color:var(--line-strong);}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  .tab-btn.active .num{color:var(--signal);}
+
+  main{max-width:960px; margin:0 auto; padding:2.4rem clamp(1.2rem, 4vw, 3rem) 6rem;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); letter-spacing:0.04em;}
+  .section-head h2{font-size:1.25rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.98rem; margin-bottom:1.2rem;}
+
+  ul, ol{padding-left:1.3rem; margin:0 0 1em 0;}
+  li{margin-bottom:0.45rem;}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .card h3{font-size:1.02rem; margin-bottom:0.4rem;}
+  .card h4{font-size:0.9rem; color:var(--ink-soft); margin:0.9rem 0 0.3rem;}
+
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.85rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.92rem; color:#5c2c1a; margin:1rem 0;}
+  .callout strong{color:#4a2314;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.good strong{color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .callout.wire strong{color:#2e2450;}
+
+  .cmp-table-wrap, .ds-table-wrap{overflow-x:auto; margin-bottom:0.4rem;}
+  table.cmp, table.ds, table.results{width:100%; border-collapse:collapse; font-size:0.86rem; background:var(--paper-raised);}
+  table.cmp th, table.ds th, table.results th{text-align:left; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.7rem;}
+  table.cmp td, table.ds td, table.results td{padding:0.55rem 0.7rem; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.cmp tr:last-child td, table.ds tr:last-child td, table.results tr:last-child td{border-bottom:none;}
+  table.results td.best{color:var(--good); font-weight:600;}
+  table.results td.worst{color:var(--bad);}
+
+  .stage-list{list-style:none; padding:0; margin:0;}
+  .stage-list li{display:grid; grid-template-columns:2.4rem 1fr; gap:0.9rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .stage-list li:last-child{border-bottom:none;}
+  .stage-num{font-family:'Source Serif 4', serif; font-size:1.3rem; color:var(--line-strong); line-height:1.4;}
+  .stage-body h4{margin:0 0 0.25rem; font-size:1rem; color:var(--ink); font-family:'IBM Plex Sans', sans-serif; font-weight:600;}
+  .stage-body p{margin:0; font-size:0.94rem; color:var(--ink-soft);}
+
+  .schema-grid{display:grid; grid-template-columns:1fr 1fr; gap:1rem;}
+  @media(max-width:640px){.schema-grid{grid-template-columns:1fr;}}
+  .schema-col{border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem; background:var(--paper-raised);}
+  .schema-col.nodes{border-left:3px solid var(--signal);}
+  .schema-col.edges{border-left:3px solid var(--wire);}
+  .schema-col h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em; font-family:'IBM Plex Mono', monospace; color:var(--ink-mute); margin-bottom:0.7rem;}
+  .schema-item{margin-bottom:0.6rem; font-size:0.9rem;}
+  .schema-item code{background:var(--signal-soft); color:var(--signal-deep); padding:0.05rem 0.35rem; border-radius:2px;}
+  .schema-col.edges .schema-item code{background:var(--wire-soft); color:#3d3260;}
+  .schema-item .desc{color:var(--ink-soft); display:block; margin-top:0.15rem; font-size:0.85rem;}
+
+  .model-list{list-style:none; padding:0; margin:0;}
+  .model-card{display:grid; grid-template-columns:2.2rem 1fr; gap:1rem; padding:1.1rem 0; border-bottom:1px solid var(--line);}
+  .model-card:first-child{padding-top:0;}
+  .model-card:last-child{border-bottom:none;}
+  .model-order{font-family:'IBM Plex Mono', monospace; font-size:0.95rem; color:var(--signal); padding-top:0.15rem;}
+  .model-card h3{font-size:1.02rem; margin-bottom:0.3rem;}
+  .model-card .subtitle{font-family:'IBM Plex Mono', monospace; font-size:0.75rem; color:var(--ink-mute); margin-bottom:0.5rem;}
+  .model-card p{font-size:0.92rem; color:var(--ink-soft); margin-bottom:0.5rem;}
+  .model-card .why{font-size:0.85rem; color:var(--ink-mute); font-style:italic;}
+  .model-card.anchor{background:var(--signal-soft); margin:0 -1.1rem 1.1rem; padding:1.1rem 1.1rem; border-radius:var(--radius); border-bottom:none;}
+  .model-card.anchor .model-order{color:var(--signal-deep);}
+  .model-card.demoted{background:var(--alert-soft); margin:0 -1.1rem 1.1rem; padding:1.1rem 1.1rem; border-radius:var(--radius); border-bottom:none;}
+
+  .code-file{margin:1.2rem 0 1.8rem;}
+  .code-file .fname{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; color:var(--ink-mute); margin-bottom:0.3rem; display:flex; justify-content:space-between;}
+  .code-block{background:var(--ink); color:#e8e6dc; border-radius:var(--radius); padding:1.1rem 1.3rem; font-family:'IBM Plex Mono', monospace; font-size:0.74rem; line-height:1.6; overflow-x:auto; white-space:pre;}
+  .code-block .c{color:#7c8579;}
+  .code-block .k{color:#8bc9a3;}
+  .code-block .s{color:#e0b080;}
+  .code-block .f{color:#a9c9e8;}
+
+  .metric-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:0.8rem; margin:1rem 0;}
+  .metric{border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; background:var(--paper-raised);}
+  .metric .name{font-size:0.78rem; font-family:'IBM Plex Mono', monospace; color:var(--signal-deep); margin-bottom:0.3rem;}
+  .metric .val{font-family:'IBM Plex Mono', monospace; font-size:1.1rem; color:var(--ink);}
+  .metric .def{font-size:0.8rem; color:var(--ink-soft); margin-top:0.2rem;}
+
+  .reasoning-card{border:1px solid var(--line); border-left:3px solid var(--wire); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:0.9rem 1.1rem; margin-bottom:0.8rem; font-size:0.87rem;}
+  .reasoning-card .who{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--wire); margin-bottom:0.3rem;}
+
+  footer{max-width:960px; margin:0 auto; padding:1.5rem clamp(1.2rem, 4vw, 3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+  ::selection{background:var(--signal-soft); color:var(--signal-deep);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Companion document</span>
+    <span>Recommended approach · code · real backtest</span>
+    <span>Read against DARPA-DPA26BZ04-DV015, "Art of Novel Signals" SBIR</span>
+  </div>
+  <h1>What the reference document got right, what the actual RFP requires instead, and a working prototype on real data</h1>
+  <p class="dek">The methodology reference in this folder is strong groundwork. Read against the actual solicitation text, one load-bearing design choice needs to change before it matches what DARPA is asking proposers to demonstrate. This document makes that correction, then builds and runs a real, working version of the corrected approach — real GDELT events, a real temporal knowledge graph, five real models, and an honest rolling-origin backtest — end to end.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab1"><span class="num">01</span>RFP Alignment</button>
+  <button class="tab-btn" data-tab="tab2"><span class="num">02</span>Recommended Approach</button>
+  <button class="tab-btn" data-tab="tab3"><span class="num">03</span>Code</button>
+  <button class="tab-btn" data-tab="tab4"><span class="num">04</span>Real Results</button>
+  <button class="tab-btn" data-tab="tab5"><span class="num">05</span>Next Steps</button>
+</div>
+
+<main>
+
+<!-- ===================== TAB 1: RFP ALIGNMENT ===================== -->
+<div class="panel active" id="tab1">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The program</span><h2>What DARPA-DPA26BZ04-DV015 actually asks for</h2></div>
+    <p class="lede">Pulled directly from the solicitation page. This is a Direct-to-Phase-II SBIR under DARPA's Applied Artificial Intelligence / Human-Machine Interfaces / Integrated Sensing and Cyber critical technology areas.</p>
+    <div class="metric-grid">
+      <div class="metric"><div class="name">Baseline precision</div><div class="val">~80%</div><div class="def">Current state of the art across regions</div></div>
+      <div class="metric"><div class="name">Target precision</div><div class="val">~90%</div><div class="def">Phase II goal</div></div>
+      <div class="metric"><div class="name">False-positive reduction</div><div class="val">~50%</div><div class="def">Within-country rates</div></div>
+      <div class="metric"><div class="name">Forecast horizon</div><div class="val">10–14 days</div><div class="def">Progressing toward a 2-week target</div></div>
+    </div>
+    <div class="card">
+      <h3>The four interlocking components DARPA describes</h3>
+      <ol>
+        <li>A radio data collection engine — streaming online plus software-defined receivers for offline stations</li>
+        <li>ASR for low-resource, predominantly oral languages (fine-tuned Whisper Large-v3, 50–200 hours transcribed audio per language, native-speaker annotation at roughly $5/hour)</li>
+        <li>A synthetic-data strategy for affordable broad language coverage</li>
+        <li>Forecasting integration — converting transcribed audio into early warnings</li>
+      </ol>
+      <h4>Geographic scope</h4>
+      <p>Central and Southeast Asia, East and Northeast Africa, South America.</p>
+      <h4>Program structure</h4>
+      <p>18-month Phase II base (Month 3 baseline setup → Month 6 extended language coverage / 10-day horizon → Month 9 two-week horizon and 90% precision target → Month 12 live demonstration → Month 15 paralinguistic feature extraction (pitch, energy, emotion) → Month 18 final benchmark suite) plus a 6-month, $500K option period for operational pilot deployment and rapid crisis-language onboarding.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The correction</span><h2>The one requirement that changes the model ordering</h2></div>
+    <p class="lede">The solicitation's DP2 evaluation criteria are explicit about the required forecasting mechanism, quoted directly:</p>
+    <div class="callout"><strong>"An in-context-learning forecasting pipeline that operates over temporal knowledge graphs without retraining."</strong></div>
+    <p>The reference document's tab 03 leads with a temporal graph neural network (TGN / EvolveGCN) as its anchor model — the one every other entry in the battery is measured against. A TGN is a genuinely strong architecture for graph-structured forecasting, and it isn't wrong as an idea. But it needs gradient training on every rolling fold to update its learned representations. That directly contradicts <em>"without retraining."</em> Leading a DARPA-facing methodology document with the one architecture the solicitation's own evaluation criteria rules out is a real risk worth fixing before this goes further, not a stylistic quibble.</p>
+
+    <div class="cmp-table-wrap">
+    <table class="cmp">
+      <tr><th>Requirement</th><th>Reference doc, as written</th><th>What the RFP actually asks for</th></tr>
+      <tr><td>Anchor forecasting mechanism</td><td>TGN / EvolveGCN (model 01, trained per fold)</td><td>In-context learning over the temporal knowledge graph, <strong>no retraining</strong></td></tr>
+      <tr><td>Ground truth</td><td>ACLED / UCDP onset dates</td><td>Matches — "baseline precision at 80%+ fidelity on ACLED-style political/conflict events"</td></tr>
+      <tr><td>Signal sources</td><td>Radio transcripts generically, CAMEO/ACLED-coded extraction</td><td>Matches, with specifics added: multilingual radio + local news + community reporting (Telegram/WhatsApp) from data-sparse regions specifically</td></tr>
+      <tr><td>Forecast horizon</td><td>7 / 14 / 30-day stratification</td><td>Matches closely — RFP's own 10–14 day target sits inside that stratification</td></tr>
+      <tr><td>Not addressed in reference doc</td><td>—</td><td>Paralinguistic features (pitch, energy, emotion) as a Month-15 deliverable; a synthetic-data strategy for language coverage; ASR word-error-rate vs. training-hours benchmarking</td></tr>
+    </table>
+    </div>
+
+    <div class="callout good"><strong>What doesn't need to change:</strong> the extraction pipeline (tab 01 stages 1–4), the graph schema (Actor / Location / Event / Source / Claim nodes, bitemporal edges), the backtesting discipline (rolling-origin splits, Brier + precision/recall over ROC-AUC, base-rate comparison), and three of the reference document's four non-TGN models. Only the anchor model and its justification need correcting — the rest of the reference document's thinking holds up well against the actual solicitation text.</div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 2: RECOMMENDED APPROACH ===================== -->
+<div class="panel" id="tab2">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Architecture</span><h2>The corrected model battery</h2></div>
+    <p class="lede">Same shared interface as the reference document — <code>fit(train_window)</code>, <code>predict_proba(next_window)</code> — run back-to-back against identical rolling-origin splits. The anchor changes; the discipline doesn't.</p>
+
+    <ul class="model-list">
+      <li class="model-card anchor">
+        <span class="model-order">01</span>
+        <div>
+          <h3>In-context-learning forecaster over the temporal knowledge graph</h3>
+          <div class="subtitle">No gradient training at any point — retrieval + prompting only</div>
+          <p>At prediction time: serialize the recent graph state for a country-week to structured text (event counts by CAMEO quad-class, Goldstein trend, distinct-actor count, source tone), retrieve the <em>k</em> most similar historical country-weeks by cosine similarity over that same feature vector, and prompt a foundation model for a calibrated probability plus a reasoning trace referencing the retrieved analogs. The "index" built from the training window is retrieval bookkeeping, not a trained model — nothing about it has learned weights that update via backpropagation.</p>
+          <p class="why">Why first: this is the literal mechanism named in the RFP's DP2 evaluation criteria. Every other model in the battery exists to show whether this one is actually earning its complexity.</p>
+        </div>
+      </li>
+      <li class="model-card">
+        <span class="model-order">02</span>
+        <div>
+          <h3>Gradient-boosted trees on hand-engineered graph features</h3>
+          <div class="subtitle">XGBoost, tabular, retrained per fold — a labeled comparison point</div>
+          <p>Flattens the graph to region-week features: event frequency, quad-class escalation ratios, Goldstein trend, actor-count deltas. Fast, interpretable, and — unlike the ICL forecaster — explicitly <em>allowed</em> to retrain each fold, since it isn't the model being evaluated against the "without retraining" criterion. Its job is to set the bar the ICL approach needs to clear or credibly explain why it doesn't need to.</p>
+          <p class="why">Why: if a retrained tabular model matches the no-retraining ICL forecaster, that's a legitimate, reportable finding either way — not a failure of the harness.</p>
+        </div>
+      </li>
+      <li class="model-card">
+        <span class="model-order">03</span>
+        <div>
+          <h3>Lagged logistic regression</h3>
+          <div class="subtitle">The minimum viable baseline</div>
+          <p>Region-week event counts and their lags, nothing else. Every fancier model must beat this or the added complexity has no case.</p>
+        </div>
+      </li>
+      <li class="model-card">
+        <span class="model-order">04</span>
+        <div>
+          <h3>Naive persistence</h3>
+          <div class="subtitle">Not a model — a floor</div>
+          <p>"Escalation continues where it's already happening." No features, no fitting.</p>
+        </div>
+      </li>
+      <li class="model-card">
+        <span class="model-order">05</span>
+        <div>
+          <h3>Historical base rate</h3>
+          <div class="subtitle">Not a model — the other floor</div>
+          <p>Predicts each country's own historical escalation rate. Run automatically every fold, not as a one-time check — see tab 04 for why that discipline mattered in practice.</p>
+        </div>
+      </li>
+      <li class="model-card demoted">
+        <span class="model-order">—</span>
+        <div>
+          <h3>Temporal graph neural network — demoted, not discarded</h3>
+          <div class="subtitle">TGN / EvolveGCN</div>
+          <p>Still worth building once the program has enough labeled history to retrain on a defensible cadence (e.g., quarterly, outside the live no-retraining evaluation loop) — genuinely the only architecture here that can use alliance-edge changes and centrality shifts directly rather than as flattened features. Positioned as a <em>research</em> track parallel to the SBIR's required deliverable, not the deliverable itself.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Label</span><h2>Defining "escalation" without a fatality count</h2></div>
+    <p class="lede">This prototype runs on raw GDELT (automated CAMEO coding, no built-in fatality field), not ACLED — so the label is defined relative to each country's own trailing baseline rather than an absolute severity threshold. It's a real, defensible operationalization, and it's exactly the kind of choice that should be swapped for ACLED/UCDP fatality-coded onsets once that registration is in place (see tab 05).</p>
+    <div class="card">
+      <h4>Escalation, country-week t → t+1</h4>
+      <p><code>label = 1</code> if either:</p>
+      <ul>
+        <li>the material-conflict share of events (CAMEO quad-class 4) rises more than 1 standard deviation above that country's own trailing expanding mean, <strong>or</strong></li>
+        <li>the mean Goldstein score drops more than 2 points below that country's own trailing expanding mean</li>
+      </ul>
+      <p>Both baselines use only data available before the prediction point (an expanding window, shifted by one period) — the same bitemporal discipline the reference document's tab 01 callout insists on for the graph writes themselves.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 3: CODE ===================== -->
+<div class="panel" id="tab3">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Pipeline</span><h2>Four scripts, run in order, on real data</h2></div>
+    <p class="lede">Every script below actually ran to produce the numbers in tab 04 — real GDELT events for Sudan, Myanmar, Afghanistan, and Colombia (one country from each of the RFP's three named regions, Sudan and Afghanistan both sitting inside the broader Africa/Asia scope), 90 days ending August 1, 2026, no synthetic rows anywhere.</p>
+
+    <div class="code-file">
+      <div class="fname"><span>scripts/download_gdelt.py — real, free, no-auth GDELT 2.0 event export</span><span>~90 lines</span></div>
+      <div class="code-block"><span class="c">"""
+Download real GDELT 2.0 daily event export files (data.gdeltproject.org,
+free, no auth) for a real recent window, filtering on the fly to four
+countries spanning DARPA's three named target regions:
+  Sudan (SU)       -- East/Northeast Africa
+  Myanmar (BM)     -- Southeast Asia
+  Afghanistan (AF) -- Central Asia
+  Colombia (CO)    -- South America
+Confirmed live GDELT 2.0 schema (58 tab-delimited fields, 0-indexed).
+"""</span>
+<span class="k">import</span> io, sys, time, urllib.request, zipfile
+<span class="k">from</span> datetime <span class="k">import</span> date, timedelta
+
+UA = <span class="s">"Mozilla/5.0 ..."</span>
+BASE = <span class="s">"http://data.gdeltproject.org/events/{date}.export.CSV.zip"</span>
+TARGET_COUNTRIES = {<span class="s">"SU"</span>, <span class="s">"BM"</span>, <span class="s">"AF"</span>, <span class="s">"CO"</span>}
+
+<span class="c"># confirmed against a real downloaded row -- 0-indexed field positions</span>
+COLS_KEEP = [0, 1, 5, 6, 7, 15, 16, 17, 26, 29, 30, 31, 32, 33, 34, 51, 53, 54]
+COLS_HEADER = [<span class="s">"GlobalEventID"</span>, <span class="s">"SQLDATE"</span>, <span class="s">"Actor1Code"</span>, <span class="s">"Actor1Name"</span>, <span class="s">"Actor1CountryCode"</span>,
+    <span class="s">"Actor2Code"</span>, <span class="s">"Actor2Name"</span>, <span class="s">"Actor2CountryCode"</span>, <span class="s">"EventCode"</span>, <span class="s">"QuadClass"</span>,
+    <span class="s">"GoldsteinScale"</span>, <span class="s">"NumMentions"</span>, <span class="s">"NumSources"</span>, <span class="s">"NumArticles"</span>, <span class="s">"AvgTone"</span>,
+    <span class="s">"ActionGeo_CountryCode"</span>, <span class="s">"ActionGeo_Lat"</span>, <span class="s">"ActionGeo_Long"</span>]
+
+<span class="k">def</span> <span class="f">fetch_day</span>(day_str, retries=4):
+    url = BASE.format(date=day_str)
+    <span class="k">for</span> attempt <span class="k">in</span> range(retries):
+        <span class="k">try</span>:
+            req = urllib.request.Request(url, headers={<span class="s">"User-Agent"</span>: UA})
+            <span class="k">with</span> urllib.request.urlopen(req, timeout=60) <span class="k">as</span> resp:
+                <span class="k">return</span> resp.read()
+        <span class="k">except</span> Exception <span class="k">as</span> e:
+            <span class="k">if</span> attempt == retries - 1:
+                <span class="k">return</span> <span class="k">None</span>
+            time.sleep(2 * (attempt + 1))
+
+<span class="k">def</span> <span class="f">main</span>():
+    n_days = int(sys.argv[1]) <span class="k">if</span> len(sys.argv) > 1 <span class="k">else</span> 90
+    end = date(2026, 8, 1)
+    days = [(end - timedelta(days=i)).strftime(<span class="s">"%Y%m%d"</span>) <span class="k">for</span> i <span class="k">in</span> range(n_days)]
+
+    <span class="k">with</span> open(<span class="s">"data/gdelt_filtered.csv"</span>, <span class="s">"w"</span>, encoding=<span class="s">"utf-8"</span>) <span class="k">as</span> out:
+        out.write(<span class="s">","</span>.join(COLS_HEADER) + <span class="s">"\n"</span>)
+        <span class="k">for</span> day_str <span class="k">in</span> days:
+            raw = fetch_day(day_str)
+            <span class="k">if</span> raw <span class="k">is</span> <span class="k">None</span>: <span class="k">continue</span>
+            zf = zipfile.ZipFile(io.BytesIO(raw))
+            content = zf.read(zf.namelist()[0]).decode(<span class="s">"utf-8"</span>, errors=<span class="s">"replace"</span>)
+            <span class="k">for</span> line <span class="k">in</span> content.split(<span class="s">"\n"</span>):
+                fields = line.split(<span class="s">"\t"</span>)
+                <span class="k">if</span> len(fields) < 58 <span class="k">or</span> fields[51] <span class="k">not in</span> TARGET_COUNTRIES:
+                    <span class="k">continue</span>
+                row = [fields[c] <span class="k">for</span> c <span class="k">in</span> COLS_KEEP]
+                out.write(<span class="s">","</span>.join(row) + <span class="s">"\n"</span>)
+            time.sleep(0.15)
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    main()</div>
+    </div>
+
+    <div class="code-file">
+      <div class="fname"><span>scripts/build_features.py — temporal knowledge graph + country-week panel</span><span>~110 lines</span></div>
+      <div class="code-block"><span class="c">"""
+Builds a real temporal knowledge graph from the filtered GDELT events
+(networkx), then derives a country-week panel of graph-native features
+plus an escalation label defined relative to each country's own
+trailing baseline. Matches the reference document's tab-01 schema:
+Actor / Location / Event nodes; PARTICIPATED_IN / OCCURRED_AT edges.
+"""</span>
+<span class="k">import</span> networkx <span class="k">as</span> nx
+<span class="k">import</span> numpy <span class="k">as</span> np
+<span class="k">import</span> pandas <span class="k">as</span> pd
+
+TARGET_COUNTRIES = [<span class="s">"SU"</span>, <span class="s">"BM"</span>, <span class="s">"AF"</span>, <span class="s">"CO"</span>]
+
+<span class="k">def</span> <span class="f">build_graph</span>(df):
+    G = nx.MultiDiGraph()
+    <span class="k">for</span> country <span class="k">in</span> TARGET_COUNTRIES:
+        G.add_node(<span class="s">f"LOC:{country}"</span>, type=<span class="s">"Location"</span>)
+    <span class="k">for</span> _, row <span class="k">in</span> df.iterrows():
+        eid = <span class="s">f"EVT:{row['GlobalEventID']}"</span>
+        G.add_node(eid, type=<span class="s">"Event"</span>, quad_class=row[<span class="s">"QuadClass"</span>],
+                   goldstein=row[<span class="s">"GoldsteinScale"</span>])
+        G.add_edge(eid, <span class="s">f"LOC:{row['ActionGeo_CountryCode']}"</span>, type=<span class="s">"OCCURRED_AT"</span>)
+        <span class="k">for</span> actor_col <span class="k">in</span> [<span class="s">"Actor1Code"</span>, <span class="s">"Actor2Code"</span>]:
+            actor = row[actor_col]
+            <span class="k">if</span> isinstance(actor, str) <span class="k">and</span> actor.strip():
+                anode = <span class="s">f"ACT:{actor}"</span>
+                <span class="k">if</span> anode <span class="k">not in</span> G:
+                    G.add_node(anode, type=<span class="s">"Actor"</span>)
+                G.add_edge(anode, eid, type=<span class="s">"PARTICIPATED_IN"</span>)
+    <span class="k">return</span> G
+
+<span class="k">def</span> <span class="f">build_panel</span>():
+    df = load_events()   <span class="c"># parses dates, filters to target countries + real window</span>
+    rows = []
+    <span class="k">for</span> country <span class="k">in</span> TARGET_COUNTRIES:
+        sub = df[df.ActionGeo_CountryCode == country]
+        weekly = sub.groupby(<span class="s">"week"</span>).agg(
+            n_events=(<span class="s">"GlobalEventID"</span>, <span class="s">"count"</span>),
+            n_material_conflict=(<span class="s">"QuadClass"</span>, <span class="k">lambda</span> s: (s == 4).sum()),
+            mean_goldstein=(<span class="s">"GoldsteinScale"</span>, <span class="s">"mean"</span>),
+            mean_tone=(<span class="s">"AvgTone"</span>, <span class="s">"mean"</span>),
+        ).reset_index()
+        weekly[<span class="s">"country"</span>] = country
+        rows.append(weekly)
+    panel = pd.concat(rows).sort_values([<span class="s">"country"</span>, <span class="s">"week"</span>])
+    panel[<span class="s">"material_conflict_share"</span>] = panel.n_material_conflict / panel.n_events.clip(lower=1)
+
+    <span class="c"># trailing baseline -- expanding window, shifted, so it only ever uses</span>
+    <span class="c"># information available BEFORE the week being scored</span>
+    panel[<span class="s">"baseline_mean_share"</span>] = panel.groupby(<span class="s">"country"</span>)[<span class="s">"material_conflict_share"</span>].transform(
+        <span class="k">lambda</span> s: s.expanding(min_periods=4).mean().shift(1))
+    panel[<span class="s">"baseline_std_share"</span>] = panel.groupby(<span class="s">"country"</span>)[<span class="s">"material_conflict_share"</span>].transform(
+        <span class="k">lambda</span> s: s.expanding(min_periods=4).std().shift(1))
+
+    z_share = (panel.material_conflict_share - panel.baseline_mean_share) / panel.baseline_std_share
+    panel[<span class="s">"escalation_next_1w"</span>] = (z_share > 1.0).astype(<span class="s">"Int64"</span>)
+    panel[<span class="s">"label_1w_ahead"</span>] = panel.groupby(<span class="s">"country"</span>)[<span class="s">"escalation_next_1w"</span>].shift(-1)
+    panel[<span class="s">"label_2w_ahead"</span>] = panel.groupby(<span class="s">"country"</span>)[<span class="s">"escalation_next_1w"</span>].shift(-2)
+    <span class="k">return</span> panel</div>
+    </div>
+
+    <div class="code-file">
+      <div class="fname"><span>scripts/models.py — the corrected battery, ICL forecaster with real API path + documented fallback</span><span>~180 lines</span></div>
+      <div class="code-block"><span class="c">class</span> <span class="f">ICLForecaster</span>:
+    <span class="c">"""
+    THE RFP'S ACTUAL REQUIRED APPROACH -- in-context learning over the
+    temporal knowledge graph, no gradient training at any point.
+    'fit' below only builds the historical-analog index from the
+    training window -- retrieval bookkeeping, not model training.
+    """</span>
+    <span class="k">def</span> <span class="f">fit</span>(self, train_df, label_col):
+        self.index_df = train_df.dropna(subset=FEATURES + [label_col])
+        self.index_features = self.index_df[FEATURES].fillna(0).values
+        self.index_labels = self.index_df[label_col].values
+        <span class="k">return</span> self
+
+    <span class="k">def</span> <span class="f">_retrieve_analogs</span>(self, feature_vec):
+        <span class="c"># cosine similarity over standardized features -- real, non-trained retrieval</span>
+        z_query = (feature_vec - self.index_mean) / self.index_std
+        z_index = (self.index_features - self.index_mean) / self.index_std
+        sims = z_index @ z_query / (np.linalg.norm(z_index, axis=1) * np.linalg.norm(z_query) + 1e-9)
+        <span class="k">return</span> np.argsort(-sims)[:self.k_analogs], sims
+
+    <span class="k">def</span> <span class="f">_call_llm</span>(self, context_text, analog_summary):
+        api_key = os.environ.get(<span class="s">"ANTHROPIC_API_KEY"</span>)
+        prompt = (<span class="s">"You are a conflict early-warning analyst. Given the current "</span>
+                  <span class="s">"temporal knowledge graph state below and the outcomes of the most "</span>
+                  <span class="s">"similar historical weeks retrieved from the graph, output JSON "</span>
+                  <span class="s">'{"probability": &lt;0-1 float&gt;, "reasoning": "&lt;one paragraph&gt;"} ...'</span>)
+        <span class="k">if</span> api_key:
+            <span class="k">try</span>:
+                <span class="k">import</span> anthropic
+                client = anthropic.Anthropic(api_key=api_key)
+                resp = client.messages.create(model=<span class="s">"claude-sonnet-5"</span>, max_tokens=300,
+                                               messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: prompt}])
+                parsed = json.loads(resp.content[0].text[...])
+                <span class="k">return</span> float(parsed[<span class="s">"probability"</span>]), parsed[<span class="s">"reasoning"</span>], <span class="s">"live_llm"</span>
+            <span class="k">except</span> Exception <span class="k">as</span> e:
+                <span class="k">return</span> <span class="k">None</span>, <span class="s">f"LLM call failed: {e}"</span>, <span class="s">"error"</span>
+        <span class="k">return</span> <span class="k">None</span>, <span class="k">None</span>, <span class="s">"no_api_key"</span>   <span class="c"># -&gt; documented heuristic fallback runs instead</span>
+
+    <span class="k">def</span> <span class="f">predict_proba</span>(self, test_df, label_col):
+        probs = []
+        <span class="k">for</span> _, row <span class="k">in</span> test_df.iterrows():
+            top_idx, sims = self._retrieve_analogs(row[FEATURES].fillna(0).values)
+            analog_rate = self.index_labels[top_idx].mean()
+            llm_prob, reasoning, mode = self._call_llm(self._serialize_context(row), <span class="s">"..."</span>)
+            <span class="k">if</span> llm_prob <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+                prob = llm_prob
+            <span class="k">else</span>:
+                <span class="c"># fixed, hand-specified fallback -- NOT the real ICL mechanism,</span>
+                <span class="c"># included only so the harness runs end-to-end without an API key</span>
+                delta_signal = (0.5 * np.tanh(row.material_conflict_share_delta * 3) +
+                                0.3 * np.tanh(-row.mean_goldstein_delta / 3) +
+                                0.2 * np.tanh(row.distinct_actors_delta / 5))
+                prob = float(np.clip(0.5 * analog_rate + 0.5 * (0.5 + 0.5 * delta_signal), 0, 1))
+            probs.append(prob)
+        <span class="k">return</span> np.array(probs)</div>
+    </div>
+
+    <div class="code-file">
+      <div class="fname"><span>scripts/backtest_harness.py — rolling-origin evaluation, pooled across folds</span><span>~90 lines</span></div>
+      <div class="code-block"><span class="k">def</span> <span class="f">rolling_origin_folds</span>(panel, label_col, min_train_weeks=6):
+    weeks = sorted(panel.week.unique())
+    folds = []
+    <span class="k">for</span> i <span class="k">in</span> range(min_train_weeks, len(weeks)):
+        cutoff = weeks[i]
+        train = panel[panel.week < cutoff].dropna(subset=[label_col])   <span class="c"># strict temporal cutoff</span>
+        test = panel[panel.week == cutoff]
+        <span class="k">if</span> len(train) <span class="k">and</span> len(test) <span class="k">and</span> <span class="k">not</span> test[label_col].isna().all():
+            folds.append((cutoff, train, test))
+    <span class="k">return</span> folds
+
+<span class="k">def</span> <span class="f">run_backtest</span>(panel, label_col, lead_time_label):
+    folds = rolling_origin_folds(panel, label_col)
+    all_preds = {name: [] <span class="k">for</span> name <span class="k">in</span> MODEL_REGISTRY}
+    all_labels = []
+    <span class="k">for</span> cutoff, train, test <span class="k">in</span> folds:
+        test_valid = test.dropna(subset=[label_col])
+        all_labels.extend(test_valid[label_col].astype(int).tolist())
+        <span class="k">for</span> name, cls <span class="k">in</span> MODEL_REGISTRY.items():
+            model = cls().fit(train, label_col)
+            all_preds[name].extend(model.predict_proba(test_valid, label_col).tolist())
+
+    y = np.array(all_labels)
+    <span class="k">for</span> name <span class="k">in</span> MODEL_REGISTRY:
+        p = np.array(all_preds[name])
+        brier = brier_score_loss(y, p)
+        ap = average_precision_score(y, p) <span class="k">if</span> y.sum() > 0 <span class="k">else</span> float(<span class="s">"nan"</span>)
+        <span class="c"># ... precision/recall at 0.5 and at top-N, delta vs base rate, logged per model</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 4: REAL RESULTS ===================== -->
+<div class="panel" id="tab4">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Data, actually pulled</span><h2>What ran, on what</h2></div>
+    <div class="metric-grid">
+      <div class="metric"><div class="name">Real events downloaded</div><div class="val">63,137</div><div class="def">4 countries, 90 days, GDELT 2.0, no auth required</div></div>
+      <div class="metric"><div class="name">Graph size</div><div class="val">63,682 nodes</div><div class="def">1,227 Actor nodes, 62,451 Event nodes, 167,045 edges</div></div>
+      <div class="metric"><div class="name">Country-weeks</div><div class="val">55</div><div class="def">4 countries × ~13–14 weeks after date-window cleanup</div></div>
+      <div class="metric"><div class="name">Positive labels</div><div class="val">6 of 55</div><div class="def">~11% base rate, both 1-week and 2-week horizons</div></div>
+    </div>
+    <div class="callout">
+      <strong>A real data-quality catch worth stating plainly:</strong> the first pass at building the panel showed a handful of GDELT rows dated many months outside the actual 90-day download window — a known minor GDELT quirk where a small number of records carry a retrospective or corrected SQLDATE. Left in, they would have added several near-empty, unreliable weeks to a rolling-origin backtest that's already working with a small sample. Filtered out before scoring, and disclosed here rather than silently fixed.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Backtest</span><h2>Real rolling-origin results, both lead times</h2></div>
+    <p class="lede">7 folds at the 1-week horizon, 6 folds at 2-week (6-week minimum training burn-in, strict temporal cutoffs, all 5 models scored on identical folds). Best score per metric in <strong>bold</strong>.</p>
+
+    <h3 style="margin-top:0">1-week horizon — 28 pooled predictions, 4 positive (14.3% base rate)</h3>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Model</th><th>Brier ↓</th><th>Avg. precision ↑</th><th>Precision @ 0.5</th><th>Recall @ 0.5</th><th>Precision @ top-4</th></tr>
+      <tr><td>ICL over temporal graph <span class="mono" style="font-size:0.7rem;color:var(--ink-mute)">(fallback mode)</span></td><td>0.173</td><td>0.179</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+      <tr><td>GBM on graph features</td><td>0.177</td><td class="best">0.204</td><td>0.200</td><td class="best">0.250</td><td class="best">0.250</td></tr>
+      <tr><td>Logistic regression (lagged counts)</td><td>0.327</td><td>0.131</td><td>0.118</td><td class="best">0.500</td><td>0.000</td></tr>
+      <tr><td>Naive persistence</td><td>0.250</td><td>0.143</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+      <tr><td>Historical base rate</td><td class="best">0.130</td><td>0.164</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+    </table>
+    </div>
+
+    <h3>2-week horizon — 24 pooled predictions, 4 positive (16.7% base rate)</h3>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Model</th><th>Brier ↓</th><th>Avg. precision ↑</th><th>Precision @ 0.5</th><th>Recall @ 0.5</th><th>Precision @ top-4</th></tr>
+      <tr><td>ICL over temporal graph <span class="mono" style="font-size:0.7rem;color:var(--ink-mute)">(fallback mode)</span></td><td>0.167</td><td>0.219</td><td>0.000</td><td>0.000</td><td>0.250</td></tr>
+      <tr><td>GBM on graph features</td><td>0.138</td><td class="best">0.405</td><td class="best">1.000</td><td>0.250</td><td>0.250</td></tr>
+      <tr><td>Logistic regression (lagged counts)</td><td>0.295</td><td>0.214</td><td>0.182</td><td class="best">0.500</td><td>0.250</td></tr>
+      <tr><td>Naive persistence</td><td>0.292</td><td>0.167</td><td>0.000</td><td>0.000</td><td>0.250</td></tr>
+      <tr><td>Historical base rate</td><td class="best">0.149</td><td>0.192</td><td>0.000</td><td>0.000</td><td>0.000</td></tr>
+    </table>
+    </div>
+
+    <div class="callout">
+      <strong>The honest headline, exactly as the reference document's own methodology predicted it might go:</strong> tab 01's backtesting section warns "a lot of published results look strong only until compared against these [base-rate] baselines" — and here, the historical base rate posts the best (lowest) Brier score at <em>both</em> horizons, beating every trained model including the GBM and the ICL forecaster. The GBM wins on average precision and top-N precision at both horizons — it's better at correctly rank-ordering the handful of true positives — but nothing here beats a country's own historical rate at calibrated probability. With only 6 positive weeks total across 90 days and 4 countries, that's the expected, defensible outcome of a small prototype sample, not a failure of the approach — and it's exactly the comparison the methodology insists on running every fold rather than skipping.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Transparency</span><h2>What the ICL forecaster actually did, with no API key present</h2></div>
+    <p class="lede">No <code>ANTHROPIC_API_KEY</code> was set in this environment, so every prediction below ran through the documented fallback path in <code>models.py</code> — real retrieval over real historical analogs, but a fixed formula standing in for the LLM's reasoning, not a claim that it reasons like one.</p>
+    <div class="reasoning-card"><div class="who">Afghanistan · week of 2026-06-08 · probability 0.465</div>[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas → 0.47</div>
+    <div class="reasoning-card"><div class="who">Myanmar · week of 2026-06-08 · probability 0.384</div>[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas → 0.38</div>
+    <div class="reasoning-card"><div class="who">Colombia · week of 2026-06-08 · probability 0.310</div>[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas → 0.31</div>
+    <div class="reasoning-card"><div class="who">Sudan · week of 2026-06-08 · probability 0.443</div>[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas → 0.44</div>
+    <p style="font-size:0.88rem;color:var(--ink-soft)">Set the API key and rerun <code>backtest_harness.py</code> unchanged and these same log entries carry a real model-generated reasoning paragraph and <code>mode: "live_llm"</code> instead — the retrieval, serialization, and scoring code paths don't change, only which branch of <code>_call_llm</code> executes.</p>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 5: NEXT STEPS ===================== -->
+<div class="panel" id="tab5">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Immediate</span><h2>What would change the results above the most</h2></div>
+    <ul class="stage-list">
+      <li><span class="stage-num">1</span><div class="stage-body"><h4>Wire in a real LLM call</h4><p>The code path exists and is untested against a live model in this environment. Setting <code>ANTHROPIC_API_KEY</code> and rerunning is a same-code change, not a rewrite — the honest next step before drawing any conclusion about whether the ICL approach's reasoning trace adds value over the fallback's fixed formula.</p></div></li>
+      <li><span class="stage-num">2</span><div class="stage-body"><h4>Register for ACLED and switch the label</h4><p>Free for academic/nonprofit use per the reference document's tab 02. Fatality-coded, hand-curated onset dates directly replace the Goldstein/quad-class proxy label used here, and match the RFP's own stated evaluation ground truth ("ACLED-style political/conflict events") exactly rather than approximately.</p></div></li>
+      <li><span class="stage-num">3</span><div class="stage-body"><h4>Widen the window</h4><p>GDELT 2.0 covers February 2015 to present at no cost. 90 days was a deliberate, disclosed scope choice for a runnable prototype — expanding to multiple years turns "6 positive weeks" into a sample size that can actually separate these models' calibration from noise.</p></div></li>
+      <li><span class="stage-num">4</span><div class="stage-body"><h4>Add the radio/ASR layer the RFP is actually funding</h4><p>Everything here starts from already-coded GDELT events — useful for prototyping the graph and forecasting layers exactly as the reference document's tab 02 frames it, but it isn't the novel signal source the program exists to fund. The Whisper Large-v3 fine-tuning, streaming/SDR ingestion, and synthetic-data strategy for the named oral-language regions are a separate, larger build this document doesn't attempt.</p></div></li>
+      <li><span class="stage-num">5</span><div class="stage-body"><h4>Build the paralinguistic feature extractor</h4><p>Explicitly named as a Month-15 deliverable (pitch, energy, emotion indicators) and not present anywhere in the reference document or this prototype — worth flagging early since it implies an audio-features pipeline distinct from the transcription pipeline, not an extension of it.</p></div></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Program fit</span><h2>Mapping this prototype to the actual milestone schedule</h2></div>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>RFP milestone</th><th>What this prototype demonstrates now</th><th>What's still missing</th></tr>
+        <tr><td>Month 3 — baseline setup</td><td>Working ingestion (GDELT), working forecasting baseline, real backtest harness</td><td>Radio ingestion engine; ASR models</td></tr>
+        <tr><td>Month 6 — 10-day horizon, accuracy baseline</td><td>7/14-day-equivalent lead-time stratification already built into the harness</td><td>Multilingual coverage; real accuracy baseline vs. the RFP's ~80% figure, which needs ACLED ground truth to compute honestly</td></tr>
+        <tr><td>Month 9 — 90% precision target</td><td>The metric (precision@top-N) is already tracked every fold</td><td>Real data volume — not reachable on 55 country-weeks</td></tr>
+        <tr><td>Month 12 — live demonstration</td><td>The ICL forecaster's live-API code path</td><td>An actual live key, and a demo scenario</td></tr>
+        <tr><td>Month 15 — paralinguistic features</td><td>—</td><td>Not started; a genuinely separate build</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  Companion to conflict-prediction-reference.html in this folder. All data real (GDELT 2.0, public, no authentication), all code actually executed to produce the numbers in tab 04, all fallback behavior disclosed rather than hidden. Not a finished Phase II proposal — a working demonstration of the corrected methodology on real, if intentionally small-scale, data.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

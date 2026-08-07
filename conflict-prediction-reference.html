@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conflict signal prediction: methodology, data, and model testing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1d2420;
+    --ink-soft:#4a544d;
+    --ink-mute:#7c8579;
+    --paper:#f6f4ec;
+    --paper-raised:#fdfcf7;
+    --line:#d9d5c4;
+    --line-strong:#b8b29a;
+    --signal:#3d6b52;
+    --signal-soft:#e2ebe3;
+    --signal-deep:#1f3d2d;
+    --alert:#9c4a2f;
+    --alert-soft:#f3e4dc;
+    --wire:#6b5a8c;
+    --wire-soft:#eae5f2;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.65;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.88em;
+  }
+  h1,h2,h3,h4{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 0.5em 0;
+  }
+  p{margin:0 0 1em 0;}
+  a{color:var(--signal-deep); text-decoration-color:var(--line-strong); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--signal-deep);}
+
+  /* ===== Header / masthead ===== */
+  .masthead{
+    border-bottom:1px solid var(--ink);
+    padding:2.2rem clamp(1.2rem, 4vw, 3rem) 1.4rem;
+    background:var(--paper);
+  }
+  .masthead .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    margin-bottom:0.6rem;
+    display:flex;
+    gap:1.2rem;
+    flex-wrap:wrap;
+  }
+  .masthead h1{
+    font-size:clamp(1.6rem, 3.4vw, 2.3rem);
+    line-height:1.15;
+    max-width:46ch;
+  }
+  .masthead .dek{
+    color:var(--ink-soft);
+    max-width:62ch;
+    font-size:0.98rem;
+    margin-top:0.6rem;
+  }
+
+  /* ===== Tabs ===== */
+  .tabbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    background:var(--paper);
+    border-bottom:1px solid var(--ink);
+    padding:0 clamp(1.2rem, 4vw, 3rem);
+    overflow-x:auto;
+  }
+  .tab-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--ink-mute);
+    padding:0.95rem 1.3rem;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+    transition:color 0.15s ease;
+  }
+  .tab-btn .num{
+    display:inline-block;
+    width:1.4em;
+    color:var(--line-strong);
+  }
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{
+    color:var(--ink);
+    border-bottom-color:var(--signal);
+  }
+  .tab-btn.active .num{color:var(--signal);}
+
+  main{
+    max-width:920px;
+    margin:0 auto;
+    padding:2.4rem clamp(1.2rem, 4vw, 3rem) 6rem;
+  }
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section{margin-bottom:2.6rem;}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:0.7rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:0.5rem;
+    margin-bottom:1.1rem;
+  }
+  .section-head .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--signal-deep);
+    background:var(--signal-soft);
+    padding:0.15rem 0.5rem;
+    border-radius:var(--radius);
+    letter-spacing:0.04em;
+  }
+  .section-head h2{font-size:1.3rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.98rem; margin-bottom:1.2rem;}
+
+  ul, ol{padding-left:1.3rem; margin:0 0 1em 0;}
+  li{margin-bottom:0.45rem;}
+
+  .card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.1rem 1.3rem;
+    margin-bottom:1rem;
+  }
+  .card h3{font-size:1.02rem; margin-bottom:0.4rem;}
+  .card h4{font-size:0.9rem; color:var(--ink-soft); margin:0.9rem 0 0.3rem;}
+  .card .meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.74rem;
+    color:var(--ink-mute);
+    margin-bottom:0.6rem;
+  }
+
+  .stage-list{list-style:none; padding:0; margin:0;}
+  .stage-list li{
+    display:grid;
+    grid-template-columns:2.4rem 1fr;
+    gap:0.9rem;
+    padding:0.9rem 0;
+    border-bottom:1px solid var(--line);
+    margin-bottom:0;
+  }
+  .stage-list li:last-child{border-bottom:none;}
+  .stage-num{
+    font-family:'Source Serif 4', serif;
+    font-size:1.3rem;
+    color:var(--line-strong);
+    line-height:1.4;
+  }
+  .stage-body h4{margin:0 0 0.25rem; font-size:1rem; color:var(--ink); font-family:'IBM Plex Sans', sans-serif; font-weight:600;}
+  .stage-body p{margin:0; font-size:0.94rem; color:var(--ink-soft);}
+
+  .schema-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  @media(max-width:640px){.schema-grid{grid-template-columns:1fr;}}
+  .schema-col{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1rem 1.1rem;
+    background:var(--paper-raised);
+  }
+  .schema-col.nodes{border-left:3px solid var(--signal);}
+  .schema-col.edges{border-left:3px solid var(--wire);}
+  .schema-col h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em; font-family:'IBM Plex Mono', monospace; color:var(--ink-mute); margin-bottom:0.7rem;}
+  .schema-item{margin-bottom:0.6rem; font-size:0.9rem;}
+  .schema-item code{
+    background:var(--signal-soft);
+    color:var(--signal-deep);
+    padding:0.05rem 0.35rem;
+    border-radius:2px;
+  }
+  .schema-col.edges .schema-item code{background:var(--wire-soft); color:#3d3260;}
+  .schema-item .desc{color:var(--ink-soft); display:block; margin-top:0.15rem; font-size:0.85rem;}
+
+  .callout{
+    border-left:3px solid var(--alert);
+    background:var(--alert-soft);
+    padding:0.85rem 1.1rem;
+    border-radius:0 var(--radius) var(--radius) 0;
+    font-size:0.92rem;
+    color:#5c2c1a;
+    margin:1rem 0;
+  }
+  .callout strong{color:#4a2314;}
+
+  /* dataset table */
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.4rem;}
+  table.ds{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.86rem;
+    background:var(--paper-raised);
+  }
+  table.ds th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-mute);
+    border-bottom:1px solid var(--ink);
+    padding:0.5rem 0.7rem;
+  }
+  table.ds td{
+    padding:0.55rem 0.7rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  table.ds tr:last-child td{border-bottom:none;}
+
+  .dataset-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:1.3rem;
+    overflow:hidden;
+    background:var(--paper-raised);
+  }
+  .dataset-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:1rem;
+    padding:1rem 1.3rem 0.8rem;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .dataset-head h3{font-size:1.08rem; margin-bottom:0.2rem;}
+  .dataset-head .sub{font-size:0.85rem; color:var(--ink-mute);}
+  .pill-row{display:flex; gap:0.4rem; flex-wrap:wrap;}
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    padding:0.2rem 0.55rem;
+    border-radius:12px;
+    border:1px solid var(--line-strong);
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .pill.free{background:var(--signal-soft); color:var(--signal-deep); border-color:var(--signal-soft);}
+  .dataset-body{padding:1rem 1.3rem 1.2rem;}
+  .dataset-body .row{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:0.6rem;
+    margin-bottom:0.6rem;
+    font-size:0.9rem;
+  }
+  @media(max-width:600px){.dataset-body .row{grid-template-columns:1fr;}}
+  .dataset-body .row .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-mute);
+    padding-top:0.15rem;
+  }
+  .dataset-body .row .value{color:var(--ink);}
+  .dataset-body .row .value a{font-size:0.92rem;}
+
+  /* model battery */
+  .model-list{list-style:none; padding:0; margin:0;}
+  .model-card{
+    display:grid;
+    grid-template-columns:2.2rem 1fr;
+    gap:1rem;
+    padding:1.1rem 0;
+    border-bottom:1px solid var(--line);
+  }
+  .model-card:first-child{padding-top:0;}
+  .model-card:last-child{border-bottom:none;}
+  .model-order{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.95rem;
+    color:var(--signal);
+    padding-top:0.15rem;
+  }
+  .model-card h3{font-size:1.02rem; margin-bottom:0.3rem;}
+  .model-card .subtitle{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--ink-mute);
+    margin-bottom:0.5rem;
+  }
+  .model-card p{font-size:0.92rem; color:var(--ink-soft); margin-bottom:0.5rem;}
+  .model-card .why{font-size:0.85rem; color:var(--ink-mute); font-style:italic;}
+  .model-card.anchor{
+    background:var(--signal-soft);
+    margin:0 -1.1rem 1.1rem;
+    padding:1.1rem 1.1rem;
+    border-radius:var(--radius);
+    border-bottom:none;
+  }
+  .model-card.anchor .model-order{color:var(--signal-deep);}
+
+  .harness-block{
+    background:var(--ink);
+    color:#e8e6dc;
+    border-radius:var(--radius);
+    padding:1.2rem 1.4rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    line-height:1.65;
+    overflow-x:auto;
+    margin:1rem 0;
+  }
+  .harness-block .c{color:#7c8579;}
+  .harness-block .k{color:#8bc9a3;}
+  .harness-block .s{color:#e0b080;}
+
+  .metric-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:0.8rem;
+    margin:1rem 0;
+  }
+  .metric{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:0.8rem 1rem;
+    background:var(--paper-raised);
+  }
+  .metric .name{font-size:0.78rem; font-family:'IBM Plex Mono', monospace; color:var(--signal-deep); margin-bottom:0.3rem;}
+  .metric .def{font-size:0.83rem; color:var(--ink-soft);}
+
+  footer{
+    max-width:920px;
+    margin:0 auto;
+    padding:1.5rem clamp(1.2rem, 4vw, 3rem) 3rem;
+    font-size:0.8rem;
+    color:var(--ink-mute);
+    border-top:1px solid var(--line);
+  }
+
+  ::selection{background:var(--signal-soft); color:var(--signal-deep);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Reference document</span>
+    <span>Conflict signal analysis</span>
+    <span>Prepared for Cameron Peltz Consulting</span>
+  </div>
+  <h1>Predicting conflict from transcribed signals: a graph-based methodology</h1>
+  <p class="dek">A working reference covering the extraction-to-graph pipeline, the public datasets available for backtesting, and a battery of models to test against them in sequence — starting with the graph-native model described in the methodology.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab1"><span class="num">01</span>Methodology</button>
+  <button class="tab-btn" data-tab="tab2"><span class="num">02</span>Datasets</button>
+  <button class="tab-btn" data-tab="tab3"><span class="num">03</span>Model battery</button>
+</div>
+
+<main>
+
+<!-- ===================== TAB 1: METHODOLOGY ===================== -->
+<div class="panel active" id="tab1">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Pipeline</span><h2>Collecting signal events into a graph database</h2></div>
+    <p class="lede">Four stages sit between raw audio and a queryable graph. Each stage introduces a specific failure mode worth designing around from the start.</p>
+
+    <ul class="stage-list">
+      <li>
+        <span class="stage-num">1</span>
+        <div class="stage-body">
+          <h4>Transcription and normalization</h4>
+          <p>ASR on radio and audio feeds, with speaker diarization, language ID, and dialect handling for multilingual regional sources. Every utterance keeps a confidence score. Low-confidence spans carry that uncertainty downstream instead of being silently treated as ground truth.</p>
+        </div>
+      </li>
+      <li>
+        <span class="stage-num">2</span>
+        <div class="stage-body">
+          <h4>Event extraction</h4>
+          <p>Extraction runs against a controlled event schema, not open-ended relation extraction. CAMEO or ACLED-style coding (actor, action, target, location, time, source) gives a validated vocabulary already accepted in conflict research. An LLM or fine-tuned classifier outputs coded tuples from transcript spans, with a secondary classifier for escalation severity.</p>
+        </div>
+      </li>
+      <li>
+        <span class="stage-num">3</span>
+        <div class="stage-body">
+          <h4>Entity resolution</h4>
+          <p>Actors get named inconsistently across sources, languages, and transliterations. Build a canonical entity table with aliases and resolve mentions against it before graph write — resolution errors compound into phantom nodes if deferred.</p>
+        </div>
+      </li>
+      <li>
+        <span class="stage-num">4</span>
+        <div class="stage-body">
+          <h4>Staged, idempotent graph write</h4>
+          <p>Land raw tuples in a staging table, run entity resolution and near-duplicate collapsing (one broadcast event reported by three stations shouldn't become three graph events), then batch-write with upserts keyed on (actor, action, location, time-bucket).</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Schema</span><h2>Graph node and edge design</h2></div>
+    <div class="schema-grid">
+      <div class="schema-col nodes">
+        <h4>Node types</h4>
+        <div class="schema-item"><code>Actor</code><span class="desc">Militia, official, ethnic or political group. Canonical entity, aliases attached.</span></div>
+        <div class="schema-item"><code>Location</code><span class="desc">Geo hierarchy — village → district → region — for aggregation at any level.</span></div>
+        <div class="schema-item"><code>Event</code><span class="desc">A coded occurrence: actor, action, severity, timestamp.</span></div>
+        <div class="schema-item"><code>Source</code><span class="desc">Radio station, frequency, or broadcast outlet, with a reliability tier.</span></div>
+        <div class="schema-item"><code>Claim / Statement</code><span class="desc">Rhetoric tracked separately from physical events — propaganda and real reporting shouldn't share a node type.</span></div>
+      </div>
+      <div class="schema-col edges">
+        <h4>Edge types</h4>
+        <div class="schema-item"><code>PARTICIPATED_IN</code><span class="desc">Actor → Event</span></div>
+        <div class="schema-item"><code>OCCURRED_AT</code><span class="desc">Event → Location</span></div>
+        <div class="schema-item"><code>REPORTED_BY</code><span class="desc">Event → Source, carries provenance</span></div>
+        <div class="schema-item"><code>PRECEDED_BY / ESCALATED_FROM</code><span class="desc">Event → Event, builds escalation chains</span></div>
+        <div class="schema-item"><code>ALLIED_WITH / HOSTILE_TO</code><span class="desc">Actor → Actor, time-scoped — alliances shift, so this edge always carries a validity window</span></div>
+      </div>
+    </div>
+    <div class="callout"><strong>Temporal modeling is the load-bearing design choice.</strong> Use bitemporal properties — event time versus ingestion time — on every edge. Without this, a backtest can't reconstruct what the graph actually looked like at the moment a prediction would have been made, and results become hindsight-contaminated. Provenance edges back to the specific transcript span, timestamp, and source reliability tier are non-negotiable given how much propaganda mixes with real reporting in radio intelligence.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Inference</span><h2>Predicting conflict from NLP inference</h2></div>
+    <p class="lede">Two complementary families. The strongest systems run both — quantitative features drive a base-rate model, an LLM layer flags anomalies and supplies an auditable narrative.</p>
+
+    <div class="card">
+      <h3>A. Signal-based / feature engineering</h3>
+      <p>Extract time-series features from the graph: event frequency by region, escalation-verb ratios using CAMEO's quad-class coding (verbal cooperation → material cooperation → verbal conflict → material conflict), rhetoric hostility trends from Source nodes, and network centrality shifts — an actor suddenly gaining alliance edges is itself a leading signal. Feed these into gradient boosting for a tabular baseline, or a temporal graph neural network (TGN, EvolveGCN) if the graph structure itself should inform the prediction rather than being flattened to features.</p>
+    </div>
+    <div class="card">
+      <h3>B. LLM-based inference</h3>
+      <p>Run the model directly on aggregated recent events plus historical-analog retrieval — "this pattern resembles pre-escalation signatures from case X" — to produce a probabilistic assessment with a reasoning trace. Weaker for calibrated probability, stronger for qualitative context an event coder would miss, such as a rhetorical shift in a broadcast's tone.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Validation</span><h2>Backtesting methodology</h2></div>
+    <ul>
+      <li><strong>Strict temporal cutoffs.</strong> No feature in a training window may derive from data with an ingestion timestamp after the prediction point — this is exactly why bitemporal graph modeling matters upstream.</li>
+      <li><strong>Rolling-origin splits, not random splits.</strong> Conflict events cluster geographically and temporally, so k-fold cross-validation leaks information. Train through month T, predict T+1, roll forward.</li>
+      <li><strong>Beat the base rate.</strong> Compare against a naive persistence baseline ("conflict continues where it's already happening") and a historical base-rate model. A lot of published results look strong only until compared against these.</li>
+      <li><strong>Brier score and precision-recall over ROC-AUC.</strong> Class imbalance makes AUC misleadingly optimistic for rare, clustered events. Stratify by lead time — a model useful at seven days may fail badly at thirty.</li>
+      <li><strong>External validation set.</strong> Backtest against a documented ground truth (ACLED or UCDP onset dates) that is separate from whatever corpus built the graph, so the test isn't just validating the extraction pipeline's own biases.</li>
+    </ul>
+    <div class="callout"><strong>Leakage risk worth documenting explicitly:</strong> if the signal-extraction model was trained or tuned with any indirect knowledge of later events — through corpus construction choices, for instance — that is a subtle vector reviewers may probe. State the extraction model's training cutoff relative to the earliest backtest window directly in the methodology writeup.</div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 2: DATASETS ===================== -->
+<div class="panel" id="tab2">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Overview</span><h2>Where to get real conflict data, for free</h2></div>
+    <p class="lede">None of these give you a raw radio-transcript layer — they're all pre-coded events or aggregated indicators. Their value is as backtesting ground truth and as prototyping data for the graph-modeling and prediction stages, before the extraction pipeline is built. Kaggle mirrors of these exist but are frequently stale or partially synthetic — the primary sources below are more reliable for anything you'll cite in a methodology document.</p>
+  </div>
+
+  <div class="section">
+    <div class="dataset-card">
+      <div class="dataset-head">
+        <div>
+          <h3>GDELT — Global Database of Events, Language, and Tone</h3>
+          <div class="sub">Automated, CAMEO-coded, continuously updated</div>
+        </div>
+        <div class="pill-row"><span class="pill free">Free, no registration</span><span class="pill">CSV / BigQuery</span></div>
+      </div>
+      <div class="dataset-body">
+        <div class="row"><span class="label">Access</span><span class="value">Direct CSV download at <a href="http://data.gdeltproject.org/events/index.html" target="_blank">data.gdeltproject.org/events</a>, or query the full history through <a href="https://console.cloud.google.com/marketplace/product/bigquery-public-data-gdelt" target="_blank">Google BigQuery public datasets</a> (free tier covers most exploratory work). Documentation and codebooks at <a href="https://www.gdeltproject.org/data.html" target="_blank">gdeltproject.org/data.html</a>.</span></div>
+        <div class="row"><span class="label">Coverage</span><span class="value">1979–present (GDELT 1.0 backfile) and Feb 2015–present at 15-minute update cadence in GDELT 2.0, across 65 live-translated languages.</span></div>
+        <div class="row"><span class="label">Size</span><span class="value">The 1979–2013 backfile alone is roughly 1.1 GB compressed. Daily export files run 6–8 MB compressed each; full 2.0-era history totals in the hundreds of GB uncompressed, over 100 million distinct coded events.</span></div>
+        <div class="row"><span class="label">Columns</span><span class="value">58 fields per record in the 2.0 event table: dyadic actor codes (country, ethnic, religious, type classifications for both Actor1 and Actor2), CAMEO action code and its full hierarchy, Goldstein cooperation/conflict scale score, geo-referencing (lat/long, ADM1 code, feature ID) for both actors and the event location, source URL, and a date/time stamp. A companion Mentions table tracks how a story propagates across outlets.</span></div>
+        <div class="row"><span class="label">Typical use</span><span class="value">Volume-based early warning (event-count anomaly detection), media-attention bias studies, and as the automated counterpart to ACLED's hand-coded events in comparative conflict-data reviews.</span></div>
+        <div class="row"><span class="label">Advantages</span><span class="value">Largest event count of any public conflict dataset by a wide margin, real-time update cadence, genuinely global and multilingual sourcing. The tradeoff is automated coding — noisier and more duplicate-prone than hand-curated alternatives, so pair it with a dedup pass before use as ground truth.</span></div>
+      </div>
+    </div>
+
+    <div class="dataset-card">
+      <div class="dataset-head">
+        <div>
+          <h3>ACLED — Armed Conflict Location and Event Data</h3>
+          <div class="sub">Human-curated, subject-matter-expert coded</div>
+        </div>
+        <div class="pill-row"><span class="pill free">Free for academic / nonprofit use</span><span class="pill">CSV / API</span></div>
+      </div>
+      <div class="dataset-body">
+        <div class="row"><span class="label">Access</span><span class="value">Register at <a href="https://acleddata.com/data-export-tool" target="_blank">acleddata.com/data-export-tool</a>. Academic, student, and nonprofit accounts get full free access; commercial use requires a license. API access documented at <a href="https://acleddata.com/knowledge-base/" target="_blank">acleddata.com/knowledge-base</a>.</span></div>
+        <div class="row"><span class="label">Coverage</span><span class="value">Full global coverage from 1997–present, updated in real time. Originally Africa-focused, expanded to global scope over the 2010s–2020s.</span></div>
+        <div class="row"><span class="label">Size</span><span class="value">Full global export runs to several hundred MB as CSV — well over a million individual events, and growing at roughly tens of thousands of new rows a month.</span></div>
+        <div class="row"><span class="label">Columns</span><span class="value">Event ID and date, disorder and event type (battles, violence against civilians, explosions/remote violence, riots, protests, strategic developments), primary and associate actors on both sides, named organizations involved, precise location down to admin level and coordinates, fatality count, and a source citation field for the underlying report.</span></div>
+        <div class="row"><span class="label">Typical use</span><span class="value">The standard ground truth in the academic conflict-forecasting literature — used as the outcome variable that GDELT-based and NLP-based prediction models are evaluated against. ACLED's own Conflict Alert System (CAST) is a production forecasting tool built on this same data.</span></div>
+        <div class="row"><span class="label">Advantages</span><span class="value">Hand-coded by regional analysts rather than automated extraction, giving much higher precision per event than GDELT at the cost of lower volume and slower update latency. Fatality counts and named-actor detail are more reliable than in automated datasets. Known limitation: under-coding in areas with limited media access, which is worth stating explicitly if radio-signal collection is pitched as filling that specific gap.</span></div>
+      </div>
+    </div>
+
+    <div class="dataset-card">
+      <div class="dataset-head">
+        <div>
+          <h3>UCDP GED — Uppsala Conflict Data Program, Georeferenced Event Dataset</h3>
+          <div class="sub">Academic gold-standard, narrowly scoped to organized violence</div>
+        </div>
+        <div class="pill-row"><span class="pill free">Free, no registration</span><span class="pill">CSV / shapefile / API</span></div>
+      </div>
+      <div class="dataset-body">
+        <div class="row"><span class="label">Access</span><span class="value">Direct download at <a href="https://ucdp.uu.se/downloads/" target="_blank">ucdp.uu.se/downloads</a>, GED-specific page at <a href="https://ucdp.uu.se/downloads/index.html#ged_global" target="_blank">ucdp.uu.se/downloads/index.html#ged_global</a>. A REST API is documented in the codebook for programmatic pulls.</span></div>
+        <div class="row"><span class="label">Coverage</span><span class="value">1989–present, annual releases plus a more frequently updated candidate/preliminary version for the current year.</span></div>
+        <div class="row"><span class="label">Size</span><span class="value">Tens of MB as CSV — roughly 300,000 events in the full historical file, far smaller than GDELT or ACLED by design, since UCDP's inclusion bar (organized violence causing at least one fatality) is stricter.</span></div>
+        <div class="row"><span class="label">Columns</span><span class="value">Event ID, conflict/dyad ID linking to UCDP's broader conflict typology, date precision fields, side A and side B actor names with their own ID system, event type (state-based, non-state, one-sided violence), best/low/high fatality estimates, and point or centroid geocoding with a precision flag.</span></div>
+        <div class="row"><span class="label">Typical use</span><span class="value">The reference dataset in peace-and-conflict academic research specifically (as distinct from applied/policy forecasting, where ACLED dominates). Frequently used as a cross-check against ACLED, since the two datasets use different inclusion criteria and disagree on a meaningful share of cases.</span></div>
+        <div class="row"><span class="label">Advantages</span><span class="value">Highest per-event coding rigor of the major datasets, with documented fatality estimate ranges rather than single point figures — useful for uncertainty-aware backtesting. Smaller volume is a real tradeoff for training data-hungry models, but it's the strongest available secondary ground truth to validate ACLED- or GDELT-derived predictions against.</span></div>
+      </div>
+    </div>
+
+    <div class="dataset-card">
+      <div class="dataset-head">
+        <div>
+          <h3>ICEWS — Integrated Crisis Early Warning System coded event data</h3>
+          <div class="sub">DARPA-lineage, automated CAMEO coding</div>
+        </div>
+        <div class="pill-row"><span class="pill free">Free, no registration</span><span class="pill">TSV via Dataverse</span></div>
+      </div>
+      <div class="dataset-body">
+        <div class="row"><span class="label">Access</span><span class="value">Harvard Dataverse: <a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075" target="_blank">dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/28075</a>. Files are organized by year, downloadable individually or in bulk through the Dataverse API.</span></div>
+        <div class="row"><span class="label">Coverage</span><span class="value">1995–present, updated weekly, global scope.</span></div>
+        <div class="row"><span class="label">Size</span><span class="value">Individual yearly files range from tens to low hundreds of MB as tab-delimited text; full history is in the low single-digit GB range uncompressed.</span></div>
+        <div class="row"><span class="label">Columns</span><span class="value">Event ID, date, source and target actor names with sector/agent codes, CAMEO event code and quad-class category, Goldstein score, and geolocation fields (country, latitude/longitude where resolvable) similar in structure to GDELT since both descend from the same CAMEO/TABARI lineage.</span></div>
+        <div class="row"><span class="label">Typical use</span><span class="value">Originally built for DARPA's Integrated Conflict Early Warning System program — directly relevant lineage to cite in a DARPA-facing methodology document. Widely used in political science forecasting competitions for state-level instability prediction.</span></div>
+        <div class="row"><span class="label">Advantages</span><span class="value">The most directly comparable prior-art dataset for a DARPA conflict-forecasting proposal, since it shares the program's original mandate. Automated coding like GDELT, so similar noise tradeoffs, but a cleaner actor-sector taxonomy that maps well onto a graph schema's Actor node types.</span></div>
+      </div>
+    </div>
+
+    <div class="dataset-card">
+      <div class="dataset-head">
+        <div>
+          <h3>Kaggle mirrors and derived datasets</h3>
+          <div class="sub">Useful for quick prototyping, not for citation-grade backtesting</div>
+        </div>
+        <div class="pill-row"><span class="pill free">Free, Kaggle account only</span><span class="pill">CSV</span></div>
+      </div>
+      <div class="dataset-body">
+        <div class="row"><span class="label">GDELT Conflict Events (1979–2021)</span><span class="value"><a href="https://www.kaggle.com/datasets/vladproex/gdelt-conflict-events-1979-2021" target="_blank">kaggle.com/datasets/vladproex/gdelt-conflict-events-1979-2021</a> — a pre-filtered, ready-to-load slice of the full GDELT backfile, useful for a first pass without setting up BigQuery access.</span></div>
+        <div class="row"><span class="label">Ukraine Conflict Event Dataset (2022–2025)</span><span class="value"><a href="https://www.kaggle.com/datasets/sangampaudel530/ukraine-conflict-event-dataset-20222025" target="_blank">kaggle.com/datasets/sangampaudel530/ukraine-conflict-event-dataset-20222025</a> — single-conflict, bounded time range, good for a small rolling-origin backtest with a known escalation trajectory and onset date.</span></div>
+        <div class="row"><span class="label">Countries in Conflict Dataset (1989–2022)</span><span class="value"><a href="https://www.kaggle.com/datasets/saurabhbadole/countries-in-conflict-dataset" target="_blank">kaggle.com/datasets/saurabhbadole/countries-in-conflict-dataset</a> — country-year fatality aggregates, closer to UCDP's structure.</span></div>
+        <div class="row"><span class="label">Global Geopolitical Conflict Dataset (2020–2025)</span><span class="value"><a href="https://www.kaggle.com/datasets/muhammadhussnain09/global-geopolitical-conflict-dataset-20202025" target="_blank">kaggle.com/datasets/muhammadhussnain09/global-geopolitical-conflict-dataset-20202025</a> — country-month indicators with a prebuilt six-month escalation label. Worth inspecting closely before relying on it: the "real-world-style" framing in its own description suggests at least partial synthetic construction, which would make it circular as a backtest target for a model built on similar assumptions.</span></div>
+        <div class="row"><span class="label">Caution</span><span class="value">None of these Kaggle uploads are primary sources — they're re-exports or derivations of ACLED/GDELT/UCDP. Treat them as convenience layers for prototyping code, and cite the primary datasets above in any deliverable that leaves the prototyping stage.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Comparison</span><h2>At a glance</h2></div>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Dataset</th><th>Coding method</th><th>Span</th><th>Approx. size</th><th>Best for</th></tr>
+        <tr><td>GDELT</td><td>Automated</td><td>1979–present</td><td>100GB+ full history</td><td>Volume, anomaly detection, real-time signal</td></tr>
+        <tr><td>ACLED</td><td>Hand-coded</td><td>1997–present</td><td>~hundreds of MB</td><td>Ground truth outcome variable</td></tr>
+        <tr><td>UCDP GED</td><td>Hand-coded</td><td>1989–present</td><td>Tens of MB</td><td>High-rigor external validation</td></tr>
+        <tr><td>ICEWS</td><td>Automated</td><td>1995–present</td><td>Low single-digit GB</td><td>DARPA-lineage benchmark, actor typology</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 3: MODEL BATTERY ===================== -->
+<div class="panel" id="tab3">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Design</span><h2>A swappable battery of conflict prediction models</h2></div>
+    <p class="lede">Each model below implements one shared interface — fit on a training window, predict a probability for the next window, expose feature importances or attention weights where applicable — so the harness can run them back-to-back against identical rolling-origin splits and compare directly. The first model is the graph-native approach from the methodology tab; everything after it is a progressively simpler or differently-shaped baseline to test it against.</p>
+  </div>
+
+  <div class="section">
+    <ul class="model-list">
+      <li class="model-card anchor">
+        <span class="model-order">01</span>
+        <div>
+          <h3>Temporal graph neural network on the event graph</h3>
+          <div class="subtitle">TGN / EvolveGCN over the schema in tab 01</div>
+          <p>Operates directly on the Actor / Location / Event / Source graph with bitemporal edges. Learns representations that update as new events and alliance shifts arrive, rather than flattening the graph to a tabular snapshot. This is the model the whole pipeline is built to feed, and the one every other entry in this list needs to beat to justify the graph infrastructure's cost.</p>
+          <p class="why">Why first: it's the only model that actually uses the relational structure — network centrality shifts and alliance-edge changes are legible to it in a way no tabular model can see directly.</p>
+        </div>
+      </li>
+
+      <li class="model-card">
+        <span class="model-order">02</span>
+        <div>
+          <h3>Gradient-boosted trees on hand-engineered graph features</h3>
+          <div class="subtitle">XGBoost / LightGBM, tabular</div>
+          <p>Flattens the graph into features per region-month: event frequency, escalation-verb ratios by CAMEO quad-class, actor-centrality deltas, source-hostility trend. Strong, fast, interpretable baseline via SHAP values.</p>
+          <p class="why">Why: if this matches the TGN's accuracy, the graph structure isn't earning its complexity — a genuinely useful negative result for the methodology writeup.</p>
+        </div>
+      </li>
+
+      <li class="model-card">
+        <span class="model-order">03</span>
+        <div>
+          <h3>LLM-based inference with historical-analog retrieval</h3>
+          <div class="subtitle">Retrieval-augmented probabilistic assessment</div>
+          <p>Feeds recent aggregated events plus retrieved historical analogs to an LLM, prompted to output a calibrated probability and reasoning trace. Weak on calibration alone; test it primarily on the qualitative flags it raises that the quantitative models miss.</p>
+          <p class="why">Why: captures rhetorical and contextual signal — tone shifts in broadcast sources — that event-coded models structurally can't see.</p>
+        </div>
+      </li>
+
+      <li class="model-card">
+        <span class="model-order">04</span>
+        <div>
+          <h3>Autoencoder-based anomaly detection</h3>
+          <div class="subtitle">Unsupervised, on event-frequency time series</div>
+          <p>Trains on "normal" event patterns per region and flags reconstruction-error spikes as candidate escalation signals, rather than predicting a labeled outcome directly. Published early-warning work using this approach on combined ACLED/GDELT data has reported strong AUC in case studies.</p>
+          <p class="why">Why: doesn't need labeled onset events to train, useful where ground-truth escalation labels are sparse for a given region.</p>
+        </div>
+      </li>
+
+      <li class="model-card">
+        <span class="model-order">05</span>
+        <div>
+          <h3>Logistic regression on lagged event counts</h3>
+          <div class="subtitle">The minimum viable baseline</div>
+          <p>Region-month event counts and their lags as the only features, no graph, no NLP. Trivial to implement and to explain to a non-technical reviewer.</p>
+          <p class="why">Why: every other model in this list must beat this or the added complexity has no case.</p>
+        </div>
+      </li>
+
+      <li class="model-card">
+        <span class="model-order">06</span>
+        <div>
+          <h3>Naive persistence and historical base-rate</h3>
+          <div class="subtitle">Not a model — the floor every model is measured against</div>
+          <p>"Conflict continues where it's already happening" and "predict the historical regional average" respectively. Neither uses features. Run both automatically as part of every harness pass, not as a one-time check.</p>
+          <p class="why">Why: the backtesting methodology in tab 01 depends on this comparison existing for every fold, not just once at the start.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Harness</span><h2>Shared evaluation interface</h2></div>
+    <p class="lede">Each model implements <code>fit(train_window)</code> and <code>predict_proba(next_window)</code>. The harness owns the rolling-origin split, the metric computation, and the leaderboard — models never see data outside their assigned window.</p>
+    <div class="harness-block"><span class="c"># pseudocode — rolling-origin battery runner</span>
+models = [
+  <span class="s">"tgn_graph"</span>, <span class="s">"gbm_graph_features"</span>, <span class="s">"llm_retrieval"</span>,
+  <span class="s">"autoencoder_anomaly"</span>, <span class="s">"logreg_lagged_counts"</span>,
+  <span class="s">"naive_persistence"</span>, <span class="s">"historical_base_rate"</span>
+]
+
+<span class="k">for</span> fold <span class="k">in</span> rolling_origin_splits(start=<span class="s">"2010-01"</span>, step=<span class="s">"1M"</span>, horizon=<span class="s">"1M"</span>):
+    train, test = fold.train_window, fold.test_window
+    <span class="k">for</span> name <span class="k">in</span> models:
+        model = load(name)
+        model.fit(train)                      <span class="c"># no leakage past train cutoff</span>
+        probs = model.predict_proba(test)
+        log_metrics(name, fold, brier(probs, test.labels),
+                     precision_recall(probs, test.labels),
+                     lead_time=fold.horizon)
+
+leaderboard = aggregate(log, group_by=[<span class="s">"model"</span>, <span class="s">"lead_time"</span>, <span class="s">"region"</span>])</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Scoring</span><h2>Metrics tracked per model, per fold</h2></div>
+    <div class="metric-grid">
+      <div class="metric"><div class="name">Brier score</div><div class="def">Calibration quality — how close predicted probabilities land to actual outcomes.</div></div>
+      <div class="metric"><div class="name">Precision / recall</div><div class="def">Preferred over ROC-AUC given how rare and clustered conflict events are.</div></div>
+      <div class="metric"><div class="name">Lead-time stratification</div><div class="def">Same metrics recomputed at 7-, 14-, and 30-day horizons — accuracy typically degrades unevenly across models.</div></div>
+      <div class="metric"><div class="name">Delta vs. base rate</div><div class="def">Every model's score reported alongside the naive persistence and historical base-rate floor from the same fold.</div></div>
+      <div class="metric"><div class="name">External validation gap</div><div class="def">Performance on the primary training ground truth (e.g. GDELT) versus an independent dataset (e.g. UCDP) — a large gap signals overfitting to one source's coding biases.</div></div>
+    </div>
+    <div class="callout"><strong>Run order matters less than fold discipline.</strong> The battery can execute in any sequence, but every model in every fold must respect the same temporal cutoff from the methodology tab — no feature computed with an ingestion timestamp after the fold's prediction point, for any model including the LLM-retrieval one, where this is easiest to violate accidentally through a retrieval index built on the full corpus.</div>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  Compiled reference — methodology, dataset access, and testing harness for graph-based conflict signal prediction. Dataset access details current as of source review; re-verify download endpoints periodically, as academic data portals change registration terms without notice.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

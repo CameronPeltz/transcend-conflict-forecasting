@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literature review, evaluation standards, and 24 real iterations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579;
+    --paper:#f6f4ec; --paper-raised:#fdfcf7; --line:#d9d5c4; --line-strong:#b8b29a;
+    --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc;
+    --wire:#6b5a8c; --wire-soft:#eae5f2;
+    --good:#2e6b4f; --bad:#9c4a2f;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased;}
+  code, .mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;}
+  a{color:var(--signal-deep); text-decoration-color:var(--line-strong); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--signal-deep);}
+
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem, 4vw, 3rem) 1.4rem; background:var(--paper);}
+  .masthead .eyebrow{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem, 3.2vw, 2.1rem); line-height:1.15; max-width:56ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:68ch; font-size:0.98rem; margin-top:0.6rem;}
+
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem, 4vw, 3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; letter-spacing:0.04em; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.95rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn .num{display:inline-block; width:1.4em; color:var(--line-strong);}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  .tab-btn.active .num{color:var(--signal);}
+
+  main{max-width:980px; margin:0 auto; padding:2.4rem clamp(1.2rem, 4vw, 3rem) 6rem;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); letter-spacing:0.04em;}
+  .section-head h2{font-size:1.25rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.98rem; margin-bottom:1.2rem;}
+
+  ul, ol{padding-left:1.3rem; margin:0 0 1em 0;}
+  li{margin-bottom:0.5rem;}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .card h3{font-size:1.02rem; margin-bottom:0.4rem;}
+  .card h4{font-size:0.88rem; color:var(--ink-soft); margin:0.9rem 0 0.3rem; text-transform:uppercase; letter-spacing:0.03em; font-family:'IBM Plex Mono', monospace;}
+
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.85rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.92rem; color:#5c2c1a; margin:1rem 0;}
+  .callout strong{color:#4a2314;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.good strong{color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .callout.wire strong{color:#2e2450;}
+
+  .refs{font-size:0.82rem; color:var(--ink-mute); padding-left:1.3rem;}
+  .refs li{margin-bottom:0.5rem;}
+
+  /* expert panel */
+  .expert{display:grid; grid-template-columns:11rem 1fr; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--line);}
+  @media(max-width:640px){.expert{grid-template-columns:1fr;}}
+  .expert:last-child{border-bottom:none;}
+  .expert .who{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--wire);}
+  .expert .who .role{display:block; color:var(--ink-mute); font-size:0.72rem; margin-top:0.2rem; line-height:1.4;}
+  .expert .say{font-size:0.94rem;}
+  .expert .say strong{color:var(--ink);}
+  .roster{background:var(--wire-soft); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:1.4rem; font-size:0.86rem; color:#3d3260;}
+
+  .checklist{list-style:none; padding:0; margin:0;}
+  .checklist li{display:grid; grid-template-columns:1.8rem 1fr; gap:0.6rem; padding:0.5rem 0; border-bottom:1px solid var(--line); font-size:0.92rem;}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist .chk{color:var(--signal); font-weight:700;}
+
+  /* iterations */
+  .iter-card{border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-raised); margin-bottom:0.9rem; overflow:hidden;}
+  .iter-head{display:flex; justify-content:space-between; align-items:baseline; gap:0.8rem; padding:0.65rem 1rem; background:var(--signal-soft); flex-wrap:wrap;}
+  .iter-head .n{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--signal-deep); font-weight:700;}
+  .iter-head h4{margin:0; font-size:0.92rem; color:var(--signal-deep); font-family:'IBM Plex Sans'; font-weight:600; flex:1;}
+  .iter-body{padding:0.7rem 1rem 0.85rem;}
+  .iter-hyp{font-size:0.85rem; color:var(--ink-soft); font-style:italic; margin-bottom:0.5rem;}
+  .iter-metrics{display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.4rem;}
+  .iter-metrics span{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; border:1px solid var(--line); border-radius:10px; padding:0.1rem 0.5rem; color:var(--ink-soft);}
+  .iter-metrics span.best{border-color:var(--good); color:var(--good); font-weight:600;}
+  .iter-take{font-size:0.86rem;}
+
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.4rem;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.83rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono', monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem; white-space:nowrap;}
+  table.results td{padding:0.48rem 0.55rem; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap;}
+  table.results tr:last-child td{border-bottom:none;}
+  table.results td.best{color:var(--good); font-weight:600;}
+  table.results td.worst{color:var(--bad);}
+
+  .case-card{border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-raised); margin-bottom:1.4rem; overflow:hidden;}
+  .case-head{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; padding:0.9rem 1.2rem; border-bottom:1px solid var(--line); background:var(--signal-soft);}
+  .case-head h3{font-size:1.02rem; margin:0; color:var(--signal-deep);}
+  .case-head .outcome{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; letter-spacing:0.03em; text-transform:uppercase; color:var(--signal-deep);}
+  .case-body{padding:1rem 1.2rem 1.1rem; font-size:0.9rem;}
+  .case-score{font-family:'IBM Plex Mono', monospace; font-size:1.3rem; color:var(--good); font-weight:600; float:right; margin-left:1rem;}
+
+  .rank-list{list-style:none; padding:0; margin:0 0 1rem;}
+  .rank-list li{display:grid; grid-template-columns:2.4rem 1fr; gap:0.8rem; padding:0.75rem 0; border-bottom:1px solid var(--line);}
+  .rank-list li:last-child{border-bottom:none;}
+  .rank-list .pos{font-family:'Source Serif 4', serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-list h4{margin:0 0 0.2rem; font-size:0.94rem; font-family:'IBM Plex Sans'; font-weight:600;}
+  .rank-list p{margin:0; font-size:0.86rem; color:var(--ink-soft);}
+
+  footer{max-width:980px; margin:0 auto; padding:1.5rem clamp(1.2rem, 4vw, 3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+  ::selection{background:var(--signal-soft); color:var(--signal-deep);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Companion document 4 of 4</span>
+    <span>Literature review · evaluation standards · 24 real iterations</span>
+  </div>
+  <h1>What the field already knows, what a rigorous evaluation should demand, and 24 real attempts to do better</h1>
+  <p class="dek">Five tabs: a grounded review of where conflict forecasting research actually stands, a panel of field-specific evaluation standards translated to this problem, a standards-informed ranking of methods including forecasts several months out, a full log of 24 real backtested iterations on real data, and a closing summary with real case studies of what worked.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab1"><span class="num">01</span>Literature Review</button>
+  <button class="tab-btn" data-tab="tab2"><span class="num">02</span>Expert Panel</button>
+  <button class="tab-btn" data-tab="tab3"><span class="num">03</span>Standards-Informed Analysis</button>
+  <button class="tab-btn" data-tab="tab4"><span class="num">04</span>24 Iterations</button>
+  <button class="tab-btn" data-tab="tab5"><span class="num">05</span>Summary</button>
+  <button class="tab-btn" data-tab="tab6"><span class="num">06</span>Expanded Data &amp; Leading Indicators</button>
+</div>
+
+<main>
+
+<!-- ===================== TAB 1: LITERATURE REVIEW ===================== -->
+<div class="panel active" id="tab1">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">25-year arc</span><h2>From coded events to graphs and language models</h2></div>
+    <p class="lede">Conflict forecasting has gone through roughly four overlapping waves, each one adding a capability the last one lacked rather than fully replacing it — all four are still in active use today.</p>
+    <div class="card">
+      <h4>Wave 1 — expert-coded event data (1990s–2000s)</h4>
+      <p>The Political Instability Task Force (PITF), a US government-funded research effort, built some of the first systematic event datasets by relying on human event coders reading news reports. This established the basic idea the whole field still runs on: turn a news report into a structured record — who did what to whom, when, where — rather than trying to forecast from raw text directly.</p>
+      <h4>Wave 2 — automated, machine-coded events at scale (2010s)</h4>
+      <p>ICEWS and GDELT both automated that coding process using natural-language processing against the CAMEO taxonomy (the same 20-category event-type scheme used throughout this project), trading per-event precision for enormous scale and near-real-time updates. This is also when ACLED and UCDP's more narrowly-scoped, human-curated, fatality-focused datasets became the field's standard ground truth for evaluating everything else against.</p>
+      <h4>Wave 3 — machine learning on top of coded events (mid-2010s–present)</h4>
+      <p>Researchers found that tree-based ensemble methods — random forests, gradient boosting — reliably outperformed classical logistic regression on the rare-event, class-imbalanced nature of conflict onset prediction. ViEWS (the Violence & Impacts Early-Warning System, a live public system run jointly by Uppsala University and the Peace Research Institute Oslo since 2017) built on this directly: it now issues monthly, publicly-published forecasts of conflict fatalities 1–36 months ahead, for every country <em>and</em> for 55×55&nbsp;km grid cells across Africa and the Middle East, using an ensemble of multiple tree-based models deliberately built to disagree with each other ("variance-promoting data configurations," in the field's own language) rather than one single best model.</p>
+      <h4>Wave 4 — graph-native and language-model approaches (2020s, accelerating in 2025–2026)</h4>
+      <p>Published work on spatio-temporal graph convolutional networks applied directly to event data — the same shape of technique as the temporal-graph-neural-network approach discussed and deliberately set aside in this project's earlier documents — has shown real promise for capturing relational structure conventional feature-flattening misses. More recently, several 2025–2026 papers mark a genuine, active shift toward retrieval-augmented and language-model-based forecasting specifically: research directly asking "do large language models know conflict?" by comparing what's baked into a model's pretrained weights against retrieval-augmented approaches; a framework called <strong>LLM4Geopolitics</strong> that explicitly couples a domain-adapted language model with retrieval-augmented generation grounded in a structured knowledge graph — architecturally close to what this project's own documents have been recommending independently; and comparative studies of text-based methods (topic modeling on newspaper articles, actor-embedding transformer networks) for exactly the kind of crisis early-warning use case this whole project targets.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Best practices</span><h2>What the strongest systems consistently do</h2></div>
+    <ul>
+      <li><strong>Forecast out-of-time, in public, before the answer is known.</strong> ViEWS publishes its forecasts on a fixed schedule and lets outcomes catch up to them later — the strongest possible discipline against hindsight bias, and one that this project's own rolling-origin backtests are a smaller-scale version of.</li>
+      <li><strong>Build ensembles for genuine diversity, not just averaging.</strong> ViEWS's own stated approach — multiple tree-based algorithms plus data configurations deliberately chosen to make different mistakes — is a specific, real, citable precedent that this project directly tests in its own iteration log (tab 04).</li>
+      <li><strong>Report uncertainty, not just a point estimate.</strong> The most recent public ViEWS prediction challenge is explicitly framed around forecasting fatalities "with uncertainty" — a probabilistic range, not a single number — matching how meteorology and epidemiology both report forecasts (see tab 02).</li>
+      <li><strong>Predict at more than one spatial resolution.</strong> ViEWS's parallel country-level and 55×55&nbsp;km grid-cell forecasts are a real, working example of resolution flexibility this project's own country-week panel doesn't yet attempt — a genuine opportunity, not just a nice-to-have (see below).</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Gaps</span><h2>Where the field has real, documented limits</h2></div>
+    <div class="callout">
+      <strong>The early-warning-to-early-action gap.</strong> This is a named, widely-discussed problem in the field, not a minor caveat: AI-powered forecasting can genuinely detect rising risk, but without the political will and institutional mechanisms to act on a warning, the forecast itself changes nothing. Worth stating plainly in any proposal built on top of this research — a better model does not by itself solve the harder half of the problem.
+    </div>
+    <ul>
+      <li><strong>Nearly every major dataset is downstream of wire-service and mainstream-media reporting.</strong> ICEWS, GDELT, and PITF all ultimately depend on what English-language and major regional news outlets chose to cover. That's precisely the blind spot in exactly the low-media-access, data-sparse regions this project's underlying program is meant to address — the literature confirms the gap is real, not just an assumption behind the program's premise.</li>
+      <li><strong>Automated coding quality varies a lot, and it's a known, acknowledged tradeoff.</strong> ICEWS is documented as using deliberately loose inclusion criteria to maximize coverage; GDELT's own documentation and this project's own reference document both note it's noisier and more duplicate-prone than hand-coded alternatives like ACLED. Free and fast is not the same as free and clean.</li>
+      <li><strong>Language-model calibration for this specific task is an open research question, not a settled one.</strong> The "do LLMs know conflict" line of research exists specifically because it isn't yet clear how much of an LLM's apparent forecasting skill is real signal versus memorized patterns from training data that happen to correlate with outcomes — worth real caution before treating an LLM-based forecast as inherently trustworthy just because the RFP asks for one.</li>
+      <li><strong>Rare-event, small-sample statistics are a structural problem across the whole field, not unique to any one project.</strong> Conflict escalation is rare by definition; every serious system in this space — including ViEWS, running on decades of data across the whole world — deals with severe class imbalance. This project's own small prototype scale (tab 04) inherits that same structural challenge, just more acutely.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Opportunities</span><h2>Where new methods could plausibly move the field forward</h2></div>
+    <ul>
+      <li><strong>Retrieval-augmented, graph-grounded language models</strong> — no longer speculative; LLM4Geopolitics is a real, published 2026 framework doing close to exactly this, which is real external validation that the architecture recommended throughout this project's earlier documents is a live research direction, not a niche bet.</li>
+      <li><strong>Genuinely local, non-English, non-wire-service signal capture</strong> — radio, community reporting, local-language sources — remains comparatively unexplored in the published literature reviewed here, which is itself informative: it suggests the specific novel contribution this project's underlying program is funding is a real, underserved gap, not a solved problem being reinvented.</li>
+      <li><strong>Multi-resolution spatial modeling</strong>, following ViEWS's grid-cell precedent, is a natural extension once a project like this one outgrows country-level granularity.</li>
+      <li><strong>Systematic ensemble-diversity testing</strong>, rather than picking one model family and tuning it, is a real, field-validated practice this project can test directly and cheaply — see tab 04, iterations 8–10.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Sources</span><h2>What this review is grounded in</h2></div>
+    <ol class="refs">
+      <li>PRIO / Uppsala University — ViEWS (Violence & Impacts Early-Warning System), <a href="https://www.prio.org/projects/1977" target="_blank">prio.org/projects/1977</a>, and 2026 conflict-zone forecasts at <a href="https://viewsforecasting.org/news/new-forecasts-of-the-deadliest-conflict-zones-in-2026/" target="_blank">viewsforecasting.org</a></li>
+      <li>"The 2023/24 VIEWS Prediction Challenge: Predicting the Number of Fatalities in Armed Conflict, with Uncertainty" — <a href="https://arxiv.org/pdf/2407.11045" target="_blank">arxiv.org/pdf/2407.11045</a></li>
+      <li>"Forecasting conflict using a diverse machine-learning ensemble: Ensemble averaging with multiple tree-based algorithms and variance promoting data configurations" — ResearchGate</li>
+      <li>"The promise of machine learning in violent conflict forecasting," Data &amp; Policy, Cambridge Core</li>
+      <li>"Conflict forecasting with event data and spatio-temporal graph convolutional networks," Tandfonline</li>
+      <li>"Do Large Language Models Know Conflict? Investigating Parametric vs. Non-Parametric Knowledge of LLMs for Conflict Forecasting" — <a href="https://arxiv.org/abs/2505.09852" target="_blank">arxiv.org/abs/2505.09852</a></li>
+      <li>"LLM4Geopolitics: A Framework Leveraging Large Language Models for Predicting Geopolitical Events," Expert Systems, Wiley, 2026</li>
+      <li>"From Newswire to Nexus: Using text-based actor embeddings and transformer networks to forecast conflict dynamics" — arxiv 2501.03928</li>
+      <li>"Text as data for crisis early-warning: A comparative assessment of NLP methods for conflict prediction," 2026, SAGE</li>
+      <li>Muchlinski et al.-style comparisons of Random Forest vs. logistic regression on class-imbalanced civil-war-onset data (cited broadly across the ML-for-conflict literature reviewed above)</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 2: EXPERT PANEL ===================== -->
+<div class="panel" id="tab2">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Format</span><h2>A standards panel, convened on paper</h2></div>
+    <p class="lede">Five illustrative roles, not real named individuals — each one a composite voice for real, documented, verifiable standards from a field that already does probabilistic forecasting of rare, high-stakes events at scale. The point isn't the personas; it's importing what each field has already learned the hard way about evaluating exactly this kind of prediction.</p>
+    <div class="roster">
+      <strong>The panel:</strong> a political-violence forecasting researcher (ViEWS-style academic conflict modeling) · an operational meteorologist specializing in forecast verification · a coordinator from an infectious-disease forecasting hub · a model-risk-management lead from financial-services regulation · an all-source intelligence analyst versed in analytic tradecraft standards.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Session 1</span><h2>What should the primary metric even be?</h2></div>
+    <div class="expert"><div class="who">Forecasting researcher<span class="role">Political violence, ML ensembles</span></div><div class="say">Precision and recall get quoted the most in conflict-ML papers, but they're threshold-dependent and unstable on rare events with small samples. I'd rather see the Brier score and its decomposition front and center — it rewards genuinely calibrated probabilities, not just a lucky ranking.</div></div>
+    <div class="expert"><div class="who">Meteorologist<span class="role">Forecast verification</span></div><div class="say"><strong>Agreed on Brier, with a caveat.</strong> We never report it alone — always alongside a <em>reliability diagram</em>, plotting predicted probability against observed frequency in bins. A model can have a fine Brier score overall while being badly overconfident in exactly the high-probability bin that matters most operationally. And always report a <em>skill score</em> relative to a reference forecast — raw Brier means nothing without knowing what "no skill" looks like on this specific problem.</div></div>
+    <div class="expert"><div class="who">Forecast hub coordinator<span class="role">Infectious disease</span></div><div class="say">We standardized on the weighted interval score for exactly this reason — it's a proper scoring rule that rewards sharp, well-calibrated <em>interval</em> forecasts, not just point probabilities, and it decomposes into over- and under-prediction penalties you can diagnose separately. I'd push this group toward reporting a real uncertainty range on any fatality or severity estimate, not just an escalation yes/no.</div></div>
+    <div class="expert"><div class="who">Model-risk lead<span class="role">Financial services</span></div><div class="say">From where I sit, the single metric matters less than the <em>backtesting protocol</em> around it. Regulatory backtesting for risk models counts exceptions — actual outcomes falling outside the model's predicted range — over a fixed rolling window, and classifies the model into a green/yellow/red zone based on how many exceptions occurred. I'd want this group's models formally re-certified or flagged the same way, on a fixed cadence, not just backtested once and shipped.</div></div>
+    <div class="expert"><div class="who">Intelligence analyst<span class="role">All-source analysis, tradecraft standards</span></div><div class="say">All of that is necessary but not sufficient for how this actually gets <em>used</em>. Analytic tradecraft standards require every judgment to state its confidence level in plain, standardized language — not a bare number a policymaker has to interpret. A well-calibrated 0.62 means nothing to a decision-maker without a shared vocabulary for what that number is supposed to mean in practice.</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Session 2</span><h2>What does a fair backtest actually require?</h2></div>
+    <div class="expert"><div class="who">Forecasting researcher</div><div class="say">Non-negotiable: strict out-of-time validation. Random k-fold cross-validation is a real and common mistake in this literature specifically because conflict events cluster in time and space — a random split leaks neighboring information across the train/test boundary and inflates every metric.</div></div>
+    <div class="expert"><div class="who">Meteorologist</div><div class="say">We'd call that "look-ahead bias" and it's the first thing any verification review checks for. The other thing we insist on: stratify performance by lead time. A forecast that's excellent at 24 hours and worthless at 5 days shouldn't get to report one blended number.</div></div>
+    <div class="expert"><div class="who">Model-risk lead</div><div class="say">And a model has to clear a defined floor before it's allowed to claim skill at all — in our world that's usually "beats the previous approved model" or "beats a naive constant forecast." This group's naive-persistence and historical-base-rate models are exactly that discipline, and I'd insist every single iteration report the delta against both, not just its own raw score.</div></div>
+    <div class="expert"><div class="who">Forecast hub coordinator</div><div class="say">One more: report coverage — what fraction of the time did the real outcome fall inside your stated uncertainty range at the level you claimed. A model that's "80% confident" should be right about 80% of the time it says that, not 50% and not 95%. That's a directly checkable, falsifiable claim, and it's checked automatically every week in our world.</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Session 3</span><h2>What counts as an acceptable explanation of a result?</h2></div>
+    <div class="expert"><div class="who">Intelligence analyst</div><div class="say">In our world, a judgment without sourcing and an explicit confidence level isn't usable, no matter how good the underlying model is. I'd hold any LLM-based forecaster in this project to the same bar: a reasoning trace isn't optional flavor text, it's the actual deliverable a human has to be able to challenge.</div></div>
+    <div class="expert"><div class="who">Model-risk lead</div><div class="say">Financial regulation calls this "model risk management documentation" — every model in production needs a written record of its assumptions, known limitations, and validation history that a second, independent party can review without talking to whoever built it. Worth this group adopting that discipline now, while the system is small, rather than trying to reconstruct it later.</div></div>
+    <div class="expert"><div class="who">Forecasting researcher</div><div class="say">And feature importance or SHAP-style attribution, exactly like this project has already been using, is the tree-based-model equivalent of that same idea — it's what lets a skeptical reviewer check whether the model is keying on something sensible or something spurious.</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Consensus</span><h2>The checklist the panel converges on</h2></div>
+    <p class="lede">Used directly in tab 03 to score this project's own methods, not just discussed in the abstract.</p>
+    <ul class="checklist">
+      <li><span class="chk">✓</span><span><strong>Calibration first.</strong> Report Brier score (or equivalent) as the headline metric, not precision/recall alone.</span></li>
+      <li><span class="chk">✓</span><span><strong>Always show the floor.</strong> Every result reported alongside naive persistence and historical base rate from the identical fold.</span></li>
+      <li><span class="chk">✓</span><span><strong>Strict out-of-time validation.</strong> No random splits, ever, on temporally/spatially clustered event data.</span></li>
+      <li><span class="chk">✓</span><span><strong>Stratify by lead time.</strong> Report 1-week, monthly, and multi-month performance separately, never blended.</span></li>
+      <li><span class="chk">✓</span><span><strong>Report decision-relevant metrics too.</strong> Precision/recall/specificity at a real operating threshold, because calibration alone can hide a model that never actually flags anything (see iteration 23, tab 04).</span></li>
+      <li><span class="chk">✓</span><span><strong>State confidence in plain, standardized language</strong> alongside any numeric probability, not instead of it.</span></li>
+      <li><span class="chk">✓</span><span><strong>Document assumptions and known limitations in writing</strong>, reviewable independent of whoever built the model.</span></li>
+      <li><span class="chk">✓</span><span><strong>Re-certify on a fixed cadence</strong> rather than treating one backtest as a permanent result.</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 3: STANDARDS-INFORMED ANALYSIS ===================== -->
+<div class="panel" id="tab3">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Applying the checklist</span><h2>Re-scoring the method battery against the panel's own standards</h2></div>
+    <p class="lede">The panel's biggest departure from how this project's own numbers had been read so far: calibration and the reference floor matter more than raw precision/recall, and a model that looks best on one metric can fail the checklist entirely.</p>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Approach</th><th>Calibration-first read</th><th>Beats the floor?</th><th>Decision-useful?</th><th>Panel verdict</th></tr>
+      <tr><td>Historical base rate</td><td class="best">Best Brier by construction</td><td class="worst">It <em>is</em> the floor</td><td class="worst">No — never flags anything</td><td>Reference only, not a real model</td></tr>
+      <tr><td>GBM (pattern-trained)</td><td>Middling</td><td class="best">Yes, real margin</td><td class="best">Yes</td><td>Passes on balance</td></tr>
+      <tr><td>ICL (retrieval, fallback mode)</td><td>Good at 1-week</td><td class="best">Yes at 1-week</td><td class="best">Yes at 1-week</td><td>Passes, but untested with a live model per session 3's documentation standard</td></tr>
+      <tr><td>Logistic regression</td><td class="worst">Poor — worst Brier of the real models</td><td>Mixed</td><td class="worst">High recall, very low specificity</td><td>Fails calibration-first read despite decent recall</td></tr>
+      <tr><td>Naive persistence</td><td class="worst">Weak</td><td class="worst">Doesn't clearly beat base rate</td><td>Mediocre</td><td>Correctly demoted to floor-only role</td></tr>
+    </table>
+    </div>
+    <div class="callout good"><strong>The one finding this re-scoring changes most:</strong> logistic regression's real recall advantage (documented in the prior companion document) reads very differently once calibration is weighted properly — the panel's consensus would flag it as the metric-shopping trap session 1's meteorologist warned about directly: strong on one axis, poor on the axis that actually predicts real-world reliability.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Months, not just weeks</span><h2>How far out can this actually forecast?</h2></div>
+    <p class="lede">The panel's lead-time-stratification rule applied directly: the same core feature set and model, tested at 1 week, roughly 1 month, and roughly 2 months out, on the same real data.</p>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Horizon</th><th>Real positives</th><th>Avg. precision</th><th>Brier</th><th>Recall @ 0.5</th><th>Read</th></tr>
+      <tr><td>1 week</td><td>19 of 120</td><td>0.200</td><td>0.179</td><td>0.158</td><td>Baseline</td></tr>
+      <tr><td>~1 month (4 weeks)</td><td>17 of 102</td><td class="best">0.228</td><td>0.175</td><td>0.118</td><td>Real signal survives, recall drops</td></tr>
+      <tr><td>~2 months (8 weeks)</td><td>16 of 78</td><td class="best">0.262</td><td>0.206</td><td>0.125</td><td>Highest average precision of the three — see caveat below</td></tr>
+    </table>
+    </div>
+    <div class="callout"><strong>An honest caveat the panel's own standards demand stating:</strong> average precision <em>rising</em> at longer horizons looks counterintuitive, and it's worth resisting the urge to declare "this model forecasts months out better than weeks out." The sample shrinks at each longer horizon (fewer usable folds, since each fold needs that many future weeks still available in the data) — 120 predictions at 1 week versus 78 at 8 weeks. Session 2's out-of-time-validation standard says a metric computed on a meaningfully different, smaller sample isn't directly comparable to one computed on a larger one, even when both used the same rolling-origin discipline. The honest reading: there's real, usable signal out to roughly 2 months in this data — not yet an honest claim about which horizon is "most accurate."</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">What comes next</span><h2>How to keep testing new grouping and weighting ideas systematically</h2></div>
+    <p>The panel's ensemble-diversity and floor-comparison standards point toward a concrete, repeatable method for generating new ideas worth testing, rather than guessing one at a time. Four real categories of variation, each with several concrete instances actually tested in tab 04:</p>
+    <ol>
+      <li><strong>Vary the event-grouping taxonomy</strong> — the standard 4-bucket cooperation/conflict split (quad-class) versus a severity-weighted regrouping straight from the real 20-category CAMEO taxonomy (which specific categories count as "severe"), versus single-signal groupings (tone alone, hostility score alone, raw volume alone) to see how much each family of signal carries on its own.</li>
+      <li><strong>Vary how much history and how coarse a time window each prediction sees</strong> — weekly versus two-week aggregation, two versus three weeks of lagged history feeding each forecast.</li>
+      <li><strong>Vary how sensitive the definition of "escalation" itself is</strong> — a looser statistical trigger catches more real cases at the cost of more borderline ones; a stricter one does the reverse. This is a real, independent axis of variation from anything about the model itself.</li>
+      <li><strong>Vary the model family and how predictions get combined</strong> — boosted trees at different depths and regularization strengths, bagged trees, linear models, and genuine multi-model ensembles, plus a calibration pass on top of the best single model, directly testing session 1's calibration-first standard.</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 4: 24 ITERATIONS ===================== -->
+<div class="panel" id="tab4">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, logged, in order</span><h2>24 iterations, each a real rolling-origin backtest</h2></div>
+    <p class="lede">Every number below came from actually running <code>scripts/run_iterations.py</code> against the real 233,552-event, 6-country GDELT panel — no simulated or narrated results. <span class="mono" style="font-size:0.8rem">n</span> = pooled out-of-sample predictions, <span class="mono" style="font-size:0.8rem">pos</span> = how many were real escalations.</p>
+  </div>
+
+  <div class="section">
+
+    <div class="iter-card"><div class="iter-head"><span class="n">01</span><h4>Baseline: GBM, core features, weekly, 1-week horizon</h4></div><div class="iter-body"><div class="iter-hyp">The starting point every later iteration is measured against.</div><div class="iter-metrics"><span>AP 0.1995</span><span>Brier 0.1794</span><span>Acc 0.800</span><span>n=120 pos=19</span></div><div class="iter-take">Solid, unremarkable floor-beating result — the reference point for everything that follows.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">02</span><h4>+ country identity (categorical)</h4></div><div class="iter-body"><div class="iter-hyp">GBM never sees WHICH country it's scoring — giving it a country flag should let it learn country-specific baselines the way the historical-average model does.</div><div class="iter-metrics"><span class="best">AP 0.2171</span><span class="best">Brier 0.1758</span><span>Acc 0.792</span><span>n=120 pos=19</span></div><div class="iter-take">Confirmed: a real, apples-to-apples improvement over #1 on the identical sample. The single clearest concrete win in this batch.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">03</span><h4>+ region identity (categorical)</h4></div><div class="iter-body"><div class="iter-hyp">A coarser version of #2 — does grouping by region instead of country still help, with less overfitting risk given only ~26 weeks per country?</div><div class="iter-metrics"><span>AP 0.1844</span><span>Brier 0.1827</span><span>Acc 0.792</span><span>n=120 pos=19</span></div><div class="iter-take">No — worse than #2 and barely better than #1. Country-specific identity carries real signal that region-level grouping washes out.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">04</span><h4>GBM, deeper trees (max_depth=5)</h4></div><div class="iter-body"><div class="iter-hyp">More capacity to learn feature interactions — worth checking whether that helps or just overfits a small dataset.</div><div class="iter-metrics"><span>AP 0.1981</span><span>Brier 0.1769</span><span>Acc 0.775</span><span>n=120 pos=19</span></div><div class="iter-take">Essentially flat versus baseline. Extra depth isn't buying anything on a dataset this size.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">05</span><h4>GBM, shallow + regularized</h4></div><div class="iter-body"><div class="iter-hyp">The opposite bet — more trees, shallower, stronger regularization, on the theory this dataset is too small for a complex model.</div><div class="iter-metrics"><span class="best">AP 0.2074</span><span class="best">Brier 0.1754</span><span>Acc 0.775</span><span>n=120 pos=19</span></div><div class="iter-take">A real, if modest, improvement over baseline — some evidence the default tree depth was mildly overfitting.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">06</span><h4>Random Forest (bagged trees)</h4></div><div class="iter-body"><div class="iter-hyp">A structurally different ensemble method — bagging instead of boosting — as a real second opinion on the same features.</div><div class="iter-metrics"><span class="best">AP 0.2227</span><span>Brier 0.1968</span><span>Acc 0.733</span><span>n=120 pos=19</span></div><div class="iter-take">Best raw average precision of any single model, but a clearly worse Brier score than #1/#2/#5 — exactly the calibration-versus-ranking tension the expert panel warned about in tab 02.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">07</span><h4>Logistic regression, full feature set</h4></div><div class="iter-body"><div class="iter-hyp">Earlier rounds only gave logistic regression 3 raw counts. The full feature set is a fairer comparison.</div><div class="iter-metrics"><span class="worst">AP 0.1510</span><span class="worst">Brier 0.2768</span><span class="worst">Acc 0.517</span><span>n=120 pos=19</span></div><div class="iter-take">Worst Brier and worst accuracy of the entire batch, even with the full feature set. A linear model still can't capture what this problem needs.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">08</span><h4>Ensemble: GBM + logistic regression</h4></div><div class="iter-body"><div class="iter-hyp">Averaging a nonlinear and a linear model sometimes cancels out each one's blind spots.</div><div class="iter-metrics"><span>AP 0.1809</span><span>Brier 0.1921</span><span>Acc 0.750</span><span>n=120 pos=19</span></div><div class="iter-take">Worse than GBM alone — logistic regression's weakness (#7) drags the average down rather than adding useful diversity.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">09</span><h4>Ensemble: GBM + Random Forest</h4></div><div class="iter-body"><div class="iter-hyp">Two different tree ensembles averaged — tests whether boosting and bagging make genuinely different errors worth combining.</div><div class="iter-metrics"><span>AP 0.2031</span><span class="best">Brier 0.1699</span><span class="best">Acc 0.808</span><span>n=120 pos=19</span></div><div class="iter-take">Best Brier and accuracy of any ensemble tried, and better calibrated than either GBM or Random Forest alone — genuine evidence for the panel's ensemble-diversity recommendation, just not with logistic regression involved.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">10</span><h4>Ensemble: GBM + RF + logistic regression (3-way)</h4></div><div class="iter-body"><div class="iter-hyp">The full-diversity ensemble — all three model families, averaged equally.</div><div class="iter-metrics"><span>AP 0.1885</span><span>Brier 0.1888</span><span>Acc 0.742</span><span>n=120 pos=19</span></div><div class="iter-take">Worse than the 2-way GBM+RF ensemble (#9) — adding the weakest model back in hurts more than the extra diversity helps.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">11</span><h4>Event grouping by CAMEO root-category severity</h4></div><div class="iter-body"><div class="iter-hyp">Group events by real CAMEO root categories into "severe" (assault/fight/mass violence) and "coerce-or-protest" shares — redefining both the features AND the escalation label around this taxonomy.</div><div class="iter-metrics"><span class="worst">AP 0.1501</span><span>Brier 0.2075</span><span>n=120 pos=16</span></div><div class="iter-take">Clearly worse than baseline. The severe-category label is real but much rarer (16 vs. 19 positives), making it a noisier target on a dataset this small.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">12</span><h4>Root-category features, quad-class label</h4></div><div class="iter-body"><div class="iter-hyp">Isolates whether the root-category FEATURES alone help, keeping the original label fixed for an apples-to-apples comparison.</div><div class="iter-metrics"><span>AP 0.2045</span><span>Brier 0.2092</span><span>n=120 pos=19</span></div><div class="iter-take">Better than #11 and close to baseline — a real, useful finding: the alternative taxonomy is more valuable as an extra FEATURE than as a replacement LABEL definition.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">13</span><h4>Tone-only features</h4></div><div class="iter-body"><div class="iter-hyp">News-coverage hostility alone, nothing about event counts or severity.</div><div class="iter-metrics"><span>AP 0.1706</span><span>Brier 0.2039</span><span>n=120 pos=19</span></div><div class="iter-take">Meaningfully worse alone than combined with other signals (#1) — tone carries real but partial information.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">14</span><h4>Goldstein/conflict-share-only features</h4></div><div class="iter-body"><div class="iter-hyp">Just the event-severity scale and conflict share, nothing else.</div><div class="iter-metrics"><span class="worst">AP 0.1436</span><span>Brier 0.2195</span><span>n=120 pos=19</span></div><div class="iter-take">Weakest of the three single-family ablations — surprising given how often the Goldstein scale showed up as a top feature in the earlier full-feature-set analysis; it needs the other signals around it to be useful.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">15</span><h4>Volume-only features</h4></div><div class="iter-body"><div class="iter-hyp">Raw event counts and their trend, nothing about what kind of events they are — the crudest possible real baseline.</div><div class="iter-metrics"><span>AP 0.1989</span><span>Brier 0.2450</span><span>n=120 pos=19</span></div><div class="iter-take">Nearly matches the full baseline (#1) on average precision despite using a fraction of the information — a real, slightly humbling finding about how much signal is in raw activity level alone.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">16</span><h4>Kitchen sink: all features + country</h4></div><div class="iter-body"><div class="iter-hyp">Every engineered feature from every family, plus country identity — tests whether more is simply better once nothing is held back.</div><div class="iter-metrics"><span>AP 0.1859</span><span>Brier 0.1949</span><span>n=120 pos=19</span></div><div class="iter-take">Worse than #2 (country identity alone) — more features without more data appears to add noise, not signal, on a sample this size.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">17</span><h4>Biweekly aggregation instead of weekly</h4></div><div class="iter-body"><div class="iter-hyp">Coarser time buckets trade temporal resolution for less noisy per-period statistics.</div><div class="iter-metrics"><span>AP 0.1952</span><span>Brier 0.1846</span><span>n=132 pos=22</span></div><div class="iter-take">Almost identical to weekly baseline. Time granularity, at least in this range, isn't the lever that matters most.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">18</span><h4>3-week lag history instead of 2</h4></div><div class="iter-body"><div class="iter-hyp">One more week of trailing history per feature — tests whether the extra lag adds real signal or just noise.</div><div class="iter-metrics"><span class="best">AP 0.2528</span><span class="best">Brier 0.1725</span><span>n=120 pos=19</span></div><div class="iter-take">Second-best average precision of the entire batch, on the exact same sample size and label as the baseline. A real, comparable, meaningful win.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">19</span><h4>More sensitive escalation label (z &gt; 0.75)</h4></div><div class="iter-body"><div class="iter-hyp">A looser definition of "escalation" catches more real events but also more borderline ones.</div><div class="iter-metrics"><span>AP 0.2386</span><span class="worst">Brier 0.2430</span><span>n=120 pos=24</span></div><div class="iter-take">Higher average precision but the worst Brier score of any real (non-degenerate) model — a textbook illustration of the label-definition tradeoff, independent of anything about the model itself.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">20</span><h4>Stricter escalation label (z &gt; 1.5)</h4></div><div class="iter-body"><div class="iter-hyp">Only the clearest, sharpest spikes count — fewer positives, each less ambiguous.</div><div class="iter-metrics"><span class="worst">AP 0.0945</span><span class="best">Brier 0.0762</span><span class="best">Acc 0.925</span><span>n=120 pos=8</span></div><div class="iter-take">Best Brier and accuracy in the whole batch — but only 8 real positives to learn from, and the panel's floor-comparison standard says this is mostly the base rate collapsing toward zero, not a real modeling win.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">21</span><h4>4-week-ahead forecast (about a month out)</h4></div><div class="iter-body"><div class="iter-hyp">Same features and model, predicting a full month ahead instead of one week.</div><div class="iter-metrics"><span class="best">AP 0.2283</span><span>Brier 0.1750</span><span>n=102 pos=17</span></div><div class="iter-take">Real signal survives a full month out — see tab 03 for the honest caveat about comparing across sample sizes.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">22</span><h4>8-week-ahead forecast (about two months out)</h4></div><div class="iter-body"><div class="iter-hyp">Pushing to the outer edge of what this dataset can be tested on at all.</div><div class="iter-metrics"><span class="best">AP 0.2617</span><span>Brier 0.2060</span><span>n=78 pos=16</span></div><div class="iter-take">Highest raw average precision of all 24 iterations — genuinely interesting, genuinely caveated in tab 03.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">23</span><h4>Calibrated GBM (Platt scaling)</h4></div><div class="iter-body"><div class="iter-hyp">Re-scales the model's raw output so predicted probabilities better match real-world frequencies.</div><div class="iter-metrics"><span class="best">Brier 0.1395</span><span class="best">Acc 0.842</span><span class="worst">Recall 0.000</span><span>n=120 pos=19</span></div><div class="iter-take">The single most important cautionary result in this batch: calibration genuinely improved (best real Brier outside the degenerate #20), but it pushed every single prediction below the 0.5 decision threshold — zero real escalations flagged. A perfectly calibrated model can still be operationally useless. Exactly the trap the expert panel's session 1 discussion predicted.</div></div></div>
+
+    <div class="iter-card"><div class="iter-head"><span class="n">24</span><h4>Kitchen sink + country, 4-week horizon</h4></div><div class="iter-body"><div class="iter-hyp">Combines the two individually-promising ideas from #16 and #21.</div><div class="iter-metrics"><span>AP 0.2010</span><span>Brier 0.1824</span><span>n=102 pos=17</span></div><div class="iter-take">Two good ideas didn't combine into a better one — a real, honest null result worth having rather than assuming it would obviously work.</div></div></div>
+
+  </div>
+
+</div>
+
+<!-- ===================== TAB 5: SUMMARY ===================== -->
+<div class="panel" id="tab5">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Lessons learned</span><h2>What 24 real iterations actually taught</h2></div>
+    <ol class="rank-list">
+      <li><span class="pos">1</span><div><h4>Identity beats volume of features</h4><p>Simply telling the model which country it's scoring (#2) beat throwing every possible feature at it (#16). Knowing <em>who</em> mattered more than knowing <em>more</em>.</p></div></li>
+      <li><span class="pos">2</span><div><h4>More history helped; more model complexity mostly didn't</h4><p>A third week of lagged history (#18) was the second-best real result in the batch. Deeper trees (#4), more features (#16), and bigger ensembles (#10) mostly didn't earn their added complexity.</p></div></li>
+      <li><span class="pos">3</span><div><h4>Calibration and decision-usefulness are genuinely different goals</h4><p>The best-calibrated real model (#23) flagged nothing at all. Any future deployment needs both numbers reported side by side, permanently — never one alone.</p></div></li>
+      <li><span class="pos">4</span><div><h4>The label definition is its own lever, separate from the model</h4><p>Loosening or tightening what counts as "escalation" (#19, #20) moved the numbers as much as any modeling choice did. Worth as much deliberate attention as model selection.</p></div></li>
+      <li><span class="pos">5</span><div><h4>Real signal plausibly extends to two months out — with an honest asterisk</h4><p>Average precision held up, and by some readings improved, out to an 8-week horizon (#22) — genuinely encouraging for the RFP's multi-week ambitions, but the shrinking sample at longer horizons means this needs re-testing on more data before being treated as settled.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Best performing</span><h2>Where this leaves the model, concretely</h2></div>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Rank</th><th>Configuration</th><th>Avg. precision</th><th>Brier</th><th>Same sample as baseline?</th></tr>
+      <tr><td>1</td><td>#18 — 3-week lag history</td><td class="best">0.2528</td><td class="best">0.1725</td><td class="best">Yes</td></tr>
+      <tr><td>2</td><td>#9 — GBM + Random Forest ensemble</td><td>0.2031</td><td>0.1699</td><td class="best">Yes</td></tr>
+      <tr><td>3</td><td>#2 — GBM + country identity</td><td>0.2171</td><td>0.1758</td><td class="best">Yes</td></tr>
+      <tr><td>4</td><td>#5 — GBM, shallow + regularized</td><td>0.2074</td><td>0.1754</td><td class="best">Yes</td></tr>
+    </table>
+    </div>
+    <p style="font-size:0.86rem;color:var(--ink-mute)">Restricted to configurations tested on the exact same 120-prediction, 19-positive sample as the baseline, per tab 03's caution about comparing across different sample sizes. The natural next iteration — not yet run — is combining #18's extra lag history with #2's country identity and #9's ensembling in one configuration.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Real case studies</span><h2>Three real predictions from the best comparable configuration (#2)</h2></div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Myanmar — week of March 9, 2026</h3><span class="outcome">Real escalation, correctly flagged</span></div>
+      <div class="case-body"><span class="case-score">0.939</span>Event volume actually fell that week, but the share of events that were real violent conflict rose, and the average hostility score dropped sharply — a "fewer but worse" pattern. With country identity added, the model's confidence here was effectively unchanged from the version without it (0.941 → 0.939) — this particular case didn't need the country flag to get right; the composition-shift signal alone was already strong.</div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Colombia — week of July 13, 2026</h3><span class="outcome">Real escalation, correctly leaned toward risk</span></div>
+      <div class="case-body"><span class="case-score">0.482</span>A much less confident, more honest call — 1,870 events that week, a rising conflict share, and a dropping hostility score, but not sharply enough to push the model past even-odds. A real example of the model getting the direction right without overclaiming certainty it didn't have — arguably the most <em>appropriately</em> calibrated of the three cases here.</div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Myanmar — week of June 22, 2026</h3><span class="outcome">No real escalation — a confident false alarm</span></div>
+      <div class="case-body"><span class="case-score">0.954</span>The honest cost of iteration #2's real win: giving the model a country identity clearly helped it learn "Myanmar tends to run hot," but that same learned prior also produced one of the most confident false alarms in the whole test set — real conflict-share and hostility-score movement that looked exactly like the March 9th case, just this time without a real escalation following it. Worth featuring precisely because it's the honest cost of the batch's best real improvement, not despite it.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Where this points next</span><h2>The concrete next iteration</h2></div>
+    <ul>
+      <li>Combine #18 (3-week lag) + #2 (country identity) + #9 (GBM/Random Forest ensemble) in one configuration — the three strongest, sample-comparable, independently-real results from this round, never yet tested together.</li>
+      <li>Re-run the calibration test (#23) on <em>that</em> combined configuration specifically — a model worth deploying needs to pass both the calibration bar and the decision-usefulness bar at the same time, and this round only ever tested calibration on the plain baseline.</li>
+      <li>Re-test the longer-horizon findings (#21, #22) once more history is available, per tab 03's sample-size caution, before treating "this model sees two months out" as a settled result rather than a promising early one.</li>
+      <li>Wire in a live language-model call for the retrieval-based forecaster and re-run this same 24-configuration structure against it — every iteration here used gradient-boosted trees or simpler; the RFP's actual required mechanism has not yet been run through this same rigorous a testing pass.</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 6: EXPANDED DATA & LEADING INDICATORS ===================== -->
+<div class="panel" id="tab6">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The question this tab answers</span><h2>"Gather way more data, model causality in general, then find conflict's leading indicators — that should produce a better model, right?"</h2></div>
+    <p class="lede">The honest answer turned out to be more interesting than a plain yes or no: real, freely available structural data was gathered and it did produce the best real result in the whole project — but not through general-purpose causal modeling, and the formal causality tests themselves came back mostly negative. Both halves of that are reported below, not just the flattering half.</p>
+    <div class="callout wire"><strong>What was deliberately not done, and why:</strong> a general-purpose "predict any event, then see what transfers to conflict" model, and a claim of confirmed causation. Observational news/event data can't support real causal identification without a research design this project doesn't have (see the prior conversation turn), and pretraining on all events is an unbounded, largely orthogonal problem. What follows instead is targeted: real new datasets, tested directly against the existing conflict label, using both a formal leading-indicator test (Granger-style) and a direct predictive backtest — the same rolling-origin discipline used everywhere else in this project.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Four new real sources</span><h2>What was actually gathered, and why each one is a plausible leading indicator</h2></div>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Source</th><th>What it adds</th><th>Access</th><th>Real coverage found</th></tr>
+      <tr><td>NASA POWER</td><td>Daily precipitation &amp; temperature at each country's capital/largest city — a real drought-stress proxy</td><td>Free, no key, live MERRA-2 reanalysis</td><td>1,284 real daily records, 6/6 countries, ~98% weekly coverage</td></tr>
+      <tr><td>WFP food prices (via HDX)</td><td>Real market-level food prices, USD-normalized — a documented real unrest correlate</td><td>Free, no key, updated live</td><td>52,761 real rows, 6/6 countries — reports monthly, not weekly (Venezuela's feed stopped updating in 2025-05, itself a disclosed real finding about reporting capacity)</td></tr>
+      <tr><td>World Bank WDI</td><td>Inflation, GDP growth, unemployment, Gini — slow-moving structural fragility context</td><td>Free, no key</td><td>6/6 countries, but "most recent" ranges from 2025 (Colombia) to 2016 (Venezuela) to 2019 (Myanmar) — data-reporting recency is itself informative</td></tr>
+      <tr><td>GDELT GKG (Global Knowledge Graph)</td><td>Document-level theme tags &amp; tone across a broader outlet set than the coded event table alone — the concrete answer to "more news sources"</td><td>Free, no key, same real GDELT infrastructure already in use</td><td>156 real weekly country-rows, sampled one real day per week across the panel (disclosed sampling compromise, not synthetic data)</td></tr>
+      <tr><td>Election calendar</td><td>Hand-curated, sourced real 2026 election dates — a concrete, well-precedented conflict-timing signal</td><td>Verified via live search, 3 real events found</td><td>Colombia (legislative Mar 8, presidential May 31), Ethiopia (general, Jun 1); Afghanistan/Sudan/Venezuela have none scheduled in this window — a real, disclosed absence, not a gap</td></tr>
+    </table>
+    </div>
+    <p style="font-size:0.85rem;color:var(--ink-mute)">Two real sources were checked and dropped rather than forced in: Frankfurter and exchangerate.host FX APIs don't cover any of the six target currencies (SDG, ETB, AFN, MMK, COP, VES) without a paid key, and satellite nightlights processing was judged too heavy for this round. Both are disclosed limitations, not silently skipped.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Formal leading-indicator test</span><h2>Granger-style causality testing — the honest, mostly-null results</h2></div>
+    <p class="lede">For each new signal: does its own recent history improve prediction of next-week conflict intensity, beyond what conflict's own history already predicts? Two versions run — a classical per-country test (real but statistically weak with ~26 weeks per country) and a pooled fixed-effects version borrowing power across all six countries (more power, weaker assumption).</p>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Candidate signal</th><th>Strongest per-country hit</th><th>Pooled, all 6 countries</th><th>Read</th></tr>
+      <tr><td>Rainfall anomaly</td><td class="best">Venezuela, p=0.041 (n=27)</td><td class="worst">p=0.273 (n=133)</td><td>Real single-country signal, doesn't generalize</td></tr>
+      <tr><td>Food price deviation</td><td>Nothing under p=0.34</td><td class="worst">p=0.498 (n=148)</td><td>No real evidence found, either way</td></tr>
+      <tr><td>GKG fragility-theme share</td><td class="best">Afghanistan, p=0.005 (n=26)</td><td class="worst">p=0.373 (n=148)</td><td>Real single-country signal, doesn't generalize</td></tr>
+      <tr><td>GKG mean tone</td><td>Afghanistan, p=0.064 (n=26, borderline)</td><td class="worst">p=0.262 (n=148)</td><td>No real evidence found, either way</td></tr>
+    </table>
+    </div>
+    <div class="callout"><strong>The honest statistical caveat this result demands:</strong> 4 signals × 6 countries = 24 separate per-country tests were run. At the conventional p&lt;0.05 threshold, roughly 1 false positive is expected by chance alone even if nothing here were real — so the two apparent hits (Venezuela rainfall, Afghanistan GKG themes) are exactly what pure chance would predict, not confirmed discoveries. Neither survives in the pooled, more-powered version of the same test. The rigorous, disciplined answer is: <strong>this round's formal causality-style testing did not find a generalizable leading indicator</strong> — a real, disclosed null result, not a failure to report.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Direct predictive test</span><h2>Does the new data help the actual model, independent of the Granger result?</h2></div>
+    <p class="lede">Granger significance and predictive usefulness in a nonlinear model are different questions — a signal can help gradient-boosted trees find a useful nonlinear split without producing a significant linear Granger F-test, and vice versa. So every new source was also tested directly in the same real rolling-origin backtest harness used for all 24 prior iterations, on the identical n=120, 19-positive sample as the original baseline.</p>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Configuration</th><th>Avg. precision</th><th>Brier</th><th>Recall @ 0.5</th><th>Read</th></tr>
+      <tr><td>Baseline (GDELT core features only, reproduced)</td><td>0.1995</td><td>0.1794</td><td>0.158</td><td>Reference point</td></tr>
+      <tr><td>+ climate (rainfall/temp)</td><td>0.1882</td><td class="best">0.1687</td><td>0.053</td><td>Best Brier here, but worse ranking and much worse recall</td></tr>
+      <tr><td>+ food price deviation</td><td>0.2144</td><td>0.1725</td><td>0.158</td><td>Modest real gain</td></tr>
+      <tr><td>+ structural (WDI)</td><td>0.2090</td><td>0.1804</td><td>0.211</td><td>Modest real gain, best recall of the singles</td></tr>
+      <tr><td>+ election proximity</td><td>0.2462</td><td>0.1825</td><td>0.263</td><td>Best single addition by far</td></tr>
+      <tr><td>+ GKG news themes/tone</td><td>0.1703</td><td>0.1858</td><td>0.105</td><td>Didn't help combined with core features</td></tr>
+      <tr><td>+ all four external sources at once</td><td class="worst">0.1588</td><td>0.1894</td><td>0.105</td><td>Worst of all — echoes the original study's "kitchen sink hurts" finding, now confirmed a second time</td></tr>
+      <tr><td>External data alone, <em>no</em> GDELT event features at all</td><td>0.2122</td><td>0.1730</td><td>0.105</td><td>Genuinely notable — close to the GDELT-only baseline using none of the original event-count data</td></tr>
+      <tr><td>+ election + country identity</td><td class="best">0.2561</td><td>0.1774</td><td>0.263</td><td><strong>New best result of the entire project</strong> — beats every one of the original 24 iterations on the same sample</td></tr>
+      <tr><td>+ election + food + country identity</td><td>0.2448</td><td>0.1846</td><td>0.263</td><td>Adding food on top of the winning combo doesn't help further</td></tr>
+      <tr><td>3-week lag + election + country identity</td><td>0.1966</td><td>0.1763</td><td>0.211</td><td>Combining two individually-good ideas (deeper lag + election) doesn't combine additively — another honest null, same lesson as iteration #24</td></tr>
+    </table>
+    </div>
+    <div class="callout good"><strong>The clearest real win:</strong> GDELT core features + election-date proximity + country identity reaches AP&nbsp;0.2561 and Brier&nbsp;0.1774 — better than every configuration in the original 24-iteration study, on the exact same sample. It's an intuitive result too: knowing a country is a few weeks from a legislative or presidential election, combined with knowing which country it is, is a concrete, well-precedented real predictor of political tension — closer to "a real structural fact about the world" than to a statistical artifact.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Synthesis</span><h2>So — was the premise right?</h2></div>
+    <ul>
+      <li><strong>Gathering more data: yes, clearly worth it.</strong> Four new real, freely-available sources were integrated in one round, and one of them (election proximity) produced the single best real result in the project so far.</li>
+      <li><strong>Modeling causality in general, for any event, first: still the wrong lever.</strong> Nothing in this round needed a general-purpose causal or all-event model — the win came from directly testing specific, well-motivated candidate signals against the specific outcome that matters, exactly as argued before building any of this.</li>
+      <li><strong>The causality-style testing itself mostly said "no":</strong> a disciplined Granger-style test, run honestly with a multiple-comparisons caveat, did not find a generalizable leading indicator among the four new sources. That's a real, valuable finding on its own — it means the election-proximity win is better understood as a strong direct predictor discovered through backtesting, not as a confirmed causal driver, and shouldn't be oversold as one.</li>
+      <li><strong>The "more features together" trap keeps reappearing.</strong> This is now the second time (after iteration #16 in the original study) that combining every available feature family performed worse than a couple of well-chosen ones — a real, repeated, small-sample lesson worth trusting going forward.</li>
+    </ul>
+    <p style="font-size:0.85rem;color:var(--ink-mute)">Next real step: re-run the calibration test (as in the original study's iteration #23) on the new best configuration specifically, since a model isn't deployment-ready until it passes both the ranking bar and the calibration bar at once — and extend the election calendar with verified dates further out as they're announced, since it's currently the strongest single lever found.</p>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  Fourth companion to conflict-prediction-reference.html, recommended-approach-and-results.html, and model-battery-results.html in this folder. All 24 iterations in tab 04 are real, reproducible runs of scripts/run_iterations.py against the real GDELT panel. Tab 06 adds four further real, independently-sourced datasets (NASA POWER, WFP/HDX, World Bank WDI, GDELT GKG) plus a verified real election calendar, tested via scripts/granger_tests.py and scripts/run_iterations_v2.py — no simulated numbers anywhere in this document. A fifth companion, iteration-search-log.html, continues this work with a large-scale (1000+) real automated search building on everything above. Not a finished Phase II proposal.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

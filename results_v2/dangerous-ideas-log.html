@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dangerous / Unsafe Ideas Log — Considered, Not Pursued</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:60ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:74ch; font-size:0.98rem; margin-top:0.6rem;}
+  main{max-width:900px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .section{margin-bottom:2.4rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:#8a3520; background:var(--alert-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.2rem; margin:0;}
+  .idea{border:1px solid var(--line); border-left:4px solid var(--alert); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:1.1rem 1.3rem; margin-bottom:1.1rem;}
+  .idea h3{font-size:1rem; margin-bottom:0.5rem;}
+  .idea .risk-tag{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; background:var(--alert-soft); color:#8a3520; padding:0.1rem 0.5rem; border-radius:10px; margin-right:0.4rem; margin-bottom:0.5rem;}
+  .idea h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--ink-mute); margin:0.7rem 0 0.2rem;}
+  .idea p{font-size:0.92rem; margin-bottom:0.5rem;}
+  .callout{border-left:3px solid var(--signal); background:var(--signal-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.94rem; color:var(--signal-deep); margin:1rem 0;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.6rem; color:#8a3520; font-weight:600;}
+  .stat .l{font-size:0.78rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  footer{max-width:900px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">Companion log · considered during the 1000+-iteration search, deliberately not built</div>
+  <h1>Ideas that would plausibly move the model forward, and why they weren't pursued</h1>
+  <p class="dek">The brief for this round explicitly asked for radical next-step ideas "as long as you judge they are free and safe and possible" — and to log the ones that aren't, separately, rather than either building them or silently dropping them. This is that separate log. Nothing on this page was implemented. Each entry states the concrete capability, the concrete way it could cause harm, and what a legitimate version of the same idea would require that this project doesn't have.</p>
+</div>
+
+<main>
+
+<div class="section">
+  <div class="stat-grid">
+    <div class="stat"><div class="n">9</div><div class="l">ideas logged here instead of built</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">of them implemented in any script in this project</div></div>
+  </div>
+  <div class="callout">This project's actual DARPA SBIR context ("Art of Novel Signals," early warning from radio/social signals in data-sparse regions) makes several of these ideas not hypothetical — they're natural-sounding extensions of exactly the kind of system this prototype is a demonstration for. That's precisely why they're logged here instead of tried: the line between "early-warning research" and "surveillance/targeting infrastructure" is a real one, and it's the kind of line that should be crossed deliberately, with authorization and oversight, or not at all — not by a research iteration that seemed like the next logical step.</div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Surveillance / privacy</span><h2>Ideas that would mean collecting on real, identifiable people without consent</h2></div>
+
+  <div class="idea">
+    <h3>1. Scraping private Telegram/WhatsApp groups for "community reporting" signal</h3>
+    <span class="risk-tag">Privacy</span><span class="risk-tag">Source safety</span><span class="risk-tag">ToS / possibly illegal</span>
+    <p>The actual RFP text names Telegram/WhatsApp community reporting as an in-scope signal source for data-sparse regions. Scraping <em>public</em> channels a country's own press already treats as public sources is one thing; joining or scraping <em>private</em> groups to extract conflict-relevant chatter is another — it means collecting on real people in active conflict zones who have no idea they're a data point, several of whom could be at direct physical risk if their location or affiliation leaked.</p>
+    <h4>What a legitimate version would require</h4>
+    <p>Only public channels, explicit terms-of-service compliance, and almost certainly an IRB-style human-subjects review given the conflict-zone context — none of which this project has or was asked to obtain.</p>
+  </div>
+
+  <div class="idea">
+    <h3>2. De-anonymizing or geolocating individual sources, journalists, or actors to strengthen the actor-hypergraph</h3>
+    <span class="risk-tag">Physical safety risk</span>
+    <p>The hypergraph model's actor-sharing hyperedges (task 4 of this round) already link country-weeks by shared named actors from public GDELT/UCDP data. A "radical improvement" would be resolving vague actor codes to real individual identities and precise locations to sharpen the graph. In a conflict-zone context this is the single most dangerous idea on this list: if the actor is a journalist, activist, or defector rather than a combatant, improving the model's resolution on "who was where, when" can get that person killed.</p>
+    <h4>What a legitimate version would require</h4>
+    <p>This is close to a hard line rather than a "needs more resourcing" item — any legitimate version would need to stay at the organization/faction level GDELT and UCDP already use, never resolve to individuals absent a named-actor's own public, on-the-record political role (e.g., a head of state already named in the wire coverage).</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Dual-use / militarization</span><h2>Ideas that would turn a forecasting research prototype into operational infrastructure</h2></div>
+
+  <div class="idea">
+    <h3>3. Feeding model predictions directly into an operational alerting or targeting pipeline</h3>
+    <span class="risk-tag">Life-safety</span><span class="risk-tag">Automation bias</span>
+    <p>Every result in this project's whole document set is built on proxy labels (Goldstein-score/quad-class thresholds, or UCDP's own real but retrospective fatality coding), small-to-moderate real sample sizes even after this round's expansion, and known calibration-vs-decision-usefulness tension (flagged repeatedly in the earlier expert-panel review). Wiring this straight into any system that triggers action — military repositioning, an evacuation order, a strike-planning input — without a human analyst in the loop treats a research-grade probability estimate as ground truth it has never been validated to be.</p>
+    <h4>What a legitimate version would require</h4>
+    <p>Extensive independent validation against a real operational ground truth, a human-in-the-loop review gate, and sign-off from people with actual authority and accountability over the downstream action — not a modeling change.</p>
+  </div>
+
+  <div class="idea">
+    <h3>4. A synthetic-audio "data augmentation" pipeline for low-resource conflict languages</h3>
+    <span class="risk-tag">Disinformation</span><span class="risk-tag">Dual-use</span>
+    <p>The actual RFP explicitly asks for "a synthetic-data strategy for affordable broad language coverage" for ASR training. The legitimate version (synthetic speech to help train a transcription model) sits right next to a dangerous one: a system that can generate convincing synthetic speech in a target language/dialect is most of the way to being able to generate convincing <em>fake</em> audio of real political or military figures making statements they never made — in exactly the low-resource-language, low-media-scrutiny regions where a fake would be hardest to debunk quickly.</p>
+    <h4>What a legitimate version would require</h4>
+    <p>Synthetic data generation scoped tightly to training-only use (never distributed, never voice-cloned from a real identifiable speaker), with provenance watermarking — a real engineering and policy commitment this project doesn't have the scope to make responsibly, so it wasn't started.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Information hazard</span><h2>Ideas where the model working well is itself the risk</h2></div>
+
+  <div class="idea">
+    <h3>5. Auto-publishing real-time country instability scores</h3>
+    <span class="risk-tag">Market manipulation</span><span class="risk-tag">Self-fulfilling escalation</span>
+    <p>A public, automatically-updating "this country's escalation probability just crossed X%" feed is a tempting demo of the pipeline actually working end-to-end. It's also a real information hazard: commodity and currency markets react to exactly this kind of signal, a leaked or gamed early warning could move capital in a way that itself destabilizes a fragile state, and a faction actively planning unrest could use the model's own published confidence level to time actions around when analysts are (or aren't) watching closely.</p>
+    <h4>What a legitimate version would require</h4>
+    <p>Restricted distribution to vetted analysts under an actual responsible-disclosure framework, not a public dashboard — outside this project's scope to build or govern.</p>
+  </div>
+
+  <div class="idea">
+    <h3>6. Scraping restricted or paywalled intelligence/OSINT feeds to boost the "pure" comparison set further</h3>
+    <span class="risk-tag">Legal / ToS</span>
+    <p>Beyond UCDP and GDELT (both genuinely free and built for this use), several higher-resolution conflict intelligence products exist behind subscription or classification barriers. "Just get more of the good data" is a natural next idea; scraping around a paywall or authentication barrier to get it isn't a data-engineering shortcut, it's a legal violation, and was ruled out on that basis alone rather than attempted and disclosed.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Infrastructure abuse</span><h2>Ideas that would look like an attack on the data providers this project depends on</h2></div>
+
+  <div class="idea">
+    <h3>7. Maximally parallel, unthrottled scraping to build an even bigger dataset faster</h3>
+    <span class="risk-tag">DoS risk to a shared public resource</span>
+    <p>This round's large-scale GDELT and GKG pulls (task 2) already move several million real events and hundreds of megabytes through GDELT's free, no-auth public endpoints. Every request in both scripts is deliberately rate-limited (a real, disclosed 0.12-0.4s sleep between days) specifically so this project's own data hunger doesn't degrade a shared public resource other researchers rely on. Removing that throttling to finish the scrape faster was considered and rejected — GDELT's public infrastructure isn't this project's to stress-test.</p>
+  </div>
+
+  <div class="idea">
+    <h3>8. Standing up a persistent, always-on scraper/inference service rather than one-off runs</h3>
+    <span class="risk-tag">Unbounded resource commitment</span>
+    <p>A natural "operationalize this" step is a always-running service that keeps scraping and re-scoring continuously. Beyond the dual-use concern already logged above (idea 5), this also means an unbounded, unattended commitment of the user's own machine, disk, and network — reasonable to consider once a specific use case and owner exist, not as a default extension of a research prototype.</p>
+  </div>
+
+  <div class="idea">
+    <h3>9. Using the hypergraph's actor network to infer real-world organizational structure of non-state armed groups</h3>
+    <span class="risk-tag">Physical safety risk</span><span class="risk-tag">Dual-use</span>
+    <p>A hypergraph that already links country-weeks by shared named actors is one analytical step away from inferring command structure, coordination patterns, or membership overlap between armed groups from open-source signal alone. That's a legitimate and long-standing OSINT research area — and also directly usable as targeting intelligence. It wasn't pursued here because this project has no mechanism to control who the output reaches or how it's used once produced.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Summary</span><h2>The pattern across all nine</h2></div>
+  <p>Almost none of these are dangerous because the underlying technique is exotic — hypergraph actor-links, synthetic speech, real-time scoring, and broader scraping are all things this project already does safely in a narrower form. Each becomes dangerous specifically at the point where it would touch real, identifiable people without their knowledge (ideas 1, 2, 9), hand a probabilistic research output to a system that acts on it without a human in the loop (ideas 3, 4), or treat a shared public resource or an information channel as an unowned commodity to consume or flood (ideas 5, 6, 7, 8). That's a useful, concrete line for judging future ideas in this project too, not just these nine.</p>
+</div>
+
+</main>
+
+<footer>
+  Companion to results_v2/final-summary-and-case-studies.html. Every idea above was considered and rejected before any code was written for it — none of these appear anywhere else in this project's scripts or data.
+</footer>
+
+</body>
+</html>

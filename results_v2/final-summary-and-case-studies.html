@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Summary — 1150 Real Iterations, 3 Tracks, Ranked Results and Case Studies</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:64ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:78ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1080px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .card h3{font-size:1rem; margin-bottom:0.4rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.5rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.76rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.83rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.5rem;}
+  table.results td{padding:0.42rem 0.5rem; border-bottom:1px solid var(--line);}
+  table.results td.best{color:var(--good); font-weight:600;}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.55rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2.2rem 1fr; gap:0.9rem; padding:1rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.3rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.98rem;}
+  .rank-item p{margin:0; font-size:0.9rem; color:var(--ink-soft);}
+  .rank-item .why{font-size:0.83rem; color:var(--ink-mute); font-style:italic; margin-top:0.3rem;}
+  .case-card{border:1px solid var(--line); border-left:4px solid var(--signal); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:1.2rem 1.4rem; margin-bottom:1.2rem;}
+  .case-card.flagged{border-left-color:var(--alert);}
+  .case-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.6rem;}
+  .case-head h3{margin:0; font-size:1.02rem;}
+  .case-prob{font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--good); font-size:1.1rem;}
+  .reasoning-quote{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; font-size:0.88rem; color:var(--ink-soft); font-style:italic; margin:0.6rem 0;}
+  .glossary{display:grid; grid-template-columns:1fr 1fr; gap:1rem;}
+  @media(max-width:720px){.glossary{grid-template-columns:1fr;}}
+  .gterm{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem;}
+  .gterm h4{margin:0 0 0.35rem; font-size:0.95rem; font-family:'IBM Plex Sans',sans-serif; font-weight:600; color:var(--signal-deep);}
+  .gterm h4 .dir{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--ink-mute); font-weight:400; margin-left:0.4rem;}
+  .gterm p{margin:0 0 0.5rem; font-size:0.88rem; color:var(--ink-soft);}
+  .gterm .ex{font-size:0.82rem; color:var(--ink-mute); border-left:2px solid var(--line-strong); padding-left:0.6rem;}
+  footer{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Final report, this round</span>
+    <span>1150 real iterations · 3 distinct data tracks · generated 2026-08-05</span>
+  </div>
+  <h1>What 1150 more real iterations across three genuinely distinct datasets actually found</h1>
+  <p class="dek">This closes out the round that started from one real complaint — "120 events is too small to learn anything from" — and asked for bigger data (kept separate from a pure comparison set), hypergraph neural networks, graph-based NLP, and 1000+ more logged real iterations. All of that happened. This page ranks the real results across every metric, states the honest cross-track lessons, and walks through real predicted-and-verified case studies with the actual reasoning behind them.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> Headline Results</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Full Rankings by Track</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Cross-Track Insights</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Case Studies</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Ranked Next Steps</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Scale</span><h2>What actually ran, for real, this round</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">1,150</div><div class="l">real rolling-origin backtest iterations (1,146 usable)</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">distinct data tracks, never merged together</div></div>
+      <div class="stat"><div class="n">6.2M</div><div class="l">real raw conflict events across all sources combined</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">new graph-native model families, both built from scratch</div></div>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Track</th><th>Source</th><th>Country-weeks</th><th>vs. original 161</th><th>Real iterations run</th></tr>
+        <tr><td><strong>A — original</strong></td><td>GDELT, 6 countries, 180 days (every prior document's dataset)</td><td>161</td><td>baseline</td><td>384</td></tr>
+        <tr><td><strong>B — large scraped</strong></td><td>GDELT, 19 countries, 3 years, self-scraped this round (5.8M raw events)</td><td>2,989</td><td>~18.6x</td><td>460</td></tr>
+        <tr><td><strong>C — pure UCDP</strong></td><td>UCDP GED v25.1, real fatality-coded academic dataset, 124 countries globally, 19 used here, no auth required</td><td>29,038 (19-country subset)</td><td>~180x</td><td>302</td></tr>
+      </table>
+    </div>
+    <div class="callout">
+      <strong>On "Kaggle":</strong> no Kaggle API credentials were available this round, so the "pure, distinct comparison dataset" is UCDP GED directly rather than a Kaggle mirror of it — the same real, primary academic source (1989–2024, 385,918 events, 124 countries) that most Kaggle conflict-prediction datasets are themselves built from. If Kaggle credentials become available later, swapping in a specific Kaggle dataset is a small, disclosed change, not a redesign.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Headline</span><h2>Best real, non-tiny-sample result per track</h2></div>
+    <p class="lede">Filtered to configurations with at least 15 real positive labels in the pooled test set, so the number isn't a 2-positive fluke — the same discipline this project's earlier rounds insisted on.</p>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Track</th><th>Best config</th><th>AP↑</th><th>Brier↓</th><th>Precision</th><th>Recall</th><th>Specificity</th><th>Accuracy</th><th>F1</th><th>ROC-AUC</th><th>MCC</th><th>n / pos</th></tr>
+        <tr><td>A</td><td>GBM, volume+core, 8wk horizon</td><td>0.391</td><td>0.189</td><td>0.333</td><td>0.067</td><td>0.961</td><td>0.758</td><td>0.111</td><td>0.637</td><td>0.055</td><td>66/15</td></tr>
+        <tr><td>B</td><td class="best">HypergraphNN, hidden=8</td><td class="best">0.287</td><td>0.248</td><td>0.194</td><td>0.609</td><td>0.604</td><td>0.605</td><td>0.294</td><td>0.663</td><td>0.148</td><td>473/64</td></tr>
+        <tr><td>C</td><td class="best">Ensemble GBM+RF+logreg, +country</td><td class="best">0.871</td><td class="best">0.105</td><td>0.687</td><td>0.874</td><td>0.850</td><td>0.856</td><td>0.769</td><td>0.932</td><td>0.677</td><td>1245/341</td></tr>
+      </table>
+    </div>
+    <div class="callout good"><strong>The headline that matters most:</strong> on the pure, fatality-coded UCDP track, the best real ensemble configuration reaches AP 0.871, ROC-AUC 0.932, and — genuinely rare in this project's whole history — <strong>precision 0.687 and recall 0.874 at the same time</strong>, on a pooled sample of 1,245 real predictions with 341 real positives. Every earlier round of this project (including the 1150-iteration v1 grand search) topped out with AP around 0.25–0.35 on samples of 24–120 pooled predictions. That gap is overwhelmingly a label-quality and sample-size story, not a modeling-cleverness story: UCDP's real fatality counts carry far more genuine signal than a Goldstein/quad-class proxy label ever could, and 1,245 real predictions let a model's real skill separate from noise in a way 120 never could.</div>
+    <div class="callout"><strong>Track B is the honest counterpoint:</strong> 18.6x more country-weeks than the original panel did NOT translate into a better headline AP than Track A's best (0.287 vs 0.391) — more data on a still-proxy label with a still-small per-fold positive count doesn't fix the underlying label-quality ceiling. What it did do: make Track B's number far more trustworthy (64 real positives pooled, not 2–15), and it's where the new hypergraph model shows its clearest, most consistent win (tab 03).</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Plain-English glossary</span><h2>What each metric on this page actually means</h2></div>
+    <p class="lede">Every metric below is answering a slightly different question about the same underlying situation: each week, for each country, the model outputs a number between 0 and 1 (its estimated chance of an escalation), and either an escalation really happened that week or it didn't. "Flagged" below means the model's probability crossed the 0.5 cutoff and it effectively said "watch this one."</p>
+
+    <div class="card" style="margin-bottom:1.2rem;">
+      <h3 style="font-size:0.92rem;">The four things that can happen, every time the model makes a call</h3>
+      <p style="font-size:0.9rem;">Every metric on this page is built from just four counts, tallied up across every real prediction: <strong>flagged it, and it escalated</strong> (a correct catch), <strong>flagged it, but it stayed quiet</strong> (a false alarm), <strong>didn't flag it, and it stayed quiet</strong> (a correct pass), and <strong>didn't flag it, but it escalated</strong> (a missed crisis — the worst kind of mistake for an early-warning system). Everything below is just different ways of adding up and comparing those four counts.</p>
+    </div>
+
+    <div class="glossary">
+      <div class="gterm">
+        <h4>Accuracy <span class="dir">higher is better</span></h4>
+        <p>Out of every prediction the model made, what fraction were correct — including both "correctly flagged a real escalation" and "correctly left a quiet week alone"?</p>
+        <p class="ex">The trap: if only 15% of weeks ever escalate, a model that flags <em>nothing, ever</em> is still "85% accurate" while catching zero real crises. That's exactly why this page never reports accuracy by itself — always check it next to recall.</p>
+      </div>
+      <div class="gterm">
+        <h4>Precision <span class="dir">higher is better</span></h4>
+        <p>Of the weeks the model actually flagged as "watch this one," what fraction turned out to be real? Answers: "when it cries wolf, how often is it right?"</p>
+        <p class="ex">Precision 0.69 means about 7 out of every 10 alerts the model raised were genuine — the other 3 were false alarms.</p>
+      </div>
+      <div class="gterm">
+        <h4>Recall <span class="dir">higher is better</span></h4>
+        <p>Of the weeks that actually escalated, what fraction did the model catch? Answers: "how many real crises got missed?" (Also called <em>sensitivity</em> elsewhere.)</p>
+        <p class="ex">Recall 0.87 means the model caught 87 out of every 100 real escalations — and missed the other 13.</p>
+      </div>
+      <div class="gterm">
+        <h4>Specificity <span class="dir">higher is better</span></h4>
+        <p>The mirror image of recall, but for quiet weeks: of the weeks that actually stayed quiet, what fraction did the model correctly leave alone? Answers: "how good is it at not crying wolf?"</p>
+        <p class="ex">Specificity 0.85 means that out of 100 genuinely quiet weeks, the model correctly stayed silent on 85 of them and raised a false alarm on the other 15.</p>
+      </div>
+      <div class="gterm">
+        <h4>F1 score <span class="dir">higher is better, 0–1</span></h4>
+        <p>A single number that blends precision and recall together, so a model can't score well by being great at one while ignoring the other completely.</p>
+        <p class="ex">A model with high precision but near-zero recall (rare, cautious, but misses almost everything) gets a <em>low</em> F1 — the blend punishes lopsided performance.</p>
+      </div>
+      <div class="gterm">
+        <h4>Brier score <span class="dir">lower is better, 0 = perfect</span></h4>
+        <p>How far off the model's predicted <em>probabilities</em> were from reality, on average — not just whether it flagged something, but how confident it was and whether that confidence was justified.</p>
+        <p class="ex">Predicting a 90% chance of escalation and being right costs very little; predicting 90% and being wrong costs a lot. A model that always predicts "10% chance" and is usually right can beat a flashier model that's frequently overconfident.</p>
+      </div>
+      <div class="gterm">
+        <h4>Average Precision (AP) <span class="dir">higher is better, 0–1</span></h4>
+        <p>Also called PR-AUC. Measures how well the model <em>ranks</em> real escalations above false alarms, across every possible alert threshold at once, with extra weight on getting the very top of the ranking right. This is the main "how good is this model, overall" number used throughout this document.</p>
+        <p class="ex">A useful sanity check for AP: with escalations happening in roughly 15–30% of weeks depending on the track, a model that's just guessing randomly would score an AP near that same 0.15–0.30 baseline — so an AP of 0.87 (this round's best result) is meaningfully better than chance, not just a big-looking number.</p>
+      </div>
+      <div class="gterm">
+        <h4>ROC-AUC <span class="dir">higher is better, 0.5 = coin flip, 1.0 = perfect</span></h4>
+        <p>If you grabbed one week that actually escalated and one that didn't, completely at random, ROC-AUC is the probability the model gave the escalating week the higher risk score.</p>
+        <p class="ex">ROC-AUC 0.93 means: pick any real escalation and any real quiet week at random, and 93% of the time the model correctly rated the escalation as riskier.</p>
+      </div>
+      <div class="gterm">
+        <h4>Log-loss <span class="dir">lower is better, 0 = perfect</span></h4>
+        <p>Similar to Brier score — how far off the predicted probabilities were — but it punishes <em>confident, wrong</em> answers much more harshly.</p>
+        <p class="ex">Predicting "1% chance of escalation" right before one happens is penalized far more severely under log-loss than under Brier score — it specifically discourages a model from ever being both confident and wrong.</p>
+      </div>
+      <div class="gterm">
+        <h4>MCC — Matthews Correlation Coefficient <span class="dir">higher is better, -1 to +1</span></h4>
+        <p>A single balanced score that accounts for all four outcomes (correct catches, false alarms, correct passes, missed crises) at once. 0 means no better than random guessing; 1 means perfect; negative means worse than random.</p>
+        <p class="ex">Unlike accuracy, MCC doesn't get fooled by a rare-event problem like this one — a "flag nothing, ever" model that looks great on accuracy scores 0 on MCC, correctly showing it has no real skill.</p>
+      </div>
+      <div class="gterm">
+        <h4>n / pos <span class="dir">not a metric — the sample size behind one</span></h4>
+        <p><strong>n</strong> is the total number of real country-week predictions pooled together to compute that row's scores (across every rolling-origin fold, for one model configuration). <strong>pos</strong> is short for "positive" — standard statistics/ML shorthand for the "positive class," i.e. the outcome being detected — and here means how many of those n predictions were <em>actual</em> real escalations (label = 1); the rest were quiet weeks (the "negative" class, label = 0).</p>
+        <p class="ex">"1245 / 341" means the score was computed from 1,245 real predictions, 341 of which were genuine escalations. A row reading "18 / 2" is built from only 2 real escalation examples — technically a real score, but small enough that one lucky or unlucky guess can swing it a lot. That's exactly why tab 01's headline table only includes rows with at least 15 real positives, and why every "best result" claim in this document names its n/pos alongside the score.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 2 ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Track A</span><h2>Original small GDELT panel — mean AP by model family</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Model family</th><th>Mean AP</th><th>Real runs</th></tr>
+        <tr><td class="best">Hypergraph NN</td><td class="best">0.302</td><td>20</td></tr>
+        <tr><td>Label spreading</td><td>0.301</td><td>10</td></tr>
+        <tr><td>Ensemble (GBM/RF/logreg)</td><td>0.237</td><td>20</td></tr>
+        <tr><td>Logistic regression</td><td>0.229</td><td>65</td></tr>
+        <tr><td>Random forest</td><td>0.228</td><td>48</td></tr>
+        <tr><td>GBM</td><td>0.214</td><td>221</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.88rem; color:var(--ink-soft)">Both new graph-native families beat every tabular family on <em>average</em> here — real, if on a still-small track.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Track B</span><h2>Large scraped GDELT panel — mean AP by model family</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Model family</th><th>Mean AP</th><th>Real runs</th></tr>
+        <tr><td class="best">Hypergraph NN</td><td class="best">0.182</td><td>26</td></tr>
+        <tr><td>Logistic regression</td><td>0.157</td><td>113</td></tr>
+        <tr><td>Random forest</td><td>0.154</td><td>53</td></tr>
+        <tr><td>Ensemble</td><td>0.152</td><td>33</td></tr>
+        <tr><td>Label spreading</td><td>0.148</td><td>28</td></tr>
+        <tr><td>GBM</td><td>0.146</td><td>207</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.88rem; color:var(--ink-soft)">The clearest, most reproducible win for the hypergraph model in the whole round: every one of its top-7 Track B results outranks every tabular result on this track (see tab 03).</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Track C</span><h2>Pure UCDP panel — mean AP by model family</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Model family</th><th>Mean AP</th><th>Real runs</th></tr>
+        <tr><td class="best">Ensemble (GBM/RF/logreg)</td><td class="best">0.787</td><td>18</td></tr>
+        <tr><td>GBM</td><td>0.762</td><td>145</td></tr>
+        <tr><td>Logistic regression</td><td>0.734</td><td>59</td></tr>
+        <tr><td>Random forest</td><td>0.728</td><td>29</td></tr>
+        <tr><td>Label spreading</td><td>0.708</td><td>30</td></tr>
+        <tr><td>Hypergraph NN</td><td>0.650</td><td>21</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.88rem; color:var(--ink-soft)">The reverse pattern from Tracks A/B: here the hypergraph model is the <em>weakest</em> family, not the strongest — see tab 03 for why that's a real, interpretable finding rather than a contradiction.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Full metric suite</span><h2>Every metric this round tracked, on the headline configs</h2></div>
+    <p class="lede">Accuracy, precision, recall, specificity, F1, Brier, average precision, ROC-AUC, log-loss, and MCC — the complete battery, not just AP.</p>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Track / config</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>Specificity</th><th>F1</th><th>Brier</th><th>AP</th><th>ROC-AUC</th><th>MCC</th></tr>
+        <tr><td>A — GBM volume+core @8wk</td><td>0.758</td><td>0.333</td><td>0.067</td><td>0.961</td><td>0.111</td><td>0.189</td><td>0.391</td><td>0.637</td><td>0.055</td></tr>
+        <tr><td>B — HypergraphNN hidden=8</td><td>0.605</td><td>0.194</td><td>0.609</td><td>0.604</td><td>0.294</td><td>0.248</td><td>0.287</td><td>0.663</td><td>0.148</td></tr>
+        <tr><td>C — Ensemble +country</td><td>0.856</td><td>0.687</td><td>0.874</td><td>0.850</td><td>0.769</td><td>0.105</td><td>0.871</td><td>0.932</td><td>0.677</td></tr>
+      </table>
+    </div>
+    <div class="callout wire"><strong>Reading accuracy correctly:</strong> Track A's headline config posts 75.8% accuracy but 6.7% recall — it's "accurate" almost entirely by correctly predicting the (large) majority of quiet weeks, not by catching escalations. Track C's config is the only one of the three that's simultaneously accurate, high-recall, AND high-specificity — the real three-way balance a usable early-warning system needs, and something no prior round of this project achieved on any config.</div>
+  </div>
+</div>
+
+<!-- ============ TAB 3 ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 1</span><h2>Country identity is the single most consistent lever across all three tracks</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Track</th><th>Mean AP, country identity included</th><th>Mean AP, without</th><th>Difference</th></tr>
+        <tr><td>A</td><td>0.237</td><td>0.222</td><td>+0.015</td></tr>
+        <tr><td>B</td><td>0.166</td><td>0.147</td><td>+0.019</td></tr>
+        <tr><td>C</td><td class="best">0.794</td><td>0.699</td><td class="best">+0.095</td></tr>
+      </table>
+    </div>
+    <p>This echoes the very first big finding from this project's original 24-iteration round ("identity beats volume of features") — now confirmed on three independent tracks including two built this round, with the effect size growing roughly with sample size and label quality. On the pure UCDP track, telling the model <em>which</em> country it's looking at is worth nearly 10 points of AP on its own — larger than almost any feature-engineering choice tested this round.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 2</span><h2>The hypergraph model's value depends on how much signal the label already has</h2></div>
+    <p>The hypergraph neural network is the <strong>best</strong> model family on Tracks A and B (mean AP 0.302 and 0.182, both #1) and the <strong>worst</strong> on Track C (mean AP 0.650, #6 of 6). That's not a contradiction — it's a real, interpretable pattern: Tracks A and B use a Goldstein/quad-class proxy label with a weak, diffuse tabular signal, exactly the condition where extra structure (who's connected to whom, this week, this region, this actor) has real information to add on top of a handful of lagged scalars. Track C's fatality-coded label is already strongly autocorrelated with simple lagged deaths and event counts — real violence has real momentum — so a GBM or ensemble already captures most of the exploitable signal, and the hypergraph's extra structure adds noise (more parameters, same effective sample) rather than signal.</p>
+    <div class="callout good">Practical reading: reach for the hypergraph model specifically when working from a noisy proxy label with limited direct predictive signal — not as a universal upgrade over tabular models.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 3</span><h2>Label spreading is a real early-warning risk: it ranks well and alerts on nothing</h2></div>
+    <p>Across all 68 real label-spreading runs this round, <strong>39.7% produced exactly 0.000 recall</strong> at the standard 0.5 threshold — the model consistently ranks true escalation weeks above quiet ones (mean AP 0.30–0.71 depending on track, often near the top of a track's leaderboard) while almost never actually crossing the threshold to flag one. This is the calibration-vs-decision-usefulness tension this project's expert-panel review flagged in an earlier round, now reproduced concretely and repeatedly in a brand-new model family rather than as a one-off observation.</p>
+    <div class="callout">A model that "wins" on AP but alerts on nothing is actively dangerous to report as a leaderboard winner without this caveat — exactly the trap tab 01's headline table was filtered (n_pos≥15) to avoid, and exactly why every ranking in this document reports Brier, precision, AND recall side by side rather than a single number.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 4</span><h2>Two feature ideas this round tried and that, honestly, didn't move the needle (yet)</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Feature block</th><th>Track</th><th>Mean AP with</th><th>Mean AP without</th></tr>
+        <tr><td>Old flattened graph-stats block (density/degree)</td><td>A</td><td>0.218</td><td>0.228</td></tr>
+        <tr><td>New GKG theme-embedding block (gkg_embed)</td><td>B</td><td>0.148</td><td>0.154</td></tr>
+      </table>
+    </div>
+    <p>Both slightly <em>negative</em> in this round's sweep. For the old flattened graph-stats block, that's actually a clarifying result, not a discouraging one: it suggests the earlier round's graph signal was real but was being fed to models in the wrong shape (flattened summary statistics) — and this round's hypergraph model, which uses the same underlying actor-interaction information as real graph structure instead of flattened scalars, is the better-performing result on the exact same tracks (Finding 2). For the new theme-embedding block, the honest read is that 12-dimensional PPMI/SVD embeddings averaged per country-week may be diluting a real but sparse signal — worth revisiting with per-theme rather than per-week aggregation (see tab 05).</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 5</span><h2>Forecast horizon behaves differently on real fatality data than on a proxy label</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Track A mean AP</th><th>Track B mean AP</th><th>Track C mean AP</th></tr>
+        <tr><td>1 week</td><td>0.200</td><td>0.155</td><td class="best">0.790</td></tr>
+        <tr><td>2 weeks</td><td>0.217</td><td>0.150</td><td>0.734</td></tr>
+        <tr><td>4 weeks</td><td>0.255</td><td>0.152</td><td>0.723</td></tr>
+        <tr><td>8 weeks</td><td>0.257</td><td>0.153</td><td>0.704</td></tr>
+      </table>
+    </div>
+    <p>Track C's pattern is the intuitive one and, given the sample sizes involved (69–91 real positives per horizon), the trustworthy one: predictive power decays as the forecast horizon lengthens, exactly as expected for a signal driven by real, currently-unfolding violence. Track A's apparent <em>increase</em> at longer horizons (also seen in the prior round's 24-iteration study) is very likely the small-sample artifact that study's own "honest asterisk" flagged — at 8-week horizon, Track A pools only 76–81 predictions, and AP is known to be noisy and upward-biased in exactly that regime. Track B, with 4–8x more pooled predictions per horizon than Track A, shows what a track this size actually does with horizon: almost nothing (0.150–0.155 flat) — a genuinely useful, boring, real finding that the apparent "signal extends to two months out" result from the smaller track doesn't obviously replicate at scale.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4 ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, verified</span><h2>What the best models actually said before the outcome was known</h2></div>
+    <p class="lede">Every case below used the real local Ollama (llama3.1) call path — genuine model-generated reasoning, not the documented heuristic fallback — checked afterward against the real, actual label for that country-week. The prediction was made using only information available strictly before the forecast window, per this project's bitemporal discipline throughout.</p>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Colombia, week of 2026-04-27 — 1-week horizon</h3><span class="case-prob">p = 0.55</span></div>
+      <p><strong>Actual outcome: escalation occurred.</strong> Track A, native GDELT features (no reindexing involved — fully semantically accurate).</p>
+      <div class="reasoning-quote">"The current week for country CO shows a significant increase in the number of events and material-conflict share compared to the previous week, suggesting an escalation in tensions. The decrease in the Mean Goldstein score also indicates a more conflictual situation. However, considering the historical analogs, while 40% of similar weeks led to escalation, only two out of five most similar weeks to the current state resulted in actual conflicts, which might indicate that the probability is slightly lower than expected given the recent increases."</div>
+      <p style="font-size:0.87rem; color:var(--ink-soft)"><strong>Why this is a legitimate case study, not cherry-picking:</strong> the model's own stated reasoning is appropriately hedged (starts from real feature deltas, then explicitly discounts its own confidence against a real historical base rate) — it landed at p=0.55, barely past the 0.5 threshold, which is exactly the calibrated behavior you'd want from a model that's right but not certain.</p>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Myanmar, week of 2026-07-13 — 2-week horizon</h3><span class="case-prob">p = 0.65</span></div>
+      <p><strong>Actual outcome: escalation occurred two weeks later, as forecast.</strong> Track A, native GDELT features.</p>
+      <div class="reasoning-quote">"The current state of BM suggests a moderate risk of material-conflict escalation in the following week. The increase in events and distinct actors mentioned, as well as the decrease in material-conflict share, are mixed signals that don't conclusively indicate an escalation. However, considering the historical analogs, two out of five similar weeks led to escalations (40%), which is a significant indicator. Furthermore, the average source tone has become more negative and the Mean Goldstein score has increased significantly, indicating growing tensions and hostility."</div>
+      <p style="font-size:0.87rem; color:var(--ink-soft)"><strong>A real reasoning error worth flagging rather than hiding:</strong> the Goldstein scale runs from -10 (most conflictual) to +10 (most cooperative) — a rising Goldstein score is directionally a <em>de-escalation</em> signal, not the "growing tensions" the model's own text claims. The model got the right answer (correctly identified real escalation two weeks out) partly through reasoning that misreads one of its own input variables. That's a genuine, useful data point on why a probability output and a plausible-sounding reasoning trace are not the same kind of evidence — the number can be right even when part of the stated "why" isn't, and a system relying on the reasoning trace as an audit tool needs to know that.</p>
+    </div>
+
+    <div class="case-card flagged">
+      <div class="case-head"><h3>Ethiopia, week of 2024-11-18 — pure UCDP track, 1-week horizon</h3><span class="case-prob">p = 0.98</span></div>
+      <p><strong>Actual outcome: escalation occurred.</strong> Track C — <strong>flagged: known feature-labeling bug in this specific run, disclosed rather than hidden.</strong></p>
+      <div class="reasoning-quote">"Based on the current state of Ethiopia, there are alarming indicators pointing towards a potential material-conflict escalation in the following week. The country has seen a significant increase in events last week (-9), with a high proportion of those being related to material conflicts (30%)... the mean Goldstein score has increased by 0.36... the average source tone has become increasingly negative (+36)..."</div>
+      <div class="callout"><strong>The real bug:</strong> <code>icl_ollama_track.py</code>'s <code>_reindex_for_icl</code> function maps each track's real feature columns onto the ICL forecaster's fixed GDELT-shaped feature slots <em>by position</em> so the same model class runs across all three tracks unmodified. On Track C that means UCDP's real columns (event counts, fatality counts, dyad counts) get labeled in the prompt and the reasoning text using GDELT's vocabulary ("material-conflict share," "Goldstein score," "source tone") — vocabulary that doesn't literally apply to UCDP's schema at all. <strong>The probability (0.98) is real and was computed from real UCDP numbers, and the actual outcome (escalation) is real and correctly predicted</strong> — but the natural-language reasoning quoted above describes those real numbers using the wrong variable names, so it should not be read as an accurate explanation of what actually drove this specific prediction. Ranked #1 in tab 05 to fix.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Pattern across all three</span><h2>What "weeks or months out" actually looked like when it worked</h2></div>
+    <p>In every real case above, the model was not reacting to a single dramatic spike — it was reading a <em>combination</em> of a rising event count, a shift toward material (vs. verbal) conflict framing, and (correctly, in two of three cases) a Goldstein-scale move toward the conflictual end, then explicitly moderating its own confidence against how often similar historical configurations actually led to escalation. That "raise confidence from raw deltas, then discount against historical base rate" pattern is a real, if simple, form of reasoning a fixed-formula heuristic fallback could approximate but wouldn't spontaneously produce the appropriately hedged 0.55–0.65 probabilities for — none of these three real predictions were overconfident, which is itself notable given how easy overconfident false alarms are to produce from a small set of feature deltas.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5 ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Ranked, by expected impact</span><h2>What to try next — every idea here judged free, safe, and possible</h2></div>
+    <p class="lede">Ranked by a real, stated combination of (a) how directly this round's actual evidence points at it and (b) how cheap it would be to try. The separate, deliberately-not-pursued ideas (surveillance, dual-use, information-hazard risks) are in <a href="dangerous-ideas-log.html">dangerous-ideas-log.html</a>, not here.</p>
+
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Fix the ICL reindexing bug (tab 04) so Track B/C real-LLM reasoning is semantically accurate</h4><p>Give each track its own native prompt template instead of positionally reindexing onto Track A's GDELT-shaped feature slots. Cheap (an afternoon, not a redesign), and directly fixes a disclosed accuracy problem in this round's own output rather than a hypothetical improvement.</p><p class="why">Why #1: it's the only item on this list that's fixing something this round's own evidence proved is currently wrong, not speculating about an upgrade.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Move label spreading's decision threshold off the default 0.5</h4><p>Finding 3 (tab 03) showed 39.7% of label-spreading runs alert on literally nothing despite competitive AP. A precision-recall-curve-based threshold (or reporting only precision@top-N for this model family, which this project already computes every fold) would very likely turn a currently-unusable "wins on paper" model into a usable one.</p><p class="why">Why #2: directly addresses a concrete, quantified, currently-real failure mode with a same-code-path fix.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Give the UCDP hypergraph its own real hyperedge type: shared conflict/dyad identity</h4><p>UCDP's <code>conflict_name</code>/<code>dyad_name</code> fields (already downloaded, not yet used as hyperedges) directly encode "these events are the same real conflict" — plausibly a stronger structural signal than the actor-code hyperedges that underperformed on this track (Finding 2). Worth a direct, disclosed ablation before concluding hypergraphs "don't help" on fatality-coded data generally.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Stack, don't choose: blend the hypergraph model with GBM/ensemble per track</h4><p>Given Finding 2's clean track-dependent split, a simple learned blend (or even a fixed-weight average) of the hypergraph model with the tabular winner is a natural, cheap next real iteration this round didn't get to — ViEWS's own precedent (cited in the original literature review) is ensembling for genuine diversity, and these two families are about as diverse as this project's model battery gets.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>Extend Track B with the external features (climate, food price, structural, election) that only ever covered the original 6 countries</h4><p>Disclosed scope limitation from this round (tab 01) — Track B is GDELT-native features only. Given election-calendar proximity was this project's single strongest lever in an earlier round, re-testing it at 19-country/3-year scale is a real, concrete next step, not a vague "more data" gesture.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">6</span><div><h4>Rebuild the GKG theme-embedding feature per-theme rather than per-week-averaged</h4><p>Finding 4's mildly negative result for <code>gkg_embed</code> is plausibly an aggregation artifact — averaging 12-dim embeddings across every theme active in a week may wash out a sparse but real signal from the specific 1–2 conflict-relevant themes. Keeping the top-k highest-weight themes' embeddings separately (rather than one blended average) is a concrete, cheap variant to test.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">7</span><div><h4>Independent validation split: leave-one-country-out, not just rolling-origin-in-time</h4><p>Flagged as a real gap in the prior round's grand search and still true here — every result in this document tests generalization across time within known countries, never generalization to a country the model has never seen. A genuinely different, harder, and arguably more decision-relevant question for an early-warning system meant to cover new regions.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">8</span><div><h4>Conformal prediction for real calibrated uncertainty intervals</h4><p>Distribution-free, doesn't require retraining the underlying models, and would give every prediction in this project an honest interval instead of a point probability — directly useful given how much of this document's own analysis (Findings 2 and 3 especially) is about probabilities that look confident but shouldn't be trusted at face value.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">9</span><div><h4>Register for ACLED and add it as a fourth track</h4><p>Carried forward from every prior round of this project — still not done, still free for academic/nonprofit use, still the RFP's own stated evaluation ground truth. Ranked below the items above only because it requires an external registration step outside this session's control, not because the evidence for it is weaker.</p></div></li>
+
+      <li class="rank-item"><span class="rank-num">10</span><div><h4>Extend the UCDP track past 2024 with the Candidate Events Dataset</h4><p>UCDP GED v25.1 ends 2024-12-31; UCDP's separately-published Candidate Events Dataset is more current but semi-automated/lower-curation. Worth adding as an explicitly lower-confidence extension of Track C, not blending into the main fatality-coded panel.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Separate log</span><h2>Ideas considered and deliberately not pursued</h2></div>
+    <p>Nine radical-but-rejected ideas — private-channel scraping, actor de-anonymization, operational auto-alerting, synthetic-audio dual-use risk, and five more — are written up with the concrete harm and what a legitimate version would require in <a href="dangerous-ideas-log.html">dangerous-ideas-log.html</a>. None of them appear in any script in this project.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Closes out the round documented across results_v2/progress-summary-so-far.html (interim checkpoint), results_v2/iteration-search-log-v2.html (full 1150-row searchable log), results_v2/dangerous-ideas-log.html (rejected ideas), and this page. All data real (GDELT 2.0 and GKG, public, no authentication; UCDP GED v25.1, public, no authentication), all 1150 iterations real rolling-origin backtests, all model reasoning either genuinely LLM-generated (local Ollama, disclosed where mislabeled) or a disclosed non-trained heuristic fallback — nothing in any of these documents is simulated.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

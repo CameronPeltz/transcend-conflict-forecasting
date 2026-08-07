@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Summary So Far — Interim Snapshot, Grand Search v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:62ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:76ch; font-size:0.98rem; margin-top:0.6rem;}
+  main{max-width:960px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .section{margin-bottom:2.4rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.2rem; margin:0;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.94rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.5rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.76rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.66rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.45rem 0.55rem; border-bottom:1px solid var(--line);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.6rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .status-block{font-family:'IBM Plex Mono',monospace; font-size:0.82rem; background:var(--ink); color:#e8e6dc; padding:1rem 1.2rem; border-radius:var(--radius); white-space:pre-wrap;}
+  footer{max-width:960px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">Interim snapshot &middot; grand search v2 is still running &middot; generated 2026-08-05</div>
+  <h1>Where this round stands right now, with the search still in progress</h1>
+  <p class="dek">This is a checkpoint, not the final report. The 1000+-iteration grand search (task 6) is running in the background and was only a few percent through at the time this page was written — numbers here will be superseded by <code>results_v2/final-summary-and-case-studies.html</code> once it finishes. Live progress is always readable from <code>results_v2/STATUS.txt</code>, which the search script rewrites after every single iteration.</p>
+</div>
+
+<main>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Live status right now</span><h2>What results_v2/STATUS.txt says as of this snapshot</h2></div>
+  <div class="status-block">conflict_prediction - live status
+updated: 2026-08-05 15:23:18
+phase: running
+grand_search_v2: iteration 104 of 1150 (9.0%)
+best AP by track: A_original_small_gdelt=0.3474, B_large_scraped_gdelt=0.1656, C_pure_ucdp=(not started yet)
+last: [B_large_scraped_gdelt] Pair: core+root_taxonomy -> AP=0.1556</div>
+  <p style="margin-top:0.8rem; font-size:0.88rem; color:var(--ink-soft)">That file updates continuously — re-read it directly for the current number rather than trusting the snapshot above as time passes. A parallel job (<code>icl_ollama_track.py</code>, real local-LLM reasoning traces for the eventual case studies) is running at the same time and writes its own progress to <code>results_v2/STATUS_icl_ollama.txt</code>.</p>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Done</span><h2>What's actually finished and verified</h2></div>
+  <div class="card">
+    <h3 style="font-size:0.98rem;">1. Three genuinely distinct data tracks, never merged</h3>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Track</th><th>What it is</th><th>Size</th><th>vs. original</th></tr>
+      <tr><td>A — original</td><td>The 6-country, 180-day GDELT panel every prior document in this project used</td><td>161 country-weeks, ~19 positive</td><td>baseline</td></tr>
+      <tr><td>B — large scraped</td><td>New: 19 countries (3 named DARPA regions + 2 disclosed extras), 3 years, self-scraped from GDELT 2.0</td><td>2,989 country-weeks, 358 positive, from 5.8M raw events</td><td>~18.5x more country-weeks</td></tr>
+      <tr><td>C — pure UCDP</td><td>New: UCDP GED v25.1, the real fatality-coded academic dataset (not Kaggle directly — no Kaggle credentials were available — but the real primary source most Kaggle conflict mirrors are built from), kept fully separate</td><td>29,038 country-weeks, 4,814 positive, from 385,918 global events (124 countries)</td><td>~180x more country-weeks</td></tr>
+    </table>
+    </div>
+    <p style="font-size:0.88rem; margin-top:0.6rem;">Directly answers the original concern: the "120 events" sample was real but tiny. It's now one of three tracks, always reported separately, never diluted into a pooled number.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:0.98rem;">2. Two new graph-native model families, both verified working end-to-end</h3>
+    <ul>
+      <li><strong>Hypergraph neural network</strong> (<code>scripts/hypergraph_model.py</code>) — a real, from-scratch (numpy/scipy.sparse, no torch installed in this environment) 2-layer HGNN with real backprop, trained per fold. Hyperedges connect country-weeks by shared country, shared region-week, shared calendar week (global shocks), and shared real actors (GDELT Actor1/Actor2 codes, or UCDP side_a/side_b). This is the first model in the whole project that actually traverses a graph rather than flattening graph statistics into a tabular feature — model-battery-results.html from the prior round explicitly flagged that gap ("none of these five models actually traverse the graph yet").</li>
+      <li><strong>Graph-based label spreading</strong> (<code>scripts/graph_nlp_features.py</code>) — a kNN similarity graph over country-weeks with known labels diffused to unlabeled/test weeks via sklearn's LabelSpreading. Early numbers below are the most interesting finding so far (see the calibration callout).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:0.98rem;">3. Graph-based NLP: a real theme co-occurrence graph, embedded</h3>
+    <p>A 3-year, 19-country GDELT GKG pull captured 662,355 real theme-co-occurrence pairs across 813,624 (country, week, theme) rows. That co-occurrence graph was turned into dense per-theme embeddings via PPMI + truncated SVD (the same family of method as GloVe/LSA, applied to GDELT's theme taxonomy instead of a word-context window), then aggregated into a 12-dimensional embedding per country-week — a new <code>gkg_embed</code> feature block distinct from the old single fragility-share scalar.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:0.98rem;">4. Real local LLM wired in — no API key, no per-call cost</h3>
+    <p>The ICL forecaster (the RFP's actual named required mechanism) now calls your local Ollama <code>llama3.1:latest</code> first, confirmed with real ~10s/call inference producing genuine calibrated probabilities and reasoning paragraphs — falling back to Anthropic-if-a-key-is-set, then the documented heuristic, in that order. Kept out of the 1000+-iteration bulk sweep (too slow at that scale) and run instead as a dedicated smaller track for the eventual case studies — that job is running now (see status block above).</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:0.98rem;">5. Dangerous-ideas log written</h3>
+    <p><code>results_v2/dangerous-ideas-log.html</code> — 9 radical-but-rejected ideas (private-channel scraping, actor de-anonymization, operational auto-alerting, synthetic-audio dual-use risk, etc.), each with the concrete harm and what a legitimate version would require. None implemented.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Very early read</span><h2>What the first ~100 real iterations hint at (not final — small slice, mostly Track A)</h2></div>
+  <div class="stat-grid">
+    <div class="stat"><div class="n">104</div><div class="l">of 1150 planned iterations complete at this snapshot</div></div>
+    <div class="stat"><div class="n">0.347</div><div class="l">best AP so far, Track A (label spreading, k=10)</div></div>
+    <div class="stat"><div class="n">0.166</div><div class="l">best AP so far, Track B (GBM, core features + country)</div></div>
+  </div>
+  <div class="callout wire"><strong>The single most interesting early signal:</strong> graph-based label spreading is currently topping Track A's leaderboard on average precision (0.347, vs. the prior round's best-ever comparable AP of 0.256) — but at recall = 0.000 at the standard 0.5 threshold. It ranks the true escalation weeks higher than everything else tried so far without ever actually crossing the decision threshold to flag one. That's the calibration-vs-decision-usefulness tension this project's expert-panel review flagged before, now showing up concretely in a brand-new model family. Whether that holds up, and what threshold would actually make it useful, is exactly the kind of question 1000+ iterations is meant to pressure-test rather than something to conclude from 3 data points.</div>
+  <div class="callout">Track B's early numbers (AP around 0.13–0.17) are lower than Track A's best, on a much bigger and more diverse 19-country sample — a real, honest reminder that "more data" doesn't automatically mean "higher headline score," especially before the search has tried region/graph/hypergraph features on this track yet (only the first few anchor/ablation configs have run so far). Track C (UCDP) hadn't started at all at this snapshot.</div>
+</div>
+
+<div class="section">
+  <div class="section-head"><span class="tag">Remaining</span><h2>What's still ahead</h2></div>
+  <ol>
+    <li><strong>Let grand_search_v2 finish</strong> — currently ~9% through 1150 iterations across all 3 tracks (curated configs + a large randomized sweep, including the hypergraph and label-spreading models at meaningful but deliberately minority frequency given their per-fold cost). ETA fluctuates a lot by config type; watch <code>results_v2/STATUS.txt</code> for the live number.</li>
+    <li><strong>Let icl_ollama_track finish</strong> — real local-LLM reasoning traces across all 3 tracks, feeding the eventual case studies.</li>
+    <li><strong>Render the full log</strong> (<code>scripts/render_search_log_v2.py</code>) into a searchable per-track HTML, same discipline as the prior round's 1150-iteration log.</li>
+    <li><strong>Write the final summary</strong> (<code>results_v2/final-summary-and-case-studies.html</code>) — ranked results across every metric (accuracy, precision, recall, specificity, Brier, F1, ROC-AUC, PR-AUC, log-loss, MCC) per track, a ranked list of the most promising next-step ideas, and real case-study examples of specific predicted escalations with the reasoning behind them.</li>
+  </ol>
+</div>
+
+</main>
+
+<footer>
+  Interim checkpoint, written at the user's request while the main search was still running after two unexplained background-process interruptions (now mitigated with resume support and continuous status-file writes — see the top of this page). Superseded by results_v2/final-summary-and-case-studies.html once the full run completes.
+</footer>
+
+</body>
+</html>

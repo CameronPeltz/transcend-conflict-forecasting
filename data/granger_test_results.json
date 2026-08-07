@@ -1,0 +1,244 @@
+{
+  "precip_anomaly_z": {
+    "label": "Rainfall anomaly (climate stress)",
+    "per_country": {
+      "AF": {
+        "n": 27,
+        "min_p": 0.5274529566347779,
+        "pvals_by_lag": [
+          0.5275,
+          0.7644
+        ]
+      },
+      "BM": {
+        "n": 26,
+        "min_p": 0.4748703798703889,
+        "pvals_by_lag": [
+          0.4749,
+          0.7811
+        ]
+      },
+      "CO": {
+        "n": 26,
+        "min_p": 0.13679925633913,
+        "pvals_by_lag": [
+          0.1368,
+          0.5199
+        ]
+      },
+      "ET": {
+        "n": 27,
+        "min_p": 0.2575065138635705,
+        "pvals_by_lag": [
+          0.2575,
+          0.7645
+        ]
+      },
+      "SU": {
+        "n": 11,
+        "min_p": null,
+        "note": "too few real observations"
+      },
+      "VE": {
+        "n": 27,
+        "min_p": 0.04124712034337923,
+        "pvals_by_lag": [
+          0.0412,
+          0.0469
+        ]
+      }
+    },
+    "pooled_fe": {
+      "n": 133,
+      "f_stat": 1.214595353068273,
+      "p_value": 0.272558432216276,
+      "r2_restricted": 0.5610027615036459,
+      "r2_unrestricted": 0.5652610830226669,
+      "x_lag1_coef": 0.00048716890154826227,
+      "x_lag1_p": 0.2725584322164036
+    }
+  },
+  "food_price_pct_dev": {
+    "label": "Food price deviation from trailing baseline",
+    "per_country": {
+      "AF": {
+        "n": 27,
+        "min_p": 0.654657514833552,
+        "pvals_by_lag": [
+          0.7408,
+          0.6547
+        ]
+      },
+      "BM": {
+        "n": 26,
+        "min_p": 0.34493840589493213,
+        "pvals_by_lag": [
+          0.4674,
+          0.3449
+        ]
+      },
+      "CO": {
+        "n": 26,
+        "min_p": 0.3971921904339193,
+        "pvals_by_lag": [
+          0.7327,
+          0.3972
+        ]
+      },
+      "ET": {
+        "n": 27,
+        "min_p": 0.6327038247580686,
+        "pvals_by_lag": [
+          0.6327,
+          0.685
+        ]
+      },
+      "SU": {
+        "n": 27,
+        "min_p": 0.7286881820199251,
+        "pvals_by_lag": [
+          0.874,
+          0.7287
+        ]
+      },
+      "VE": {
+        "n": 27,
+        "min_p": null,
+        "note": "error: The x values include a column with constant values and so the test statistic cannot be computed."
+      }
+    },
+    "pooled_fe": {
+      "n": 148,
+      "f_stat": 0.46232632440442945,
+      "p_value": 0.4976696241406859,
+      "r2_restricted": 0.5557852079712893,
+      "r2_unrestricted": 0.5572578077583243,
+      "x_lag1_coef": 0.037895679852775976,
+      "x_lag1_p": 0.4976696241406974
+    }
+  },
+  "gkg_fragility_theme_share": {
+    "label": "Share of GKG news docs tagged fragility/crisis-themed",
+    "per_country": {
+      "AF": {
+        "n": 26,
+        "min_p": 0.005441357448499743,
+        "pvals_by_lag": [
+          0.0054,
+          0.0251
+        ]
+      },
+      "BM": {
+        "n": 25,
+        "min_p": 0.7731808240031441,
+        "pvals_by_lag": [
+          0.8134,
+          0.7732
+        ]
+      },
+      "CO": {
+        "n": 25,
+        "min_p": 0.3440164020698537,
+        "pvals_by_lag": [
+          0.344,
+          0.6365
+        ]
+      },
+      "ET": {
+        "n": 26,
+        "min_p": 0.8764931109609434,
+        "pvals_by_lag": [
+          0.9988,
+          0.8765
+        ]
+      },
+      "SU": {
+        "n": 26,
+        "min_p": 0.47082598243803947,
+        "pvals_by_lag": [
+          0.4708,
+          0.8305
+        ]
+      },
+      "VE": {
+        "n": 26,
+        "min_p": 0.8295188075073064,
+        "pvals_by_lag": [
+          0.8295,
+          0.9316
+        ]
+      }
+    },
+    "pooled_fe": {
+      "n": 148,
+      "f_stat": 0.7990612545195497,
+      "p_value": 0.3729193224257877,
+      "r2_restricted": 0.5557852079712893,
+      "r2_unrestricted": 0.5583242438261036,
+      "x_lag1_coef": 0.025162596524883313,
+      "x_lag1_p": 0.37291932242580517
+    }
+  },
+  "gkg_mean_tone": {
+    "label": "Mean GKG document tone",
+    "per_country": {
+      "AF": {
+        "n": 26,
+        "min_p": 0.06377320081524353,
+        "pvals_by_lag": [
+          0.1129,
+          0.0638
+        ]
+      },
+      "BM": {
+        "n": 25,
+        "min_p": 0.8503047826659925,
+        "pvals_by_lag": [
+          0.9243,
+          0.8503
+        ]
+      },
+      "CO": {
+        "n": 25,
+        "min_p": 0.45422603344671963,
+        "pvals_by_lag": [
+          0.4542,
+          0.6182
+        ]
+      },
+      "ET": {
+        "n": 26,
+        "min_p": 0.39081051700978564,
+        "pvals_by_lag": [
+          0.5617,
+          0.3908
+        ]
+      },
+      "SU": {
+        "n": 26,
+        "min_p": 0.6234521136848908,
+        "pvals_by_lag": [
+          0.6235,
+          0.7178
+        ]
+      },
+      "VE": {
+        "n": 26,
+        "min_p": 0.5872786873520517,
+        "pvals_by_lag": [
+          0.7073,
+          0.5873
+        ]
+      }
+    },
+    "pooled_fe": {
+      "n": 148,
+      "f_stat": 1.2708147781653751,
+      "p_value": 0.2615561170953854,
+      "r2_restricted": 0.5557852079712893,
+      "r2_unrestricted": 0.559809671102002,
+      "x_lag1_coef": -0.0031346468881610573,
+      "x_lag1_p": 0.2615561170955454
+    }
+  }
+}

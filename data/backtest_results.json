@@ -1,0 +1,166 @@
+{
+  "results": [
+    {
+      "lead_time": "1-week horizon",
+      "n_predictions": 28,
+      "n_positive": 4,
+      "models": {
+        "icl_temporal_graph": {
+          "brier": 0.17311689577270048,
+          "average_precision": 0.1788095238095238,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.0,
+          "n_flagged_at_0.5": 1,
+          "delta_brier_vs_base_rate": -0.04350014971269528
+        },
+        "gbm_graph_features": {
+          "brier": 0.17664036582699438,
+          "average_precision": 0.20416666666666666,
+          "precision_at_0.5": 0.2,
+          "recall_at_0.5": 0.25,
+          "precision_at_topN": 0.25,
+          "n_flagged_at_0.5": 5,
+          "delta_brier_vs_base_rate": -0.04702361976698918
+        },
+        "logreg_lagged_counts": {
+          "brier": 0.3270935085740098,
+          "average_precision": 0.13078703703703703,
+          "precision_at_0.5": 0.11764705882352941,
+          "recall_at_0.5": 0.5,
+          "precision_at_topN": 0.0,
+          "n_flagged_at_0.5": 17,
+          "delta_brier_vs_base_rate": -0.19747676251400462
+        },
+        "naive_persistence": {
+          "brier": 0.25,
+          "average_precision": 0.14285714285714285,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.0,
+          "n_flagged_at_0.5": 3,
+          "delta_brier_vs_base_rate": -0.1203832539399948
+        },
+        "historical_base_rate": {
+          "brier": 0.1296167460600052,
+          "average_precision": 0.1636904761904762,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.0,
+          "n_flagged_at_0.5": 0,
+          "delta_brier_vs_base_rate": 0.0
+        }
+      }
+    },
+    {
+      "lead_time": "2-week horizon",
+      "n_predictions": 24,
+      "n_positive": 4,
+      "models": {
+        "icl_temporal_graph": {
+          "brier": 0.16676058254946854,
+          "average_precision": 0.21929824561403508,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.25,
+          "n_flagged_at_0.5": 1,
+          "delta_brier_vs_base_rate": -0.018204702769743175
+        },
+        "gbm_graph_features": {
+          "brier": 0.13769777457021123,
+          "average_precision": 0.40482954545454547,
+          "precision_at_0.5": 1.0,
+          "recall_at_0.5": 0.25,
+          "precision_at_topN": 0.25,
+          "n_flagged_at_0.5": 1,
+          "delta_brier_vs_base_rate": 0.010858105209514135
+        },
+        "logreg_lagged_counts": {
+          "brier": 0.294770504235506,
+          "average_precision": 0.21367056856187291,
+          "precision_at_0.5": 0.18181818181818182,
+          "recall_at_0.5": 0.5,
+          "precision_at_topN": 0.25,
+          "n_flagged_at_0.5": 11,
+          "delta_brier_vs_base_rate": -0.14621462445578062
+        },
+        "naive_persistence": {
+          "brier": 0.2916666666666667,
+          "average_precision": 0.16666666666666666,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.25,
+          "n_flagged_at_0.5": 3,
+          "delta_brier_vs_base_rate": -0.14311078688694132
+        },
+        "historical_base_rate": {
+          "brier": 0.14855587977972537,
+          "average_precision": 0.19166666666666665,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "precision_at_topN": 0.0,
+          "n_flagged_at_0.5": 0,
+          "delta_brier_vs_base_rate": 0.0
+        }
+      }
+    }
+  ],
+  "icl_reasoning_samples": [
+    {
+      "country": "AF",
+      "week": "2026-06-08 00:00:00",
+      "probability": 0.46530751270117954,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.47",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - CO 2026-05-25 00:00:00 (similarity 0.57): escalation followed = False\n  - SU 2026-06-01 00:00:00 (similarity 0.52): escalation followed = False\n  - SU 2026-05-25 00:00:00 (similarity 0.43): escalation followed = False\n  - CO 2026-05-18 00:00:00 (similarity 0.39): escalation followed = False\n  - AF 2026-06-01 00:00:00 (similarity 0.29): escalation followed = True"
+    },
+    {
+      "country": "BM",
+      "week": "2026-06-08 00:00:00",
+      "probability": 0.38379619796802267,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.38",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - BM 2026-05-18 00:00:00 (similarity 0.79): escalation followed = True\n  - SU 2026-06-01 00:00:00 (similarity 0.67): escalation followed = False\n  - BM 2026-05-11 00:00:00 (similarity 0.60): escalation followed = False\n  - CO 2026-05-18 00:00:00 (similarity 0.59): escalation followed = False\n  - BM 2026-05-25 00:00:00 (similarity 0.07): escalation followed = False"
+    },
+    {
+      "country": "CO",
+      "week": "2026-06-08 00:00:00",
+      "probability": 0.31036991759254173,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.31",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - CO 2026-05-18 00:00:00 (similarity 0.73): escalation followed = False\n  - SU 2026-06-01 00:00:00 (similarity 0.63): escalation followed = False\n  - AF 2026-06-01 00:00:00 (similarity 0.54): escalation followed = True\n  - AF 2026-05-18 00:00:00 (similarity 0.28): escalation followed = False\n  - SU 2026-05-18 00:00:00 (similarity 0.21): escalation followed = False"
+    },
+    {
+      "country": "SU",
+      "week": "2026-06-08 00:00:00",
+      "probability": 0.44264751334080477,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.44",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - CO 2026-05-25 00:00:00 (similarity 0.63): escalation followed = False\n  - BM 2026-05-18 00:00:00 (similarity 0.44): escalation followed = True\n  - SU 2026-06-01 00:00:00 (similarity 0.32): escalation followed = False\n  - SU 2026-05-25 00:00:00 (similarity 0.21): escalation followed = False\n  - BM 2026-06-01 00:00:00 (similarity 0.04): escalation followed = False"
+    },
+    {
+      "country": "AF",
+      "week": "2026-06-15 00:00:00",
+      "probability": 0.24080747418981746,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.24",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - SU 2026-05-18 00:00:00 (similarity 0.81): escalation followed = False\n  - AF 2026-05-25 00:00:00 (similarity 0.76): escalation followed = False\n  - AF 2026-05-18 00:00:00 (similarity 0.62): escalation followed = False\n  - AF 2026-06-01 00:00:00 (similarity 0.49): escalation followed = True\n  - SU 2026-05-11 00:00:00 (similarity 0.29): escalation followed = False"
+    },
+    {
+      "country": "BM",
+      "week": "2026-06-15 00:00:00",
+      "probability": 0.11242350972175058,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 0% of retrieved analogs escalated; combined with raw feature deltas -> 0.11",
+      "top_analogs": "5 nearest analogs, 0% led to escalation:\n  - BM 2026-06-01 00:00:00 (similarity 0.72): escalation followed = False\n  - CO 2026-05-11 00:00:00 (similarity 0.47): escalation followed = False\n  - SU 2026-05-18 00:00:00 (similarity 0.43): escalation followed = False\n  - CO 2026-06-01 00:00:00 (similarity 0.40): escalation followed = False\n  - BM 2026-05-25 00:00:00 (similarity 0.39): escalation followed = False"
+    },
+    {
+      "country": "CO",
+      "week": "2026-06-15 00:00:00",
+      "probability": 0.31289712937640385,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 0% of retrieved analogs escalated; combined with raw feature deltas -> 0.31",
+      "top_analogs": "5 nearest analogs, 0% led to escalation:\n  - CO 2026-05-25 00:00:00 (similarity 0.64): escalation followed = False\n  - SU 2026-05-25 00:00:00 (similarity 0.63): escalation followed = False\n  - AF 2026-06-08 00:00:00 (similarity 0.50): escalation followed = False\n  - CO 2026-05-18 00:00:00 (similarity 0.38): escalation followed = False\n  - SU 2026-06-01 00:00:00 (similarity 0.37): escalation followed = False"
+    },
+    {
+      "country": "SU",
+      "week": "2026-06-15 00:00:00",
+      "probability": 0.2866174926416113,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 0% of retrieved analogs escalated; combined with raw feature deltas -> 0.29",
+      "top_analogs": "5 nearest analogs, 0% led to escalation:\n  - SU 2026-05-18 00:00:00 (similarity 0.61): escalation followed = False\n  - AF 2026-05-18 00:00:00 (similarity 0.47): escalation followed = False\n  - SU 2026-05-11 00:00:00 (similarity 0.44): escalation followed = False\n  - AF 2026-05-25 00:00:00 (similarity 0.42): escalation followed = False\n  - BM 2026-06-01 00:00:00 (similarity 0.23): escalation followed = False"
+    }
+  ]
+}

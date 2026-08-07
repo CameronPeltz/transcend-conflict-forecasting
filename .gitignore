@@ -1,0 +1,14 @@
+# Large raw/intermediate data files -- regenerable via scripts/download_*.py,
+# excluded to keep the repo reasonably sized. Derived, model-ready panels
+# (country-week aggregates, embeddings) ARE committed below this list.
+data/scraped_large/gdelt_large_raw.csv
+data/pure_ucdp/GEDEvent_v25_1.csv
+data/pure_ucdp/ged_full.zip
+data/scraped_large/gkg_theme_freq_countryweek.csv
+data/scraped_large/gkg_theme_cooccurrence.csv
+data/gdelt_filtered_v2.csv
+data/gdelt_filtered.csv
+
+__pycache__/
+*.pyc
+template_dump.txt

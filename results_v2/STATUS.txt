@@ -1,0 +1,7 @@
+conflict_prediction - live status
+updated: 2026-08-05 18:42:03
+phase: DONE
+grand_search_v2: iteration 1150 of 1150 (100.0%)
+elapsed: 89.3 min | rate: 0.21 iter/s | ETA: 0.0 min
+best AP by track: A_original_small_gdelt=0.7500, B_large_scraped_gdelt=0.2875, C_pure_ucdp=0.8708
+grand_search_v2 complete. Ready for render_search_log_v2.py.

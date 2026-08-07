@@ -1,0 +1,9 @@
+Track A, REAL local Ollama LLM calls (slow, ~10s/call)...
+  track A label_quad_1 use_llm=True: n=84 pos=16 brier=0.19663926190485714 ap=0.2306391448122591
+  track A label_quad_2 use_llm=True: n=84 pos=16 brier=0.17549429761911903 ap=0.25717150898235275
+Track B (large GDELT), real LLM, most recent weeks only...
+  track B use_llm=True: n=152 pos=12 brier=0.16348005263167104 ap=0.1336996520369332
+Track C (UCDP pure), real LLM, most recent weeks only...
+  track C use_llm=True: n=87 pos=40 brier=0.1769597471266207 ap=0.7922788939897184
+
+DONE in 30.7 min. Wrote results_v2/icl_ollama_log.json

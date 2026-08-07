@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model battery results — rankings, metrics, and next steps</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579;
+    --paper:#f6f4ec; --paper-raised:#fdfcf7; --line:#d9d5c4; --line-strong:#b8b29a;
+    --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc;
+    --wire:#6b5a8c; --wire-soft:#eae5f2;
+    --good:#2e6b4f; --bad:#9c4a2f;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased;}
+  code, .mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;}
+  a{color:var(--signal-deep); text-decoration-color:var(--line-strong); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--signal-deep);}
+
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem, 4vw, 3rem) 1.4rem; background:var(--paper);}
+  .masthead .eyebrow{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem, 3.2vw, 2.1rem); line-height:1.15; max-width:50ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:66ch; font-size:0.98rem; margin-top:0.6rem;}
+
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem, 4vw, 3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono', monospace; font-size:0.76rem; letter-spacing:0.05em; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.95rem 1.1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn .num{display:inline-block; width:1.4em; color:var(--line-strong);}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  .tab-btn.active .num{color:var(--signal);}
+
+  main{max-width:960px; margin:0 auto; padding:2.4rem clamp(1.2rem, 4vw, 3rem) 6rem;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); letter-spacing:0.04em;}
+  .section-head h2{font-size:1.25rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.98rem; margin-bottom:1.2rem;}
+
+  ul, ol{padding-left:1.3rem; margin:0 0 1em 0;}
+  li{margin-bottom:0.45rem;}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .card h3{font-size:1.02rem; margin-bottom:0.4rem;}
+  .card h4{font-size:0.9rem; color:var(--ink-soft); margin:0.9rem 0 0.3rem;}
+
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.85rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.92rem; color:#5c2c1a; margin:1rem 0;}
+  .callout strong{color:#4a2314;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.good strong{color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .callout.wire strong{color:#2e2450;}
+
+  .metric-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:0.8rem; margin:1rem 0;}
+  .metric{border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; background:var(--paper-raised);}
+  .metric .name{font-size:0.78rem; font-family:'IBM Plex Mono', monospace; color:var(--signal-deep); margin-bottom:0.3rem;}
+  .metric .val{font-family:'IBM Plex Mono', monospace; font-size:1.1rem; color:var(--ink);}
+  .metric .def{font-size:0.8rem; color:var(--ink-soft); margin-top:0.2rem;}
+
+  .term-grid{display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0 1.6rem;}
+  @media(max-width:640px){.term-grid{grid-template-columns:1fr;}}
+  .term{border:1px solid var(--line); border-radius:var(--radius); padding:0.9rem 1.1rem; background:var(--paper-raised);}
+  .term .name{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--signal-deep); margin-bottom:0.4rem;}
+  .term p{font-size:0.87rem; color:var(--ink-soft); margin:0;}
+  .term.wide{grid-column:1/-1;}
+
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.4rem;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono', monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.6rem; white-space:nowrap;}
+  table.results td{padding:0.5rem 0.6rem; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap;}
+  table.results tr:last-child td{border-bottom:none;}
+  table.results td.best{color:var(--good); font-weight:600;}
+  table.results td.worst{color:var(--bad);}
+  .rank-badge{font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.1rem 0.5rem; border-radius:10px; display:inline-block;}
+
+  .confusion{display:grid; grid-template-columns:auto 1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); max-width:460px; margin:0.8rem 0 1.2rem; font-size:0.82rem;}
+  .confusion > div{background:var(--paper-raised); padding:0.6rem 0.8rem;}
+  .confusion .hdr{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-mute); text-align:center;}
+  .confusion .lbl{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--ink-mute); display:flex; align-items:center;}
+  .confusion .cell{text-align:center;}
+  .confusion .cell .n{font-family:'IBM Plex Mono', monospace; font-size:1rem; color:var(--ink); font-weight:600;}
+  .confusion .cell .t{font-size:0.68rem; color:var(--ink-mute); margin-top:1px;}
+
+  .rank-list{list-style:none; padding:0; margin:0 0 1.2rem;}
+  .rank-list li{display:grid; grid-template-columns:2.6rem 1fr; gap:0.9rem; padding:0.85rem 0; border-bottom:1px solid var(--line);}
+  .rank-list li:last-child{border-bottom:none;}
+  .rank-list .pos{font-family:'Source Serif 4', serif; font-size:1.3rem; color:var(--line-strong);}
+  .rank-list h4{margin:0 0 0.2rem; font-size:0.98rem; font-family:'IBM Plex Sans'; font-weight:600;}
+  .rank-list p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+
+  .feat-bar-row{display:grid; grid-template-columns:220px 1fr 55px; gap:10px; align-items:center; padding:5px 0; border-top:1px solid var(--line); font-size:0.82rem;}
+  .feat-bar-row:first-child{border-top:none;}
+  .feat-bar-track{background:var(--paper); border:1px solid var(--line); height:14px; position:relative;}
+  .feat-bar-fill{background:var(--signal); opacity:0.65; height:100%;}
+  .feat-val{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--ink-mute); text-align:right;}
+
+  .reasoning-card{border:1px solid var(--line); border-left:3px solid var(--wire); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:0.75rem 1rem; margin-bottom:0.6rem; font-size:0.84rem;}
+  .reasoning-card .who{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--wire); margin-bottom:0.25rem;}
+
+  .stage-list{list-style:none; padding:0; margin:0;}
+  .stage-list li{display:grid; grid-template-columns:2.4rem 1fr; gap:0.9rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .stage-list li:last-child{border-bottom:none;}
+  .stage-num{font-family:'Source Serif 4', serif; font-size:1.3rem; color:var(--line-strong); line-height:1.4;}
+  .stage-body h4{margin:0 0 0.25rem; font-size:1rem; color:var(--ink); font-family:'IBM Plex Sans', sans-serif; font-weight:600;}
+  .stage-body p{margin:0; font-size:0.94rem; color:var(--ink-soft);}
+
+  .case-card{border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-raised); margin-bottom:1.6rem; overflow:hidden;}
+  .case-head{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; padding:0.9rem 1.2rem; border-bottom:1px solid var(--line); background:var(--signal-soft);}
+  .case-head h3{font-size:1.05rem; margin:0; color:var(--signal-deep);}
+  .case-head .outcome{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--signal-deep);}
+  .case-body{padding:1rem 1.2rem 1.2rem;}
+  .case-context{font-size:0.86rem; color:var(--ink-soft); margin-bottom:0.9rem;}
+  .prob-row{display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.5rem; margin-bottom:1rem;}
+  @media(max-width:700px){.prob-row{grid-template-columns:1fr 1fr;}}
+  .prob-chip{border:1px solid var(--line); border-radius:var(--radius); padding:0.5rem 0.6rem; text-align:center; background:var(--paper);}
+  .prob-chip.win{border-color:var(--good); background:var(--signal-soft);}
+  .prob-chip.miss{border-color:var(--bad); background:var(--alert-soft);}
+  .prob-chip .mname{font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.03em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.2rem;}
+  .prob-chip .pval{font-family:'IBM Plex Mono', monospace; font-size:1.05rem; color:var(--ink); font-weight:600;}
+  .case-why{font-size:0.9rem;}
+  .case-why strong{color:var(--ink);}
+
+  footer{max-width:960px; margin:0 auto; padding:1.5rem clamp(1.2rem, 4vw, 3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+  ::selection{background:var(--signal-soft); color:var(--signal-deep);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Companion document 3 of 3</span>
+    <span>Model battery results, rankings, and next steps</span>
+    <span>Real rolling-origin backtest, expanded dataset</span>
+  </div>
+  <h1>Which model actually wins, and by what measure — a real, expanded backtest</h1>
+  <p class="dek">Same five-model battery as the prior document, rerun on a real, meaningfully larger dataset: 6 countries (2 per RFP region) instead of 4, 180 days instead of 90, 233,552 real GDELT events. Full confusion-matrix accounting this time — accuracy and specificity alongside precision, recall, and calibration — plus an honest look at what the graph-derived features and the two NLP inference styles actually contributed.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab1"><span class="num">01</span>Results &amp; Rankings</button>
+  <button class="tab-btn" data-tab="tab2"><span class="num">02</span>Graph Approach</button>
+  <button class="tab-btn" data-tab="tab3"><span class="num">03</span>NLP Inference</button>
+  <button class="tab-btn" data-tab="tab4"><span class="num">04</span>Next Steps</button>
+  <button class="tab-btn" data-tab="tab5"><span class="num">05</span>Case Studies</button>
+</div>
+
+<main>
+
+<!-- ===================== TAB 1: RESULTS & RANKINGS ===================== -->
+<div class="panel active" id="tab1">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Data</span><h2>What actually ran</h2></div>
+    <div class="metric-grid">
+      <div class="metric"><div class="name">Real events</div><div class="val">233,552</div><div class="def">6 countries, 180 days, GDELT 2.0</div></div>
+      <div class="metric"><div class="name">Graph size</div><div class="val">232,998 nodes</div><div class="def">2,096 Actor nodes, 230,896 Event nodes, 622,505 edges</div></div>
+      <div class="metric"><div class="name">Country-weeks</div><div class="val">160</div><div class="def">Up from 55 in the first pass — 3× the sample</div></div>
+      <div class="metric"><div class="name">Positive labels</div><div class="val">23 of 160</div><div class="def">~14.4% base rate, both horizons</div></div>
+    </div>
+    <p>Sudan and Ethiopia (East/NE Africa), Afghanistan and Myanmar (Central/SE Asia), Colombia and Venezuela (South America) — two real countries per RFP-named region this time, rather than one, so no single region's dynamics dominate the pooled result.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Definitions</span><h2>What each metric actually answers</h2></div>
+    <div class="term-grid">
+      <div class="term wide"><div class="name">Why accuracy alone is misleading here</div><p>A model that predicts "no escalation" for every single country-week would be right about <strong>84.2%</strong> of the time, since real escalation is rare (~14–16% base rate). Several models below score <em>below</em> that trivial floor while still being far more useful — because they're actually trying to catch the rare positive cases, and every one they correctly flag costs some accuracy in exchange.</p></div>
+      <div class="term"><div class="name">Precision</div><p>Of the country-weeks flagged as escalation-risk, what share actually escalated. High precision means an analyst acting on the alert isn't wasting attention.</p></div>
+      <div class="term"><div class="name">Recall</div><p>Of the country-weeks that actually escalated, what share got flagged in advance. High recall means fewer real escalations slip through unflagged.</p></div>
+      <div class="term"><div class="name">Specificity</div><p>Of the country-weeks that stayed calm, what share were correctly left unflagged. Directly answers "how many of your negatives were true negatives" — the complement of the false-alarm rate.</p></div>
+      <div class="term"><div class="name">Brier score</div><p>How close the predicted <em>probabilities</em> land to the real outcomes, on a 0–1 scale where lower is better. The only metric here that rewards good calibration rather than just a good yes/no call.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Results</span><h2>1-week horizon — 120 pooled predictions, 19 positive (15.8% base rate)</h2></div>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Model</th><th>Brier ↓</th><th>Avg. precision ↑</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>Specificity</th><th>TP/FP/TN/FN</th></tr>
+      <tr><td>ICL over temporal graph</td><td class="best">0.171</td><td class="best">0.202</td><td class="best">0.825</td><td class="best">0.375</td><td>0.158</td><td class="best">0.950</td><td>3 / 5 / 96 / 16</td></tr>
+      <tr><td>GBM on graph features</td><td>0.179</td><td>0.200</td><td>0.800</td><td>0.273</td><td>0.158</td><td>0.921</td><td>3 / 8 / 93 / 16</td></tr>
+      <tr><td>Logistic regression</td><td>0.264</td><td>0.155</td><td class="worst">0.467</td><td>0.192</td><td class="best">0.737</td><td class="worst">0.416</td><td>14 / 59 / 42 / 5</td></tr>
+      <tr><td>Naive persistence</td><td class="worst">0.267</td><td>0.158</td><td>0.733</td><td>0.158</td><td>0.158</td><td>0.842</td><td>3 / 16 / 85 / 16</td></tr>
+      <tr><td>Historical base rate</td><td>0.135</td><td>0.196</td><td>0.842</td><td class="worst">0.000</td><td class="worst">0.000</td><td>1.000</td><td>0 / 0 / 101 / 19</td></tr>
+    </table>
+    </div>
+    <p style="font-size:0.85rem;color:var(--ink-mute)">Base rate's Brier and accuracy look best on paper — it never crosses the 0.5 threshold, so it never risks a wrong call, and also never catches a real one. That's the trap the reference document's methodology section warns about explicitly: a floor that "wins" on aggregate score by refusing to make decisions.</p>
+
+    <div class="section-head" style="margin-top:2rem"><span class="tag">Results</span><h2>2-week horizon — 114 pooled predictions, 18 positive (15.8% base rate)</h2></div>
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th>Model</th><th>Brier ↓</th><th>Avg. precision ↑</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>Specificity</th><th>TP/FP/TN/FN</th></tr>
+      <tr><td>ICL over temporal graph</td><td class="best">0.162</td><td>0.177</td><td>0.816</td><td class="worst">0.000</td><td class="worst">0.000</td><td class="best">0.969</td><td>0 / 3 / 93 / 18</td></tr>
+      <tr><td>GBM on graph features</td><td>0.189</td><td>0.179</td><td>0.754</td><td>0.083</td><td>0.056</td><td>0.885</td><td>1 / 11 / 85 / 17</td></tr>
+      <tr><td>Logistic regression</td><td>0.239</td><td class="best">0.289</td><td class="worst">0.588</td><td>0.216</td><td class="best">0.611</td><td class="worst">0.583</td><td>11 / 40 / 56 / 7</td></tr>
+      <tr><td>Naive persistence</td><td>0.254</td><td>0.161</td><td>0.746</td><td>0.176</td><td>0.167</td><td>0.854</td><td>3 / 14 / 82 / 15</td></tr>
+      <tr><td>Historical base rate</td><td>0.137</td><td>0.187</td><td class="best">0.842</td><td class="worst">0.000</td><td class="worst">0.000</td><td>1.000</td><td>0 / 0 / 96 / 18</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Ranking</span><h2>So which one actually wins?</h2></div>
+    <p class="lede">Honestly: it depends what the flagged list is for. No single model wins every column, and that disagreement is itself the finding worth reporting rather than picking a favorite metric after the fact.</p>
+    <ol class="rank-list">
+      <li><span class="pos">1</span><div><h4>ICL over the temporal graph — best all-around at the 1-week horizon</h4><p>Best Brier, best accuracy, best precision, and best specificity among models that actually flag anything. The one model here that's both reasonably calibrated <em>and</em> decision-useful at 1 week — though see tab 03 for why this is currently a hand-tuned formula standing in for a real LLM call, not a demonstrated NLP-reasoning advantage yet.</p></div></li>
+      <li><span class="pos">2</span><div><h4>Logistic regression — the one to reach for if recall matters most</h4><p>Best average precision at 2 weeks, and by far the best recall at both horizons (0.737 and 0.611) — it catches the most real escalations. The cost is severe: specificity as low as 0.416, meaning it's wrong more often than right when it flags something. Useful for a "cast a wide net, human reviews everything" workflow; not for an automated alert.</p></div></li>
+      <li><span class="pos">3</span><div><h4>GBM on graph features — solid, but didn't lead this round</h4><p>Middling on every metric at both horizons, and notably didn't beat the ICL forecaster's calibration this time despite being the retrained, "advantaged" baseline. Tab 04 has a specific, fixable reason why.</p></div></li>
+      <li><span class="pos">4</span><div><h4>Naive persistence — beaten by nearly everything</h4><p>"Conflict continues where it's already happening" is a weak assumption at weekly granularity in this sample — mediocre across every column, exactly the kind of floor the methodology expects a real model to clear.</p></div></li>
+      <li><span class="pos">5</span><div><h4>Historical base rate — best on paper, least useful in practice</h4><p>Wins Brier and accuracy at both horizons by construction, and catches zero real escalations at the 0.5 threshold. Kept in the battery specifically <em>because</em> it exposes this — the reference document's insistence on running it every fold, not just once, is doing real work here.</p></div></li>
+    </ol>
+    <div class="callout good"><strong>The honest headline:</strong> at 1-week, the corrected RFP-required approach (ICL over the graph) is the actual best model in this battery on real, if still modest-scale, data — not just the one the solicitation happens to require. That wasn't guaranteed going in, and it's a stronger result than the first, smaller backtest showed.</div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 2: GRAPH APPROACH ===================== -->
+<div class="panel" id="tab2">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Signal-based family</span><h2>What the graph-derived features actually contributed</h2></div>
+    <p class="lede">GBM feature importances from the largest training fold in each horizon — the clearest read on which graph-native signals the model actually leaned on.</p>
+
+    <h3 style="margin-top:0">1-week horizon</h3>
+    <div class="feat-bar-row"><div>Mean source tone (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:100%"></div></div><div class="feat-val">0.131</div></div>
+    <div class="feat-bar-row"><div>Event count (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:84%"></div></div><div class="feat-val">0.110</div></div>
+    <div class="feat-bar-row"><div>Distinct actors (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:77%"></div></div><div class="feat-val">0.101</div></div>
+    <div class="feat-bar-row"><div>Event count (lag 2)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:67%"></div></div><div class="feat-val">0.088</div></div>
+    <div class="feat-bar-row"><div>Material-conflict share (lag 2)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:61%"></div></div><div class="feat-val">0.080</div></div>
+    <div class="feat-bar-row"><div>Goldstein trend (delta)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:56%"></div></div><div class="feat-val">0.074</div></div>
+
+    <h3>2-week horizon</h3>
+    <div class="feat-bar-row"><div>Mean Goldstein score (lag 2)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:100%"></div></div><div class="feat-val">0.142</div></div>
+    <div class="feat-bar-row"><div>Mean source tone (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:94%"></div></div><div class="feat-val">0.134</div></div>
+    <div class="feat-bar-row"><div>Mean Goldstein score (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:69%"></div></div><div class="feat-val">0.099</div></div>
+    <div class="feat-bar-row"><div>Material-conflict share (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:69%"></div></div><div class="feat-val">0.099</div></div>
+    <div class="feat-bar-row"><div>Event count (lag 1)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:69%"></div></div><div class="feat-val">0.098</div></div>
+    <div class="feat-bar-row"><div>Distinct actors (lag 2)</div><div class="feat-bar-track"><div class="feat-bar-fill" style="width:51%"></div></div><div class="feat-val">0.072</div></div>
+
+    <div class="callout good" style="margin-top:1.2rem"><strong>A real validation of the reference document's design choices:</strong> "rhetoric hostility trends from Source nodes" and "network centrality shifts" — called out specifically in tab 01 of the reference document as worth tracking — are exactly what the model leaned on most. Source tone is the single strongest feature at 1 week; the Goldstein cooperation/conflict scale dominates at 2 weeks; distinct-actor count (the network-centrality proxy) places in the top half at both horizons. The graph schema's design intuition holds up against real data, not just in the abstract.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Honest limitation</span><h2>None of these five models actually traverse the graph yet</h2></div>
+    <p>Worth stating plainly rather than glossing over: every model in this battery, including the ICL forecaster, currently operates on a <em>flattened</em> summary of the graph — event counts, quad-class shares, an actor-count proxy — not the graph's actual edge structure. The reference document's schema defines <code>ALLIED_WITH / HOSTILE_TO</code> edges with time-scoped validity windows and <code>PRECEDED_BY / ESCALATED_FROM</code> event-chain edges specifically so a model could reason about <em>relationships</em>, not just counts. Nothing built so far reads those edges.</p>
+    <div class="callout"><strong>What this means concretely:</strong> the 232,998-node, 622,505-edge graph built in this round is real and does get constructed (<code>build_features.py</code>'s <code>build_graph()</code> function), but the feature-engineering step downstream of it — <code>build_panel()</code> — only asks "how many distinct actors touched an event this week," never "which two actors newly started appearing in the same events together" or "did an alliance edge flip hostile." That second kind of question is what would make this a genuinely graph-native approach rather than a graph-flattened one. It's the single highest-value piece of unfinished work from the reference document's own schema — see tab 04.</div>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 3: NLP INFERENCE ===================== -->
+<div class="panel" id="tab3">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Reference doc, tab 01</span><h2>Signal-based vs. LLM-based, compared against real results</h2></div>
+    <p class="lede">The reference document frames these as complementary families — "the strongest systems run both." This round's results let that claim actually be checked against real numbers instead of just argued in the abstract.</p>
+
+    <div class="card">
+      <h3>A. Signal-based (GBM on graph features)</h3>
+      <p><strong>What it's good at, confirmed:</strong> full auditability. Every prediction traces back to a ranked, numeric feature-importance table (tab 02) — a reviewer can see exactly why a score moved. That's a real, demonstrated strength, not a theoretical one.</p>
+      <p><strong>What it struggled with this round:</strong> didn't lead on any metric at either horizon, and its precision at 1 week (0.273) trailed the ICL forecaster's (0.375) despite being the model allowed to retrain every fold. Tab 04 has a specific, addressable reason.</p>
+    </div>
+    <div class="card">
+      <h3>B. LLM-based inference (ICL forecaster, currently in fallback mode)</h3>
+      <p><strong>What it's good at, confirmed:</strong> best overall balance at 1 week — calibration, precision, and specificity all led the battery. The historical-analog retrieval step (real, not simulated — genuine cosine similarity over standardized features against the training-window index) appears to be doing real work.</p>
+      <p><strong>The honest caveat, repeated because it matters:</strong> no <code>ANTHROPIC_API_KEY</code> was available in this environment, so every one of these predictions ran through the documented fallback formula in <code>models.py</code>, not a real language model. The result above is therefore a real demonstration that <em>retrieval-augmented scoring</em> works reasonably well on this data — it is <strong>not yet evidence</strong> that LLM-style reasoning specifically adds value over the fallback's fixed arithmetic. That comparison needs a live key.</p>
+    </div>
+
+    <div class="ds-table-wrap">
+    <table class="results">
+      <tr><th></th><th>Auditability</th><th>Calibration (this round)</th><th>Decision usefulness (this round)</th><th>Needs retraining?</th></tr>
+      <tr><td>GBM (signal-based)</td><td class="best">High — ranked feature table</td><td>Fair</td><td>Fair</td><td>Yes, every fold</td></tr>
+      <tr><td>ICL (LLM-based, fallback mode)</td><td>Medium — logged reasoning string, but currently arithmetic not language</td><td class="best">Best of the two</td><td class="best">Best of the two</td><td>No — matches the RFP requirement</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">What changes with a live model</span><h2>What a real LLM call would actually add over the fallback</h2></div>
+    <ul>
+      <li><strong>Qualitative context the numeric features can't see.</strong> A real model reading the serialized context (tab 03 of the prior document) could weigh a specific actor name, a specific event type, or a phrasing pattern the quad-class/Goldstein numbers compress away — the reference document's own stated case for LLM inference.</li>
+      <li><strong>A reasoning trace worth auditing, not just logging.</strong> Right now the "reasoning" field records which formula ran. A live model's reasoning paragraph would be the actual artifact a human analyst reviews before acting — the RFP's implicit deliverable, not a debugging log.</li>
+      <li><strong>A real test of calibration under language-model uncertainty.</strong> LLMs are known to be poorly calibrated probability estimators without extra work (temperature tuning, ensembling, or explicit calibration against held-out data) — worth testing directly rather than assuming, especially since the fallback's calibration already set a real bar (Brier 0.171 / 0.162) to beat.</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 4: NEXT STEPS ===================== -->
+<div class="panel" id="tab4">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Prioritized</span><h2>What would move accuracy the most from here</h2></div>
+    <ul class="stage-list">
+      <li><span class="stage-num">1</span><div class="stage-body"><h4>Give the GBM a country identity</h4><p>The current feature set (tab 02) is entirely trailing statistics — the model never actually sees <em>which</em> country it's scoring. That's likely the specific, fixable reason it underperformed the ICL forecaster's country-implicit historical-analog retrieval this round. Adding <code>country</code> as a categorical feature (as already done in the pooled property-prediction work referenced by this same methodology) is a same-day change.</p></div></li>
+      <li><span class="stage-num">2</span><div class="stage-body"><h4>Make the graph features actually graph-native</h4><p>Tab 02's core finding: nothing here reads an edge yet. Concrete next features: a week-over-week count of <em>new</em> actor pairs co-occurring in events (proxying the reference document's "network centrality shifts"), and a real implementation of the schema's <code>ALLIED_WITH / HOSTILE_TO</code> time-scoped edges so a shift in that relationship is directly queryable rather than inferred from raw actor counts.</p></div></li>
+      <li><span class="stage-num">3</span><div class="stage-body"><h4>Wire in the live LLM call</h4><p>Repeated from the prior document because this round's results make it more urgent, not less — the ICL forecaster is currently winning on a fallback formula, and the actual question the RFP cares about (does in-context learning over the graph work) is still untested against a real model.</p></div></li>
+      <li><span class="stage-num">4</span><div class="stage-body"><h4>Move off the 0.5 threshold</h4><p>Every model's precision/recall/specificity numbers above are read at a single, arbitrary cutoff that clearly isn't right for a ~15% base rate — it's why logistic regression looks simultaneously "best recall" and "worst everything else." A precision-recall curve swept across thresholds, with the operating point chosen deliberately for the actual downstream use (automated alert vs. analyst worklist), would make every comparison in tab 01 sharper.</p></div></li>
+      <li><span class="stage-num">5</span><div class="stage-body"><h4>Register for ACLED, replace the proxy label</h4><p>Still the highest-leverage ground-truth fix available — a fatality-coded, hand-curated onset date directly replaces the Goldstein/quad-class trailing-baseline proxy this whole battery has been trained against, and matches the RFP's own stated evaluation standard exactly.</p></div></li>
+      <li><span class="stage-num">6</span><div class="stage-body"><h4>Keep expanding real history</h4><p>55 → 160 country-weeks already changed the ranking meaningfully between the two backtest rounds. GDELT 2.0's full 2015–present history is still sitting there unused; a multi-year pull is the most direct way to turn "23 positive labels" into a sample size that can support more than 6 features without real overfitting risk.</p></div></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===================== TAB 5: CASE STUDIES ===================== -->
+<div class="panel" id="tab5">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Real cases, plainly explained</span><h2>Four real weeks where things turned bad — and how five different forecasting approaches each read the warning signs</h2></div>
+    <p class="lede">Every number below is real, pulled from actually rerunning the test and logging what each approach predicted for each real country and week, before checking what really happened next. No jargon assumed — every term and every approach is explained in plain language the first time it comes up.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Read this first</span><h2>What's being measured, and who's doing the guessing</h2></div>
+    <div class="card">
+      <h4 style="margin-top:0">What counts as "escalation" here</h4>
+      <p style="font-size:0.92rem; margin-bottom:0">A country having a noticeably worse week than its own recent normal — a real, sharp jump in hostile or violent activity compared to how that country usually looks. Each case below is a real week where that jump happened <em>after</em> the prediction point — the outcome was checked only after every model had already made its guess, so nothing below is hindsight.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">The five ways of guessing, translated</h4>
+      <p style="font-size:0.92rem">All five were given the exact same information and asked the same question — "how likely is this country to have a bad week next week?" — they just go about answering it very differently:</p>
+      <ul style="font-size:0.92rem">
+        <li><strong>The pattern-trained model</strong> (labeled "GBM" in the charts below, short for "gradient-boosted trees"): studied hundreds of past country-weeks and learned, by trial and error, which combinations of warning signs tended to come before trouble. Like a weather forecaster who's built up instinct from years of watching pressure systems.</li>
+        <li><strong>The similar-past-cases lookup</strong> ("ICL", short for "in-context learning"): does no learning or training at all. Instead, for each new week, it searches back through every country's history for the handful of past weeks that looked most similar, checks how many of those actually led to trouble, and uses that as its answer. Like asking "what happened the last five times we saw something like this, anywhere?" This is the approach the government program funding this research specifically asks for.</li>
+        <li><strong>The simple trend formula</strong> ("LogReg", short for "logistic regression"): the plainest possible math — mostly just "activity has been going up or down by this much lately" — with no ability to weigh one signal more heavily than another the way the pattern-trained model can.</li>
+        <li><strong>"Assume nothing changes"</strong> (labeled "Persistence"): the laziest honest guess — if a country was already having a bad week, assume next week looks the same. Not a real model, just a floor every real approach needs to beat.</li>
+        <li><strong>"Use the country's own long-run average"</strong> (labeled "Base rate"): guesses based purely on how often that specific country has historically had bad weeks — ignoring whatever is happening right now entirely. The other floor every real approach needs to beat.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">The warning signs each approach was looking at</h4>
+      <ul style="font-size:0.92rem; margin-bottom:0">
+        <li><strong>Event count</strong> — how many reported incidents of any kind (friendly, neutral, or hostile) happened in that country that week.</li>
+        <li><strong>Share of events that were real conflict</strong> — of those incidents, what fraction were actual physical/violent actions rather than statements, meetings, or diplomacy. A country can have the same number of "events" one week to the next while the mix quietly shifts from talk to action.</li>
+        <li><strong>Average hostility score</strong> (called "Goldstein score" in the technical tabs) — researchers rate every reported incident on a fixed scale, from very cooperative at the positive end to very violent at the negative end. Averaging that score across a whole week gives a single read on how peaceful or hostile the week was overall.</li>
+        <li><strong>News tone</strong> — separate from what actually happened, how negative or alarmed the news coverage of it sounded.</li>
+        <li><strong>Number of distinct people/groups involved</strong> — a rough read on how many different players are mixed up in a situation, versus it being contained to just one or two.</li>
+        <li><strong>"Change from the week before"</strong> — for every signal above, what matters isn't just the number itself but whether it moved sharply up or down compared to the prior week.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+
+    <div class="case-card">
+      <div class="case-head"><h3>Myanmar — week of March 9, 2026</h3><span class="outcome">Really did get worse the following week</span></div>
+      <div class="case-body">
+        <div class="case-context">Fewer incidents than the week before (174, down from 267) — on the surface, things looked like they were quieting down. But underneath that, a larger share of those incidents were real violent action rather than talk, and the average hostility score dropped hard toward the violent end of the scale. In plain terms: <em>fewer things were happening, but the things that were happening were meaningfully worse.</em></div>
+        <div class="prob-row">
+          <div class="prob-chip win"><div class="mname">Pattern model</div><div class="pval">0.941</div></div>
+          <div class="prob-chip"><div class="mname">Lookup model</div><div class="pval">0.452</div></div>
+          <div class="prob-chip"><div class="mname">Trend formula</div><div class="pval">0.528</div></div>
+          <div class="prob-chip win"><div class="mname">Assume no change</div><div class="pval">1.000</div></div>
+          <div class="prob-chip miss"><div class="mname">Country average</div><div class="pval">0.200</div></div>
+        </div>
+        <div class="case-why"><strong>Why the pattern-trained model called this one correctly (94% confident) while the others hedged:</strong> its top-weighted warning signs — news tone, event count, and how many distinct actors were involved — line up exactly with the shift happening here. Having learned from hundreds of past examples, it had effectively been trained to notice "the mix is getting worse even though the volume is dropping," and weighted that over the surface-level decline in raw activity. The "assume nothing changes" guess also scored this one correctly, but only because trouble was already brewing the week before too — it got the right answer by coincidence, not by actually noticing the shift. The lookup model, running here without a live AI connection (more on that below), leaned on a simpler formula that only partly captured the hostility-score drop, landing in the middle instead of confidently flagging it.</div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Colombia — week of July 20, 2026</h3><span class="outcome">Really did get worse the following week</span></div>
+      <div class="case-body">
+        <div class="case-context">A much bigger drop in activity than the Myanmar case — 838 incidents, down over a thousand from an unusually busy prior week — and this time the average hostility score actually <em>improved</em>, with friendlier-sounding news coverage too. Read at face value, this looks like a country calming down. It wasn't.</div>
+        <div class="prob-row">
+          <div class="prob-chip"><div class="mname">Pattern model</div><div class="pval">0.173</div></div>
+          <div class="prob-chip"><div class="mname">Lookup model</div><div class="pval">0.317</div></div>
+          <div class="prob-chip win"><div class="mname">Trend formula</div><div class="pval">0.501</div></div>
+          <div class="prob-chip win"><div class="mname">Assume no change</div><div class="pval">1.000</div></div>
+          <div class="prob-chip miss"><div class="mname">Country average</div><div class="pval">0.250</div></div>
+        </div>
+        <div class="case-why"><strong>Why this one is genuinely hard, and even the "winning" guess barely got there:</strong> every warning sign that normally matters was pointing the wrong way — quieter, calmer, friendlier coverage. The only reason the simple trend formula landed closest is that 838 incidents in a single week is still a lot in absolute terms, even if it's a steep drop from an extreme spike — and the trend formula happens to weigh raw activity level more than the hostility-score direction. This is the clearest example in this set of a real blind spot: none of these approaches currently pay much attention to "still a lot happening, even if less than before" — they mostly watch which direction things are moving, not how high the water already is.</div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Sudan — week of June 1, 2026</h3><span class="outcome">Really did get worse the following week</span></div>
+      <div class="case-body">
+        <div class="case-context">Sudan had not had a single bad week anywhere in the history this project could see, up to this point — meaning "the country's own long-run average" guess had nothing to go on and had learned to expect calm, always. This particular week, the share of real conflict incidents rose, the average hostility score dropped sharply, and news coverage turned more negative, even as the raw number of incidents fell.</div>
+        <div class="prob-row">
+          <div class="prob-chip miss"><div class="mname">Pattern model</div><div class="pval">0.065</div></div>
+          <div class="prob-chip win"><div class="mname">Lookup model</div><div class="pval">0.506</div></div>
+          <div class="prob-chip win"><div class="mname">Trend formula</div><div class="pval">0.535</div></div>
+          <div class="prob-chip miss"><div class="mname">Assume no change</div><div class="pval">0.000</div></div>
+          <div class="prob-chip miss"><div class="mname">Country average</div><div class="pval">0.000</div></div>
+        </div>
+        <div class="case-why"><strong>The clearest real example of why "look up similar past cases" earns its place:</strong> the "country's own average" guess literally could not have caught this — Sudan's own history contained zero bad weeks to learn from, so it confidently predicted calm, and was wrong. The lookup model isn't limited to one country's own history, though — it searches every country's past for weeks that <em>looked</em> similar, regardless of which country they happened in, found that two out of five of those cross-country matches went on to get worse, and combined that with the same hostility-score warning signs. That's the one structural advantage this approach has over anything trained only on a single country's own track record: it can recognize a pattern in a country having its first bad week ever, because it's seen the pattern play out somewhere else before.</div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-head"><h3>Venezuela — week of March 9, 2026</h3><span class="outcome">Really did get worse — and every single approach missed it</span></div>
+      <div class="case-body">
+        <div class="case-context">The busiest week of any case here by far — over 3,000 reported incidents — with a steep drop in volume from the week before, but nothing unusual in the hostility score or news tone. Nothing in any of the tracked warning signs looked out of the ordinary. Two weeks later, it got worse anyway.</div>
+        <div class="prob-row">
+          <div class="prob-chip miss"><div class="mname">Pattern model</div><div class="pval">0.074</div></div>
+          <div class="prob-chip miss"><div class="mname">Lookup model</div><div class="pval">0.198</div></div>
+          <div class="prob-chip miss"><div class="mname">Trend formula</div><div class="pval">0.286</div></div>
+          <div class="prob-chip miss"><div class="mname">Assume no change</div><div class="pval">0.000</div></div>
+          <div class="prob-chip miss"><div class="mname">Country average</div><div class="pval">0.167</div></div>
+        </div>
+        <div class="case-why"><strong>An honest, clean miss — worth admitting plainly rather than explaining away:</strong> the lookup model searched for similar past weeks and found that literally none of the closest matches had led to trouble, which pushed its guess down rather than up. Every approach missed this one for the same underlying reason, not five different reasons: whatever actually drove this particular escalation left no visible fingerprint in any of the warning signs being tracked — not the incident count, not the hostility score, not the news tone. That's not a case of the models guessing badly; it's a case of the information they had access to simply not containing the answer. It's exactly the kind of gap that richer, more local sources of information — the actual radio broadcasts and community reporting this whole research program exists to start capturing — are meant to close.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Pattern across all four</span><h2>What these four cases add up to</h2></div>
+    <ul>
+      <li><strong>The pattern-trained model does best when trouble shows up as a shift in the <em>mix</em> of what's happening</strong> (Myanmar) — fewer incidents, but a rising share of them turning violent. It's seen that specific shape before and knows to weight it heavily, even when a simpler approach would read the falling raw numbers as good news.</li>
+      <li><strong>The look-up-similar-cases approach does best when a country is heading into unfamiliar territory for the first time</strong> (Sudan) — because it isn't limited to that one country's own history the way a country-specific average is. This is the single clearest reason the approach earns the emphasis it gets in this research.</li>
+      <li><strong>Every approach struggles the same way when activity is still high, just less high than an extreme spike</strong> (Colombia) — a real, fixable weak spot: these methods currently pay more attention to which direction things are trending than to how much is still actually happening.</li>
+      <li><strong>Every approach fails the same way when the real warning sign was never captured in the first place</strong> (Venezuela) — not something better modeling can fix on this data. It's a case for gathering richer information, not smarter math.</li>
+    </ul>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  Third companion to conflict-prediction-reference.html and recommended-approach-and-results.html in this folder. Same real GDELT source, same code structure, expanded data and metrics. All fallback behavior disclosed rather than hidden. Not a finished Phase II proposal.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

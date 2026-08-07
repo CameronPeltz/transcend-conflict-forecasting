@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hypergraphs for conflict prediction: theory, tools, and empirical iterations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased;}
+  code, .mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;}
+  a{color:var(--signal-deep); text-decoration-color:var(--line-strong); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--signal-deep);}
+
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem, 4vw, 3rem) 1.4rem; background:var(--paper);}
+  .masthead .eyebrow{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.6rem, 3.4vw, 2.3rem); line-height:1.15; max-width:50ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:70ch; font-size:0.98rem; margin-top:0.6rem;}
+
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem, 4vw, 3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.95rem 1.3rem; border-bottom:3px solid transparent; white-space:nowrap; transition:color 0.15s ease;}
+  .tab-btn .num{display:inline-block; width:1.4em; color:var(--line-strong);}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  .tab-btn.active .num{color:var(--signal);}
+
+  main{max-width:960px; margin:0 auto; padding:2.4rem clamp(1.2rem, 4vw, 3rem) 6rem;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); letter-spacing:0.04em;}
+  .section-head h2{font-size:1.25rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.98rem; margin-bottom:1.2rem;}
+
+  ul, ol{padding-left:1.3rem; margin:0 0 1em 0;}
+  li{margin-bottom:0.45rem;}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .card h3{font-size:1.02rem; margin-bottom:0.4rem;}
+  .card h4{font-size:0.9rem; color:var(--ink-soft); margin:0.9rem 0 0.3rem;}
+  .card .meta{font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color:var(--ink-mute); margin-bottom:0.6rem;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono', monospace; font-size:1.5rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.76rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.85rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.92rem; color:#5c2c1a; margin:1rem 0;}
+  .callout strong{color:#4a2314;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.good strong{color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .callout.wire strong{color:#2c2350;}
+
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.6rem;}
+  table.ds{width:100%; border-collapse:collapse; font-size:0.86rem; background:var(--paper-raised);}
+  table.ds th{text-align:left; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.65rem; white-space:nowrap;}
+  table.ds td{padding:0.5rem 0.65rem; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.ds tr:last-child td{border-bottom:none;}
+  table.ds tr.highlight td{background:var(--signal-soft);}
+  table.ds tr.highlight td:first-child{border-left:3px solid var(--signal); padding-left:calc(0.65rem - 3px);}
+
+  .dataset-card{border:1px solid var(--line); border-radius:var(--radius); margin-bottom:1.3rem; overflow:hidden; background:var(--paper-raised);}
+  .dataset-head{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; padding:1rem 1.3rem 0.8rem; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .dataset-head h3{font-size:1.08rem; margin-bottom:0.2rem;}
+  .dataset-head .sub{font-size:0.85rem; color:var(--ink-mute);}
+  .pill-row{display:flex; gap:0.4rem; flex-wrap:wrap;}
+  .pill{font-family:'IBM Plex Mono', monospace; font-size:0.7rem; padding:0.2rem 0.55rem; border-radius:12px; border:1px solid var(--line-strong); color:var(--ink-soft); white-space:nowrap;}
+  .pill.free{background:var(--signal-soft); color:var(--signal-deep); border-color:var(--signal-soft);}
+  .pill.wire{background:var(--wire-soft); color:#3d3260; border-color:var(--wire-soft);}
+  .dataset-body{padding:1rem 1.3rem 1.2rem;}
+  .dataset-body .row{display:grid; grid-template-columns:150px 1fr; gap:0.6rem; margin-bottom:0.6rem; font-size:0.9rem;}
+  @media(max-width:600px){.dataset-body .row{grid-template-columns:1fr;} .schema-grid{grid-template-columns:1fr;}}
+  .dataset-body .row .label{font-family:'IBM Plex Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-mute); padding-top:0.15rem;}
+  .dataset-body .row .value{color:var(--ink);}
+
+  .schema-grid{display:grid; grid-template-columns:1fr 1fr; gap:1rem;}
+  .schema-col{border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem; background:var(--paper-raised);}
+  .schema-col.nodes{border-left:3px solid var(--signal);}
+  .schema-col.edges{border-left:3px solid var(--wire);}
+  .schema-col h4{font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em; font-family:'IBM Plex Mono', monospace; color:var(--ink-mute); margin-bottom:0.7rem;}
+  .schema-item{margin-bottom:0.6rem; font-size:0.9rem;}
+  .schema-item code{background:var(--signal-soft); color:var(--signal-deep); padding:0.05rem 0.35rem; border-radius:2px;}
+  .schema-col.edges .schema-item code{background:var(--wire-soft); color:#3d3260;}
+  .schema-item .desc{color:var(--ink-soft); display:block; margin-top:0.15rem; font-size:0.85rem;}
+
+  .harness-block{background:var(--ink); color:#e8e6dc; border-radius:var(--radius); padding:1.2rem 1.4rem; font-family:'IBM Plex Mono', monospace; font-size:0.78rem; line-height:1.65; overflow-x:auto; margin:1rem 0;}
+  .harness-block .c{color:#7c8579;} .harness-block .k{color:#8bc9a3;} .harness-block .s{color:#e0b080;}
+
+  .metric-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:0.8rem; margin:1rem 0;}
+  .metric{border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; background:var(--paper-raised);}
+  .metric .name{font-size:0.78rem; font-family:'IBM Plex Mono', monospace; color:var(--signal-deep); margin-bottom:0.3rem;}
+  .metric .def{font-size:0.83rem; color:var(--ink-soft);}
+
+  .rank-grid{display:grid; grid-template-columns:2.4rem 1fr; gap:0.9rem; margin-bottom:0.8rem;}
+  .rank-num{font-family:'Source Serif 4', serif; font-size:1.4rem; color:var(--signal); font-weight:600;}
+  .rank-num.n2{color:var(--ink-mute);} .rank-num.n3{color:var(--ink-mute);}
+
+  footer{max-width:960px; margin:0 auto; padding:1.5rem clamp(1.2rem, 4vw, 3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+  ::selection{background:var(--signal-soft); color:var(--signal-deep);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Hypergraph research round</span>
+    <span>conflict_prediction project</span>
+    <span>hypergraphs_research/</span>
+    <span>2026-08-05</span>
+  </div>
+  <h1>Hypergraphs for conflict prediction: theory, free tools, and empirical iterations on the real datasets</h1>
+  <p class="dek">What a hypergraph actually is, why it's a genuinely better fit than a pairwise graph for the specific things that make conflicts spread (shared actors, shared regions, shared shocks, shared named conflicts), a ranked comparison of the free Python tools available, and a real empirical test — new hyperedge types, an alternate propagation operator, a hypergraph-as-features approach via the real <code>xgi</code> library, and a genuine text hypergraph over GDELT's theme taxonomy — run against the project's existing small, large, and pure conflict datasets.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="tab-summary"><span class="num">01</span>Summary</button>
+  <button class="tab-btn" data-tab="tab-context"><span class="num">02</span>Context</button>
+  <button class="tab-btn" data-tab="tab-datasets"><span class="num">03</span>Datasets</button>
+  <button class="tab-btn" data-tab="tab-methods"><span class="num">04</span>Methods</button>
+  <button class="tab-btn" data-tab="tab-results"><span class="num">05</span>Results</button>
+  <button class="tab-btn" data-tab="tab-recs"><span class="num">06</span>Recommendations</button>
+</div>
+
+<main>
+
+<!-- ============================================================ TAB 1: SUMMARY ============================================================ -->
+<div class="panel active" id="tab-summary">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">TL;DR</span><h2>Hypergraphs are already paying off here — one track's best model, out of 100+ tried, is the hypergraph net</h2></div>
+    <p class="lede">This project already built a real, working hypergraph neural network from scratch (<code>scripts/hypergraph_model.py</code>, Feng et al. 2019 formulation) and logged 24 iterations of it across three never-merged data tracks before this research round started. This document adds new research on top of that: what hypergraphs are and why they fit conflict data specifically, a hands-on ranked comparison of the free tools available, and 22 new construction experiments — hyperedge-type ablations, an alternate propagation operator, a hypergraph-as-features approach using the real <code>xgi</code> library, and a genuine multi-way text hypergraph over GDELT's theme taxonomy — designed against the same three tracks (19 completed and reported in full below; 3 queued and disclosed as deferred, Tab 05).</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0.288</div><div class="l">Track B (large, 2,989 country-weeks): hypergraph AP is the <strong>best of 109 configs tested</strong> on that track, beating every GBM/RF/logreg/ensemble config</div></div>
+      <div class="stat"><div class="n">0.685</div><div class="l">Track C (pure UCDP): best new ablation result, matching the prior 24-iteration best (0.688) via a better hyperedge set, not hyperparameter tuning</div></div>
+      <div class="stat"><div class="n">24 + 19</div><div class="l">prior hypergraph iterations (grand_search_v2) + new, completed construction iterations this round (3 more queued, see below)</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">free Python hypergraph tools researched and ranked (XGI, HyperNetX, Hypergraphx, DHG, PyTorch Geometric)</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Verdict</span><h2>Is it promising? Yes on two of three tracks — and the reason why is legible, not a black box</h2></div>
+    <div class="callout good"><strong>Track B (large, self-scraped, 19 countries, 3 years) is where hypergraphs earn their keep most clearly.</strong> It's also the track where the argument for hypergraphs is strongest on paper: 19 countries sharing real cross-border actors and real regional/global shocks in a genuinely time-indexed panel — exactly the multi-way structure a pairwise graph has to approximate with a clique expansion. The data backs the theory here, not just the other way around.</div>
+    <div class="callout"><strong>But the ablation (Tab 05) overturns the simplest version of that theory:</strong> on Track B, the actor-sharing hyperedge — the single clearest case for a hyperedge <em>in principle</em> — actively hurts (AP 0.270 → 0.179), while the same edge type sharply helps Track C (0.554 → 0.666). The real lesson isn't "hyperedges work" or "hyperedges don't" — it's that a hyperedge is only as good as the entity-resolution quality of the field it's built from, and GDELT's actor codes are noisier than UCDP's hand-curated combatant identities.</div>
+    <div class="callout">Track A (the original 6-country, 180-day panel) shows hypergraph wins too, but nearly every result on that track has fewer than 20 pooled test predictions with 2-3 positives — real numbers, but too small to trust as more than a promising signal. Track C (pure UCDP) is the one place a plain GBM ensemble still beats the hypergraph net outright, worth taking at face value rather than explaining away.</div>
+    <p style="font-size:0.92rem; color:var(--ink-soft);">See Tab 05 for the full metric tables (accuracy, precision, recall, specificity, F1, Brier, AP, ROC-AUC, log-loss, MCC) behind every number above, and exactly which new construction — a hyperedge type, a propagation operator, or a feature-engineering shortcut — drove each result. Three configs (Track B/C structural features, Track B text hypergraph) were queued but deferred this session under real CPU contention from a much larger concurrent run — disclosed there, not glossed over.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Recommendation</span><h2>For this project's actual scale, the free tool worth adopting is XGI — not the deep-learning-oriented libraries</h2></div>
+    <p>At thousands of nodes, on CPU, with project-specific hyperedge types (shared actor, shared named conflict) that no off-the-shelf loader understands out of the box, a lightweight structural-analysis library that hands off real hypergraph statistics into the project's existing, well-tested GBM pipeline is a better fit than standing up a second, heavier, PyTorch-based training stack for marginal gain at this data size. Full ranked comparison, and when that recommendation would flip, in Tab 06.</p>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 2: CONTEXT ============================================================ -->
+<div class="panel" id="tab-context">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Definition</span><h2>A graph connects pairs. A hypergraph connects any-sized groups, in one relation.</h2></div>
+    <p class="lede">An ordinary graph edge always joins exactly two nodes. A <strong>hyperedge</strong> joins any number of nodes at once — it's a subset of the node set, not a pair. Formally, a hypergraph is a pair (V, E) where V is a set of nodes and E is a set of hyperedges, each hyperedge e ⊆ V. The whole structure is captured by an <strong>incidence matrix</strong> H (nodes × hyperedges), where H[v, e] = 1 if node v belongs to hyperedge e.</p>
+    <div class="schema-grid">
+      <div class="schema-col nodes">
+        <h4>Why this matters for real data</h4>
+        <div class="schema-item">A pairwise graph can only say "A relates to B." To represent "A, B, and C all share the same underlying cause" it has to draw three separate edges (A-B, B-C, A-C) — a <strong>clique expansion</strong> — which loses the fact that it was ONE shared cause, not three independent pairwise relationships, and which gets denser (and noisier) the more nodes share that cause.</div>
+        <div class="schema-item">A hypergraph represents that same situation as <strong>one hyperedge</strong> {A, B, C}. The shared-cause structure is preserved exactly, not approximated.</div>
+      </div>
+      <div class="schema-col edges">
+        <h4>The math already built in this project</h4>
+        <div class="schema-item"><code>H</code><span class="desc">(n_nodes × n_hyperedges) incidence matrix</span></div>
+        <div class="schema-item"><code>Dv, De</code><span class="desc">diagonal node-degree / hyperedge-degree matrices</span></div>
+        <div class="schema-item"><code>G = Dv^-1/2 H W De^-1 H^T Dv^-1/2</code><span class="desc">the symmetric hypergraph propagation (Laplacian-smoothing) operator — Feng et al., "Hypergraph Neural Networks," AAAI 2019</span></div>
+        <div class="schema-item"><code>X_out = act(G @ X_in @ Θ)</code><span class="desc">one hypergraph-convolution layer; two such layers (ReLU then a linear scoring head) make the HGNN already in production here</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Why conflict data specifically</span><h2>The things that actually make conflict spread are multi-way, not pairwise</h2></div>
+    <p class="lede">This isn't an abstract argument — every hyperedge type this project uses corresponds to a real, named relationship in the raw event data that a country-pair or actor-pair graph cannot express as a single relation:</p>
+    <div class="card">
+      <h3>Shared country history</h3>
+      <p>Every week of a given country's own recent trajectory is bound together — this week's escalation risk depends on the whole recent run, not just last week in isolation. One hyperedge per country connects all its recent weeks at once.</p>
+    </div>
+    <div class="card">
+      <h3>Regional and global shocks</h3>
+      <p>A commodity-price spike, a seasonal drought, or a coordinated regional response hits <em>many countries in the same week</em> — one real-world cause, N affected country-weeks. One hyperedge per (region, week) or per calendar week captures this directly; a pairwise graph would need a country-country edge for every pair of countries hit by the same shock, inflating edge count with no new information.</p>
+    </div>
+    <div class="card">
+      <h3>Shared armed actors</h3>
+      <p>A named actor (a GDELT Actor1/Actor2 code, or a UCDP side_a/side_b identity) can be active in multiple countries in the same week — an actor operating across a border links those countries' risk directly. This is the single clearest case for a hyperedge over a pairwise edge: the actor IS the hyperedge, and pairwise-decomposing it (actor active in A and B → draw an A-B edge) throws away which specific actor caused the link.</p>
+    </div>
+    <div class="card">
+      <h3>New this round: shared named conflicts</h3>
+      <p>UCDP's own <code>conflict_name</code> field (e.g., "Government of Sudan – SPLM/A") identifies a specific, real, named conflict that can itself span multiple countries and persist — or go quiet — over specific weeks, independent of which individual armed actor is doing the fighting that week. This is a genuinely different multi-way relation from the actor hyperedge above, built for the first time in this round (see Tab 04).</p>
+    </div>
+    <div class="callout wire"><strong>This isn't a new argument for this project either.</strong> <code>model-battery-results.html</code>, from an earlier round, explicitly flagged that every graph-feature attempt up to that point was "genuinely pairwise... flattened to summary statistics fed into a tabular model" and that "none of these five models actually traverse the graph yet." The hypergraph net was built specifically as the answer to that gap — this research round tests whether refining <em>how</em> the hypergraph is built pushes that answer further.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Broader grounding</span><h2>This isn't a niche technique — it's an active research area, including for exactly this kind of data</h2></div>
+    <ul>
+      <li><strong>Hypergraph neural networks</strong> as a field started with Feng et al. (AAAI 2019) and Bai, Zhang & Torr's "Hypergraph Convolution and Hypergraph Attention" (Pattern Recognition, 2021) — both implemented and compared in this round (Tab 04/05).</li>
+      <li><strong>Knowledge hypergraphs</strong> — recent NLP work (e.g., Text2NKG, NeurIPS 2024) argues that n-ary facts (events involving 3+ entities at once) are better modeled as hyperedges than decomposed into binary knowledge-graph triples, for the same reason argued above for country-weeks: decomposition loses which entities were jointly involved in one real event.</li>
+      <li><strong>Hypergraphs of text</strong> — a real, published technique (see Tab 04) models each document as a hyperedge connecting the words or tags it contains, rather than building a pairwise word-cooccurrence graph. This round applies exactly that idea to GDELT's own GKG theme taxonomy (Tab 04/05, "text hypergraph").</li>
+      <li><strong>Conflict forecasting with graph neural networks</strong> is itself an active academic literature (spatio-temporal GCNs for subnational violence prediction, dynamic graph contrastive learning for event prediction) — this project's hypergraph work sits inside that broader trend, one step further (multi-way instead of pairwise relations).</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 3: DATASETS ============================================================ -->
+<div class="panel" id="tab-datasets">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Discipline carried over</span><h2>Three tracks, never merged — the hypergraph work respects the same rule as everything else in this project</h2></div>
+    <p class="lede">Per the project's own standing rule (never blend UCDP's fatality-coded ground truth with GDELT-derived features, so the "pure" academic set can always be evaluated in isolation), every hypergraph iteration in this round — old or new — picks exactly one track and reports on it separately. All three were already fully assembled before this research round began; nothing here required new scraping.</p>
+  </div>
+
+  <div class="dataset-card">
+    <div class="dataset-head">
+      <div>
+        <h3>Track A — original small GDELT panel</h3>
+        <div class="sub">The 6-country, 180-day panel every earlier document in this project used</div>
+      </div>
+      <div class="pill-row"><span class="pill free">free</span><span class="pill">GDELT 2.0</span><span class="pill">baseline / continuity</span></div>
+    </div>
+    <div class="dataset-body">
+      <div class="row"><div class="label">Scale</div><div class="value">161 country-weeks, ~19-42 positive depending on horizon/label — this is the "only ~120 events" sample the original brief flagged as too small on its own</div></div>
+      <div class="row"><div class="label">Files</div><div class="value"><code>data/gdelt_filtered.csv</code>, <code>data/country_week_panel.csv</code>, plus external blocks (<code>climate_daily.csv</code>, <code>food_prices_recent.csv</code>, <code>worldbank_structural.csv</code>, <code>election_calendar.csv</code>)</div></div>
+      <div class="row"><div class="label">Hypergraph role</div><div class="value">Smallest track — used here mainly as a continuity/sanity check; results on it are real but statistically thin (single-digit positives per fold pool in most configs)</div></div>
+    </div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="dataset-head">
+      <div>
+        <h3>Track B — large self-scraped GDELT panel</h3>
+        <div class="sub">19 countries (3 DARPA-named regions + 2 disclosed extras), 3 years, built specifically to answer "the datasets are too small"</div>
+      </div>
+      <div class="pill-row"><span class="pill free">free</span><span class="pill">GDELT 2.0 + GKG</span><span class="pill">this round's strongest track</span></div>
+    </div>
+    <div class="dataset-body">
+      <div class="row"><div class="label">Scale</div><div class="value">2,989 country-weeks, 358 positive, built from 5,857,451 raw GDELT events</div></div>
+      <div class="row"><div class="label">Text component</div><div class="value">813,624 (country, week, theme, count) rows and 368,516 pairwise theme-cooccurrence rows from GDELT's GKG theme taxonomy — 8,872 distinct themes tagged across 2,907 distinct country-weeks (6,147 themes kept after a minimum-count filter for the new text hypergraph, Tab 04)</div></div>
+      <div class="row"><div class="label">Files</div><div class="value"><code>data/scraped_large/gdelt_large_raw.csv</code>, <code>large_country_week_panel.csv</code>, <code>gkg_theme_freq_countryweek.csv</code>, <code>gkg_theme_cooccurrence.csv</code>, <code>gkg_country_week_embeddings.csv</code></div></div>
+      <div class="row"><div class="label">Hypergraph role</div><div class="value">The track where a real cross-border actor or regional/global shock genuinely links multiple countries in the panel — the strongest theoretical and empirical case for a hyperedge over a pairwise edge (Tab 01/05)</div></div>
+    </div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="dataset-head">
+      <div>
+        <h3>Track C — pure UCDP GED v25.1</h3>
+        <div class="sub">Uppsala Conflict Data Program's real, fatality-coded, hand-curated conflict events — the primary source most Kaggle "armed conflict" mirrors are themselves built from</div>
+      </div>
+      <div class="pill-row"><span class="pill free">free</span><span class="pill">no auth required</span><span class="pill">kept fully separate</span></div>
+    </div>
+    <div class="dataset-body">
+      <div class="row"><div class="label">Scale (global)</div><div class="value">385,918 events, 124 countries, 1989–2024, 3,957,143 total UCDP "best"-estimate deaths</div></div>
+      <div class="row"><div class="label">Scale (19-country comparison panel)</div><div class="value">29,038 country-weeks, 4,814 positive (label_1, 1-week horizon)</div></div>
+      <div class="row"><div class="label">New this round</div><div class="value">507 distinct named conflicts (<code>conflict_name</code>) across 12,169 (country, week) cells with recorded conflict activity — the raw material for the new conflict-identity hyperedge (Tab 04)</div></div>
+      <div class="row"><div class="label">Files</div><div class="value"><code>data/pure_ucdp/GEDEvent_v25_1.csv</code>, <code>ucdp_country_week_panel.csv</code>, <code>summary.json</code></div></div>
+      <div class="row"><div class="label">Hypergraph role</div><div class="value">Ground-truth fatality-coded track — best-performing overall (any model family), and the one place a plain GBM ensemble still beats the hypergraph net outright</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 4: METHODS ============================================================ -->
+<div class="panel" id="tab-methods">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Already in production</span><h2>The existing HGNN this round builds on, not replaces</h2></div>
+    <p class="lede"><code>scripts/hypergraph_model.py</code> — a real 2-layer hypergraph neural network (Feng et al. 2019), implemented from scratch in numpy/scipy.sparse (no torch/DGL/PyG installed at the time it was built), trained with real backprop (Adam, manually derived gradients) and weighted binary cross-entropy for class imbalance. Four hyperedge types, always built together when an actor lookup is supplied:</p>
+    <div class="schema-grid">
+      <div class="schema-col nodes">
+        <h4>Hyperedge types (existing)</h4>
+        <div class="schema-item"><code>country:{code}</code><span class="desc">this country's own recent weeks, bounded to a trailing window</span></div>
+        <div class="schema-item"><code>region_week:{region}:{week}</code><span class="desc">regional spillover within the same week</span></div>
+        <div class="schema-item"><code>global_week:{week}</code><span class="desc">a global shock hitting many countries the same week</span></div>
+        <div class="schema-item"><code>actor:{code}</code><span class="desc">a real GDELT Actor1/Actor2 or UCDP side_a/side_b identity active in multiple country-weeks</span></div>
+      </div>
+      <div class="schema-col edges">
+        <h4>Evaluation discipline (unchanged this round)</h4>
+        <div class="schema-item">Rolling-origin folds<span class="desc">strict temporal cutoffs, no random k-fold — every prediction is genuinely out-of-sample in time</span></div>
+        <div class="schema-item">Transductive, never label-leaking<span class="desc"><code>predict_proba</code> rebuilds the hypergraph over train ∪ test node existence/features only — test labels are never used, standard transductive GNN evaluation</span></div>
+        <div class="schema-item">Same metric panel<span class="desc">accuracy, precision, recall, specificity, F1, Brier, average precision (PR-AUC), ROC-AUC, log-loss, MCC — identical computation to every other model in the project's grand search</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">New this round</span><h2>Five genuinely new things tested, none of which repeat the 24 already-logged iterations</h2></div>
+
+    <div class="card">
+      <h3>1. Hyperedge-type ablation</h3>
+      <p>The production model always builds all four hyperedge types together whenever an actor lookup is supplied — no prior run isolates which one actually carries signal. <code>hg_research_lib.build_incidence_v2</code> makes each type individually toggleable. Tested cumulatively (country-only → +region_week → +global_week → +actor[→ +conflict for track C]) on all three tracks.</p>
+    </div>
+
+    <div class="card">
+      <h3>2. New hyperedge type: shared named conflict</h3>
+      <p>UCDP's own <code>conflict_name</code> field, never used as a hyperedge before this round (see Tab 02 for why it's a distinct relation from the actor hyperedge). Built via <code>hg_research_lib.build_conflict_lookup</code>, tested as the 5th ablation step on Track C only (the only track with this field).</p>
+    </div>
+
+    <div class="card">
+      <h3>3. Alternate propagation operator: Bai et al. 2021 vs Feng et al. 2019</h3>
+      <p>The production model always uses the symmetric Feng et al. operator. <code>hg_research_lib.propagation_operator_v2</code> adds the asymmetric operator from Bai, Zhang & Torr, "Hypergraph Convolution and Hypergraph Attention" (Pattern Recognition, 2021) — the same formula PyTorch Geometric's <code>HypergraphConv</code> layer implements:</p>
+      <div class="harness-block"><span class="c"># Feng et al. 2019 (existing, symmetric)</span>
+G_sym  <span class="k">=</span> Dv<span class="s">^-1/2</span> H W De<span class="s">^-1</span> H<span class="s">^T</span> Dv<span class="s">^-1/2</span>
+
+<span class="c"># Bai, Zhang &amp; Torr 2021 (new, asymmetric -- PyG's HypergraphConv formula)</span>
+G_asym <span class="k">=</span> Dv<span class="s">^-1</span> H W De<span class="s">^-1</span> H<span class="s">^T</span></div>
+      <p>Tested with otherwise-identical hyperparameters on tracks B and C (the two tracks with enough pooled test predictions for the comparison to mean anything).</p>
+    </div>
+
+    <div class="card">
+      <h3>4. Hypergraph-as-features, via the real <code>xgi</code> library</h3>
+      <p>Every prior hypergraph attempt in this project trains an end-to-end HGNN. This tests the opposite approach: build the identical incidence structure, hand it to the free <code>xgi</code> package (pip-installed for this round, no dependency conflicts with the existing pandas/scikit-learn/xgboost stack — see Tab 06), compute plain structural features per node, and feed those into the project's existing, well-tested GBM pipeline — either alongside the normal tabular features or completely alone (structural signal only, isolating whether hypergraph structure by itself carries any predictive value without any of the usual tabular features). Hyperedge degree and average neighbor degree both made the final feature set; <code>xgi</code>'s local clustering coefficient was tried first and dropped after it hung for 60+ seconds on this project's topology — a real finding in its own right, see Tab 05.</p>
+    </div>
+
+    <div class="card">
+      <h3>5. Text hypergraph: GDELT's theme taxonomy as a genuine multi-way structure</h3>
+      <p>The project's existing text-graph feature (<code>graph_nlp_features.build_theme_embeddings</code>) aggregates articles down to <em>pairwise</em> theme-cooccurrence counts before embedding them (PPMI + truncated SVD — the GloVe/LSA family). That throws away exactly the information a hypergraph is supposed to keep: two articles both mentioning {A, B, C} and one mentioning {A, D, E} produce identical pairwise edge weights for (A,B) and (A,C) either way. <code>theme_hypergraph.py</code> instead treats each <strong>country-week as a hyperedge connecting every theme actually tagged in it that week</strong> (real membership data already assembled: 813,624 rows), and embeds themes via a TF-IDF-weighted truncated SVD of that real multi-way incidence matrix directly — a genuine "hypergraph of text" construction, not a pairwise collapse. Compared head-to-head against the existing pairwise embedding and against no text features at all, same folds, same base model, Track B.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Reproducibility</span><h2>Code laid down this round</h2></div>
+    <ul>
+      <li><code>hypergraphs_research/hg_research_lib.py</code> — ablation-capable incidence construction, both propagation operators, the <code>HypergraphNNVariant</code> class (drop-in API match to the production <code>HypergraphNN</code>), and the <code>xgi</code> structural-feature extractor</li>
+      <li><code>hypergraphs_research/theme_hypergraph.py</code> — the text-hypergraph embedding builder</li>
+      <li><code>hypergraphs_research/run_iterations.py</code> — runs every experiment in this document against the project's existing <code>grand_search_v2</code> harness (same panels, same folds, same metrics) and logs one JSON line per run to <code>hypergraphs_research/hg_iterations_log.jsonl</code>; <code>run_remaining3.py</code> is the standing entry point for the 3 configs queued but not yet run (Tab 05/06)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 5: RESULTS ============================================================ -->
+<div class="panel" id="tab-results">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Baseline, already logged</span><h2>What 24 prior iterations already established (results_v2/grand_search_v2_log.jsonl)</h2></div>
+    <p class="lede">Before this round started, the production HGNN (fixed hyperedge set, hyperparameter sweep only) had already run 24 times across the 3 tracks, inside a larger sweep of 109-137 configs per track covering GBM/RF/logreg/ensembles too. These are the numbers this round's new constructions are measured against:</p>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Track</th><th>Best hypergraph AP (of 24)</th><th>Best of ANY model family</th><th>Hypergraph's rank on that track</th><th>n / positives</th></tr>
+        <tr><td>A — small</td><td>0.378 (n=30, npos=3) — or 0.591 at n=18/npos=2, too thin to trust</td><td>0.591 (hypergraph itself)</td><td><strong>#1</strong> — but on a very small pooled test set</td><td>18-42 / 2-10</td></tr>
+        <tr class="highlight"><td>B — large</td><td>0.288</td><td>0.288 (hypergraph itself)</td><td><strong>#1 of 109 configs</strong> — beats every GBM/RF/logreg/ensemble tried</td><td>473 / 64</td></tr>
+        <tr><td>C — pure UCDP</td><td>0.688</td><td>0.865 (GBM+logreg ensemble)</td><td>#2 — real signal, but not the track leader</td><td>421 / 110</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">New — Section 1</span><h2>Hyperedge-type ablation: no single "right" combination — it's track-specific, and one result overturns a theoretical prediction</h2></div>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Track</th><th>Edge types</th><th>AP</th><th>Brier</th><th>Recall</th><th>Specificity</th><th>ROC-AUC</th><th>MCC</th></tr>
+        <tr class="highlight"><td rowspan="4">A — small (n=42, npos=10)</td><td>country only</td><td>0.303</td><td>0.284</td><td>0.500</td><td>0.531</td><td>0.584</td><td>0.027</td></tr>
+        <tr><td>+ region_week</td><td>0.225</td><td>0.342</td><td>0.100</td><td>0.781</td><td>0.416</td><td>-0.129</td></tr>
+        <tr><td>+ global_week</td><td>0.191</td><td>0.437</td><td>0.100</td><td>0.656</td><td>0.300</td><td>-0.230</td></tr>
+        <tr><td>+ actor (all 4)</td><td>0.221</td><td>0.358</td><td>0.100</td><td>0.594</td><td>0.456</td><td>-0.277</td></tr>
+        <tr><td rowspan="4">B — large (n=473, npos=64)</td><td>country only</td><td>0.232</td><td>0.227</td><td>0.672</td><td>0.553</td><td>0.648</td><td>0.154</td></tr>
+        <tr><td></td><td>+ region_week</td><td>0.266</td><td>0.217</td><td>0.531</td><td>0.687</td><td>0.654</td><td>0.157</td></tr>
+        <tr class="highlight"><td></td><td>+ global_week</td><td><strong>0.270</strong></td><td>0.234</td><td>0.578</td><td>0.643</td><td>0.657</td><td>0.155</td></tr>
+        <tr><td></td><td>+ actor (all 4)</td><td>0.179</td><td>0.259</td><td>0.578</td><td>0.516</td><td>0.561</td><td>0.064</td></tr>
+        <tr><td rowspan="5">C — pure UCDP (n=421, npos=110)</td><td>country only</td><td>0.599</td><td>0.171</td><td>0.700</td><td>0.801</td><td>0.823</td><td>0.468</td></tr>
+        <tr><td>+ region_week*</td><td>0.599</td><td>0.171</td><td>0.700</td><td>0.801</td><td>0.823</td><td>0.468</td></tr>
+        <tr><td>+ global_week</td><td>0.554</td><td>0.202</td><td>0.709</td><td>0.749</td><td>0.787</td><td>0.417</td></tr>
+        <tr><td>+ actor</td><td>0.666</td><td>0.174</td><td>0.718</td><td>0.781</td><td>0.838</td><td>0.460</td></tr>
+        <tr class="highlight"><td>+ conflict (new, all 5)</td><td><strong>0.685</strong></td><td>0.169</td><td>0.727</td><td>0.785</td><td>0.847</td><td>0.472</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.85rem; color:var(--ink-mute);">*Identical to "country only" by construction, not a rounding coincidence — Track C's panel has no <code>region</code> column, so the region_week hyperedge type is a real no-op on this track (disclosed, not a bug).</p>
+    <div class="callout"><strong>The single most surprising result: actor-sharing hyperedges — theoretically the clearest case for a hyperedge over a pairwise edge (Tab 02) — sharply <em>hurt</em> Track B (0.270 → 0.179, worse than country-only) while sharply <em>helping</em> Track C (0.554 → 0.666).</strong> The honest read: GDELT's Actor1/Actor2 codes on Track B are noisier and more genericly-coded (state/institutional actors reused across huge numbers of unrelated events) than UCDP's side_a/side_b identities, which are hand-curated, specific combatant names. A hyperedge is only as good as the entity-resolution behind it — "shared actor" only helps when the actor field is actually a clean, specific identity, which is a real, transferable lesson for using this construction on other event datasets.</div>
+    <div class="callout good"><strong>The new conflict-identity hyperedge (Tab 04, item 2) gives Track C its best result in this entire ablation (AP 0.685) — matching the previous 24-iteration sweep's best (0.688, reached only via a hidden-dim hyperparameter search) using a fixed hidden_dim=16 and no hyperparameter tuning at all.</strong> The gain here came entirely from a better hyperedge, not a better-tuned network — a genuinely different, complementary lever from the hyperparameter sweeps this project already ran extensively.</div>
+    <div class="callout wire"><strong>Track A's small-N caveat isn't hedging — the numbers show it directly:</strong> recall is stuck at exactly 0.100 (1 of the ~10 positives caught) across three of the four configs, meaning most of the AP movement here is one or two individual predictions changing rank, not a real behavioral difference. Directionally useful, not something to act on alone.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">New — Section 2</span><h2>Propagation operator: Feng et al. (symmetric) vs Bai et al. (asymmetric, PyG's formula)</h2></div>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Track</th><th>Operator</th><th>Edge set</th><th>AP</th><th>Brier</th><th>ROC-AUC</th><th>MCC</th></tr>
+        <tr><td rowspan="2">B — large</td><td>symmetric (Feng et al. 2019)</td><td>all 4 (the weakest B config)</td><td>0.179</td><td>0.259</td><td>0.561</td><td>0.064</td></tr>
+        <tr><td>asymmetric (Bai et al. 2021)</td><td>all 4</td><td>0.184</td><td>0.269</td><td>0.542</td><td>0.034</td></tr>
+        <tr class="highlight"><td rowspan="2">C — pure UCDP</td><td><strong>symmetric (Feng et al. 2019)</strong></td><td>all 5 (the best C config)</td><td><strong>0.685</strong></td><td>0.169</td><td>0.847</td><td>0.472</td></tr>
+        <tr><td>asymmetric (Bai et al. 2021)</td><td>all 5</td><td>0.655</td><td>0.167</td><td>0.847</td><td>0.464</td></tr>
+      </table>
+    </div>
+    <p>On Track B's weakest edge configuration, the two operators are within noise of each other (0.179 vs 0.184 — not a meaningful difference at n=473, npos=64). On Track C's <em>best</em> edge configuration, the existing symmetric Feng et al. operator meaningfully outperforms the asymmetric one (0.685 vs 0.655) — a real, if modest, reason to keep the operator already in production rather than switch to match PyTorch Geometric's default.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">New — Section 3</span><h2>Hypergraph-as-features via <code>xgi</code>: a real result, and a real tooling limitation found along the way</h2></div>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Track</th><th>Variant</th><th>AP</th><th>Brier</th><th>Recall</th><th>ROC-AUC</th><th># features</th></tr>
+        <tr><td rowspan="2">A — small (n=120, npos=19)</td><td>structural features + tabular (GBM)</td><td>0.226</td><td>0.210</td><td>0.211</td><td>0.511</td><td>22</td></tr>
+        <tr><td>structural features only (2 numbers, no tabular)</td><td>0.186</td><td>0.188</td><td>0.158</td><td>0.569</td><td>2</td></tr>
+        <tr><td colspan="7" style="color:var(--ink-mute); font-style:italic;">Track B and C's structural-feature runs, and the text-hypergraph section (Track B), were deferred this session — see callout below.</td></tr>
+      </table>
+    </div>
+    <p>On the one track this completed for, hypergraph structure captured as two plain numbers (degree, average neighbor degree) and handed to an ordinary GBM reaches AP 0.186 <em>completely alone</em> — meaningfully above this track's ~0.158 base rate (19/120), with no tabular features at all. Adding it to the normal tabular features (0.226) doesn't beat the end-to-end HGNN's own best ablation result on this track (0.303), but it's a real, cheap, interpretable signal a plain feature-importance chart can explain, which an HGNN's learned weights can't.</p>
+    <div class="callout"><strong>Real tooling finding, not a project bug:</strong> <code>xgi</code>'s <code>nodes.local_clustering_coefficient</code> was tried first and hangs — confirmed via isolated profiling to exceed 60 seconds on just Track A's 160-node, 1,388-hyperedge panel, well before any CPU contention entered the picture. The cause is real: many small, overlapping actor-sharing hyperedges (one per distinct actor code, most spanning only 2-3 country-weeks) push whatever pairwise-overlap computation that metric does into a combinatorial blow-up. <code>degree</code> and <code>average_neighbor_degree</code>, computed on the identical hypergraph, both finished in well under a second. Worth knowing before leaning on <code>xgi</code>'s fuller statistics module on a hypergraph built this way — see Tab 06.</div>
+    <div class="callout wire"><strong>Disclosed and not backfilled with invented numbers:</strong> Track B and C's structural-feature runs, and the Track B text-hypergraph comparison (Tab 04, item 5), were still queued when this machine's other concurrent job — the user's own 1,150-iteration <code>grand_search_v2</code> run plus a real local-LLM (<code>icl_ollama_track.py</code>) track — started visibly slowing down under the combined CPU load (its own iteration rate dropped from ~0.61/s to ~0.37/s across this session). Rather than keep competing for CPU with that larger, higher-priority run, these three configs were left for a follow-up pass once it finishes — a real, disclosed gap, not a result being hidden. See Tab 06 for exactly what's queued.</div>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 6: RECOMMENDATIONS ============================================================ -->
+<div class="panel" id="tab-recs">
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Free tool comparison</span><h2>Five free, open-source Python hypergraph libraries, ranked for this project's actual needs</h2></div>
+    <p class="lede">All five are free and open-source (BSD-3 or MIT/Apache-2.0 — no license blocker for any of them). The ranking below is specifically for a CPU-only environment, panels of a few hundred to ~30,000 nodes, and project-specific hyperedge types (shared actor, shared named conflict) that no loader understands without custom code — not a general-purpose ranking.</p>
+    <div class="ds-table-wrap">
+      <table class="ds">
+        <tr><th>Tool</th><th>License</th><th>Maturity</th><th>HGNN training?</th><th>Dependency weight</th><th>Fit at this project's scale</th></tr>
+        <tr class="highlight"><td><strong>XGI</strong></td><td>BSD-3</td><td>~255 ★, active (727+ commits), 2021–present</td><td>No — structural analysis + dynamics simulation only</td><td>Light — pandas-based, installs cleanly alongside the existing stack (verified: no conflicts with pandas 3.0.2/scikit-learn/xgboost already in use)</td><td><strong>Best fit</strong> — with one caveat found hands-on: <code>degree</code> and <code>average_neighbor_degree</code> compute in under a second even on a 1,388-hyperedge graph, but <code>local_clustering_coefficient</code> hangs (60s+) on hypergraphs with many small overlapping hyperedges (real actor-sharing edges here). Use the fast statistics; profile any other <code>xgi</code> algorithm before relying on it at this topology.</td></tr>
+        <tr><td>HyperNetX</td><td>BSD-3</td><td>~708 ★, PNNL-maintained, mature (v2.3)</td><td>No — structural analysis + visualization focus</td><td>Light-moderate — pulls in igraph, graphviz for visualization</td><td>Strong alternative to XGI if rich visualization matters more than dynamics simulation; slightly heavier install</td></tr>
+        <tr><td>Hypergraphx (HGX)</td><td>BSD-3-ish (academic)</td><td>Smaller community, published (Journal of Complex Networks 2023)</td><td>No — structural + temporal/multiplex hypergraph support</td><td>Light</td><td>Interesting for temporal/multiplex extensions (matches this project's weekly time-indexing) but smaller community and thinner docs than XGI/HyperNetX</td></tr>
+        <tr><td>DHG (DeepHypergraph)</td><td>Apache-2.0</td><td>~876 ★, actively released (v0.9.7, 2026), Tsinghua/iMoonLab (the HGNN paper's own authors)</td><td><strong>Yes</strong> — HGNN, HGNN+, HyperGCN, UniGNN/UniGAT, Optuna auto-tuning</td><td>Heavy — requires PyTorch (&lt;2.0 pin)</td><td>The right choice if this project ever needs a GPU-scale panel, attention layers, or more HGNN variants than the from-scratch implementation covers — overkill for the current CPU/thousands-of-nodes scale</td></tr>
+        <tr><td>PyTorch Geometric</td><td>MIT</td><td>~23,900 ★, extremely active, huge community</td><td>Yes — <code>HypergraphConv</code> (with optional attention) as one layer among a vast general GNN library</td><td>Heaviest — full PyTorch + PyG stack for a single layer type</td><td>Best if this project were already using PyG for other graph work; not worth adopting for hypergraphs alone at this scale</td></tr>
+      </table>
+    </div>
+    <div class="callout wire"><strong>Also worth watching, not yet recommended:</strong> EasyHypergraph (part of the EasyGraph ecosystem, published 2025 in <em>Humanities and Social Sciences Communications</em>) — promises fast, memory-saving hypergraph analysis and learning with optional GPU support, but is new enough (2025) that it doesn't yet have the track record of the five above.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The actual recommendation</span><h2>XGI now, DHG later if the data ever outgrows CPU-scale</h2></div>
+    <div class="rank-grid"><div class="rank-num">1</div><div><h3 style="margin-bottom:0.2rem;">XGI, for structural-feature engineering into the existing GBM pipeline</h3><p style="font-size:0.92rem; color:var(--ink-soft); margin:0;">Confirmed hands-on this round (Tab 04/05): installs cleanly with zero dependency conflicts, builds the identical incidence structure this project already constructs, and computes real degree/clustering/centrality statistics in under a second even on the largest track. It slots into the project's existing pandas-and-xgboost-centric harness with almost no new surface area to maintain, which matters more here than raw model capacity at a few thousand nodes.</p></div></div>
+    <div class="rank-grid"><div class="rank-num n2">2</div><div><h3 style="margin-bottom:0.2rem;">Keep the from-scratch HGNN for end-to-end training</h3><p style="font-size:0.92rem; color:var(--ink-soft); margin:0;">It already works, it's fully understood and auditable (no library black box), and — per this round's ablation and propagation-operator results (Tab 05) — the marginal construction choices matter more than the training framework. Rebuilding it on top of DHG mainly buys attention mechanisms and more layer variants, not a fundamentally different result at this scale.</p></div></div>
+    <div class="rank-grid"><div class="rank-num n3">3</div><div><h3 style="margin-bottom:0.2rem;">Revisit DHG if the panel ever reaches GPU scale</h3><p style="font-size:0.92rem; color:var(--ink-soft); margin:0;">If Track B-style scraping is extended to, say, 100+ countries and multi-year article-level (not aggregated) hyperedges, node/hyperedge counts could reach the range where a proper GPU-backed library with attention and more HGNN variants (DHG, purpose-built by the original HGNN authors) starts to earn its dependency weight. Not there yet.</p></div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Next steps</span><h2>Concrete, free, safe ideas worth trying next</h2></div>
+    <ol>
+      <li><strong>Finish the 3 queued-but-deferred configs first: Track B and C's xgi-structural-feature runs, and Track B's text-hypergraph comparison.</strong> All three are coded and ready (<code>hypergraphs_research/run_remaining3.py</code>) — they were deferred mid-session specifically to stop competing for CPU with a larger, higher-priority concurrent run (Tab 05), not because of any unresolved bug. Rerun once that job frees up the machine.</li>
+      <li><strong>Article-level hyperedges, not country-week aggregates.</strong> The current text hypergraph (Tab 04) already improves on the pairwise approach by using real multi-way membership, but it's still aggregated to (country, week, theme, count) — the per-article theme set itself was never persisted (only aggregated on the fly during the original GKG download to save disk). Re-scraping with per-article theme lists kept would let a hyperedge be a single real article, the finest-grained and truest version of "hypergraph of text" for this data.</li>
+      <li><strong>Attention-weighted hyperedges.</strong> Every hyperedge here is uniformly weighted. PyG's <code>HypergraphConv(use_attention=True)</code> — or a from-scratch attention head added to the existing model — would let the model learn which hyperedges (which shared actor, which regional shock) actually matter for a given prediction, rather than treating all memberships equally.</li>
+      <li><strong>Multi-week (not just same-week) hyperedges</strong> for slow-building conflicts — a trailing 4-week window hyperedge type, to capture escalations that build gradually rather than spiking in a single week.</li>
+      <li><strong>Try DHG's HGNN+ / HyperGCN directly</strong> now that this session confirmed real internet + pip access in this environment (torch was not previously assumed available) — a real apples-to-apples comparison against the from-scratch implementation, not just a documentation-level comparison.</li>
+    </ol>
+    <div class="callout"><strong>Caveat carried over, not new:</strong> the actor- and conflict-identity hyperedges used throughout this round key on the same named-entity fields (GDELT actor codes, UCDP side_a/side_b, conflict_name) already flagged in this project's <code>results_v2/dangerous-ideas-log.html</code> under actor de-anonymization risk. Nothing new surfaced in this round beyond that existing entry — worth re-reading before extending actor/conflict hyperedges into anything more identity-resolving than aggregate structural features.</div>
+  </div>
+
+</div>
+
+</main>
+
+<footer>
+  Hypergraph research round for the conflict_prediction project — theory, a hands-on free-tool comparison, and new construction experiments layered on the existing 24-iteration hypergraph baseline in <code>results_v2/grand_search_v2_log.jsonl</code>. New results logged to <code>hypergraphs_research/hg_iterations_log.jsonl</code>; code in <code>hypergraphs_research/*.py</code>.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

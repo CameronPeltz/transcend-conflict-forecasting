@@ -1,0 +1,30 @@
+{
+  "n_events_global": 385918,
+  "n_countries_global": 124,
+  "date_min": "1989-01-01",
+  "date_max": "2024-12-31",
+  "total_best_deaths_global": 3957143,
+  "n_country_weeks_19country_panel": 29038,
+  "n_positive_label_1": 4814,
+  "countries_in_panel": [
+    "AF",
+    "BL",
+    "BM",
+    "CO",
+    "EC",
+    "ER",
+    "ET",
+    "HA",
+    "KE",
+    "KG",
+    "NU",
+    "OD",
+    "PE",
+    "PK",
+    "SO",
+    "SU",
+    "TI",
+    "UZ",
+    "VE"
+  ]
+}

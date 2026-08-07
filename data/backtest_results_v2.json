@@ -1,0 +1,354 @@
+{
+  "results": [
+    {
+      "lead_time": "1-week horizon",
+      "n_predictions": 120,
+      "n_positive": 19,
+      "naive_always_negative_accuracy": 0.8416666666666667,
+      "models": {
+        "icl_temporal_graph": {
+          "brier": 0.1707682607841829,
+          "average_precision": 0.20223687959086148,
+          "precision_at_0.5": 0.375,
+          "recall_at_0.5": 0.15789473684210525,
+          "specificity_at_0.5": 0.9504950495049505,
+          "accuracy_at_0.5": 0.825,
+          "f1_at_0.5": 0.22222222222222218,
+          "tp": 3,
+          "fp": 5,
+          "tn": 96,
+          "fn": 16,
+          "precision_at_topN": 0.2631578947368421,
+          "n_flagged_at_0.5": 8,
+          "delta_brier_vs_base_rate": -0.03576123945920304
+        },
+        "gbm_graph_features": {
+          "brier": 0.17940777190995857,
+          "average_precision": 0.19949237324308292,
+          "precision_at_0.5": 0.2727272727272727,
+          "recall_at_0.5": 0.15789473684210525,
+          "specificity_at_0.5": 0.9207920792079208,
+          "accuracy_at_0.5": 0.8,
+          "f1_at_0.5": 0.19999999999999998,
+          "tp": 3,
+          "fp": 8,
+          "tn": 93,
+          "fn": 16,
+          "precision_at_topN": 0.2631578947368421,
+          "n_flagged_at_0.5": 11,
+          "delta_brier_vs_base_rate": -0.04440075058497872
+        },
+        "logreg_lagged_counts": {
+          "brier": 0.2638321663560764,
+          "average_precision": 0.15458287261833342,
+          "precision_at_0.5": 0.1917808219178082,
+          "recall_at_0.5": 0.7368421052631579,
+          "specificity_at_0.5": 0.4158415841584158,
+          "accuracy_at_0.5": 0.4666666666666667,
+          "f1_at_0.5": 0.30434782608695654,
+          "tp": 14,
+          "fp": 59,
+          "tn": 42,
+          "fn": 5,
+          "precision_at_topN": 0.05263157894736842,
+          "n_flagged_at_0.5": 73,
+          "delta_brier_vs_base_rate": -0.12882514503109657
+        },
+        "naive_persistence": {
+          "brier": 0.26666666666666666,
+          "average_precision": 0.15826408125577102,
+          "precision_at_0.5": 0.15789473684210525,
+          "recall_at_0.5": 0.15789473684210525,
+          "specificity_at_0.5": 0.8415841584158416,
+          "accuracy_at_0.5": 0.7333333333333333,
+          "f1_at_0.5": 0.15789473684210525,
+          "tp": 3,
+          "fp": 16,
+          "tn": 85,
+          "fn": 16,
+          "precision_at_topN": 0.15789473684210525,
+          "n_flagged_at_0.5": 19,
+          "delta_brier_vs_base_rate": -0.1316596453416868
+        },
+        "historical_base_rate": {
+          "brier": 0.13500702132497985,
+          "average_precision": 0.1958718871337225,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "specificity_at_0.5": 1.0,
+          "accuracy_at_0.5": 0.8416666666666667,
+          "f1_at_0.5": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "tn": 101,
+          "fn": 19,
+          "precision_at_topN": 0.10526315789473684,
+          "n_flagged_at_0.5": 0,
+          "delta_brier_vs_base_rate": 0.0
+        }
+      }
+    },
+    {
+      "lead_time": "2-week horizon",
+      "n_predictions": 114,
+      "n_positive": 18,
+      "naive_always_negative_accuracy": 0.8421052631578947,
+      "models": {
+        "icl_temporal_graph": {
+          "brier": 0.16172986940329231,
+          "average_precision": 0.1772131433910734,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "specificity_at_0.5": 0.96875,
+          "accuracy_at_0.5": 0.8157894736842105,
+          "f1_at_0.5": 0.0,
+          "tp": 0,
+          "fp": 3,
+          "tn": 93,
+          "fn": 18,
+          "precision_at_topN": 0.16666666666666666,
+          "n_flagged_at_0.5": 3,
+          "delta_brier_vs_base_rate": -0.025267101131975778
+        },
+        "gbm_graph_features": {
+          "brier": 0.18940499369028793,
+          "average_precision": 0.1787995582755159,
+          "precision_at_0.5": 0.08333333333333333,
+          "recall_at_0.5": 0.05555555555555555,
+          "specificity_at_0.5": 0.8854166666666666,
+          "accuracy_at_0.5": 0.7543859649122807,
+          "f1_at_0.5": 0.06666666666666667,
+          "tp": 1,
+          "fp": 11,
+          "tn": 85,
+          "fn": 17,
+          "precision_at_topN": 0.16666666666666666,
+          "n_flagged_at_0.5": 12,
+          "delta_brier_vs_base_rate": -0.052942225418971395
+        },
+        "logreg_lagged_counts": {
+          "brier": 0.2387339690916398,
+          "average_precision": 0.28896448861467716,
+          "precision_at_0.5": 0.21568627450980393,
+          "recall_at_0.5": 0.6111111111111112,
+          "specificity_at_0.5": 0.5833333333333334,
+          "accuracy_at_0.5": 0.5877192982456141,
+          "f1_at_0.5": 0.31884057971014496,
+          "tp": 11,
+          "fp": 40,
+          "tn": 56,
+          "fn": 7,
+          "precision_at_topN": 0.3333333333333333,
+          "n_flagged_at_0.5": 51,
+          "delta_brier_vs_base_rate": -0.10227120082032326
+        },
+        "naive_persistence": {
+          "brier": 0.2543859649122807,
+          "average_precision": 0.1609907120743034,
+          "precision_at_0.5": 0.17647058823529413,
+          "recall_at_0.5": 0.16666666666666666,
+          "specificity_at_0.5": 0.8541666666666666,
+          "accuracy_at_0.5": 0.7456140350877193,
+          "f1_at_0.5": 0.17142857142857143,
+          "tp": 3,
+          "fp": 14,
+          "tn": 82,
+          "fn": 15,
+          "precision_at_topN": 0.16666666666666666,
+          "n_flagged_at_0.5": 17,
+          "delta_brier_vs_base_rate": -0.11792319664096418
+        },
+        "historical_base_rate": {
+          "brier": 0.13646276827131654,
+          "average_precision": 0.18666225089226096,
+          "precision_at_0.5": 0.0,
+          "recall_at_0.5": 0.0,
+          "specificity_at_0.5": 1.0,
+          "accuracy_at_0.5": 0.8421052631578947,
+          "f1_at_0.5": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "tn": 96,
+          "fn": 18,
+          "precision_at_topN": 0.1111111111111111,
+          "n_flagged_at_0.5": 0,
+          "delta_brier_vs_base_rate": 0.0
+        }
+      }
+    }
+  ],
+  "icl_reasoning_samples": [
+    {
+      "country": "AF",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.2692629058681404,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.27",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - VE 2026-03-02 00:00:00 (similarity 0.73): escalation followed = False\n  - VE 2026-02-16 00:00:00 (similarity 0.68): escalation followed = True\n  - AF 2026-03-02 00:00:00 (similarity 0.65): escalation followed = False\n  - SU 2026-02-23 00:00:00 (similarity 0.64): escalation followed = False\n  - SU 2026-03-02 00:00:00 (similarity 0.62): escalation followed = False"
+    },
+    {
+      "country": "BM",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.45184593380616456,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 40% of retrieved analogs escalated; combined with raw feature deltas -> 0.45",
+      "top_analogs": "5 nearest analogs, 40% led to escalation:\n  - BM 2026-02-23 00:00:00 (similarity 0.90): escalation followed = False\n  - SU 2026-02-16 00:00:00 (similarity 0.43): escalation followed = False\n  - SU 2026-03-02 00:00:00 (similarity 0.40): escalation followed = False\n  - CO 2026-03-02 00:00:00 (similarity 0.38): escalation followed = True\n  - BM 2026-03-02 00:00:00 (similarity 0.30): escalation followed = True"
+    },
+    {
+      "country": "CO",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.4120205608059605,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 40% of retrieved analogs escalated; combined with raw feature deltas -> 0.41",
+      "top_analogs": "5 nearest analogs, 40% led to escalation:\n  - CO 2026-02-16 00:00:00 (similarity 0.59): escalation followed = False\n  - BM 2026-02-16 00:00:00 (similarity 0.56): escalation followed = False\n  - CO 2026-03-02 00:00:00 (similarity 0.48): escalation followed = True\n  - BM 2026-03-02 00:00:00 (similarity 0.44): escalation followed = True\n  - ET 2026-03-02 00:00:00 (similarity 0.44): escalation followed = False"
+    },
+    {
+      "country": "ET",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.44114787381094756,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 40% of retrieved analogs escalated; combined with raw feature deltas -> 0.44",
+      "top_analogs": "5 nearest analogs, 40% led to escalation:\n  - ET 2026-02-23 00:00:00 (similarity 0.97): escalation followed = False\n  - ET 2026-03-02 00:00:00 (similarity 0.94): escalation followed = False\n  - ET 2026-02-16 00:00:00 (similarity 0.84): escalation followed = False\n  - CO 2026-03-02 00:00:00 (similarity 0.64): escalation followed = True\n  - CO 2026-02-23 00:00:00 (similarity 0.38): escalation followed = True"
+    },
+    {
+      "country": "SU",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.3773403689654409,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.38",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - SU 2026-02-23 00:00:00 (similarity 0.70): escalation followed = False\n  - SU 2026-03-02 00:00:00 (similarity 0.56): escalation followed = False\n  - BM 2026-03-02 00:00:00 (similarity 0.49): escalation followed = True\n  - AF 2026-03-02 00:00:00 (similarity 0.44): escalation followed = False\n  - AF 2026-02-09 00:00:00 (similarity 0.39): escalation followed = False"
+    },
+    {
+      "country": "VE",
+      "week": "2026-03-09 00:00:00",
+      "probability": 0.29829114612467733,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 20% of retrieved analogs escalated; combined with raw feature deltas -> 0.30",
+      "top_analogs": "5 nearest analogs, 20% led to escalation:\n  - VE 2026-02-16 00:00:00 (similarity 0.95): escalation followed = True\n  - VE 2026-02-23 00:00:00 (similarity 0.78): escalation followed = False\n  - VE 2026-03-02 00:00:00 (similarity 0.67): escalation followed = False\n  - AF 2026-03-02 00:00:00 (similarity 0.50): escalation followed = False\n  - AF 2026-02-16 00:00:00 (similarity 0.44): escalation followed = False"
+    },
+    {
+      "country": "AF",
+      "week": "2026-03-16 00:00:00",
+      "probability": 0.28401965920432015,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 0% of retrieved analogs escalated; combined with raw feature deltas -> 0.28",
+      "top_analogs": "5 nearest analogs, 0% led to escalation:\n  - AF 2026-03-09 00:00:00 (similarity 0.87): escalation followed = False\n  - VE 2026-03-02 00:00:00 (similarity 0.59): escalation followed = False\n  - VE 2026-03-09 00:00:00 (similarity 0.58): escalation followed = False\n  - SU 2026-03-09 00:00:00 (similarity 0.58): escalation followed = False\n  - AF 2026-03-02 00:00:00 (similarity 0.55): escalation followed = False"
+    },
+    {
+      "country": "BM",
+      "week": "2026-03-16 00:00:00",
+      "probability": 0.48472586035617143,
+      "reasoning": "[heuristic fallback, mode=no_api_key] 40% of retrieved analogs escalated; combined with raw feature deltas -> 0.48",
+      "top_analogs": "5 nearest analogs, 40% led to escalation:\n  - BM 2026-03-02 00:00:00 (similarity 0.85): escalation followed = True\n  - BM 2026-02-16 00:00:00 (similarity 0.74): escalation followed = False\n  - SU 2026-03-09 00:00:00 (similarity 0.62): escalation followed = False\n  - BM 2026-03-09 00:00:00 (similarity 0.41): escalation followed = True\n  - CO 2026-03-09 00:00:00 (similarity 0.34): escalation followed = False"
+    }
+  ],
+  "gbm_feature_importance_1w": [
+    [
+      "mean_tone_lag1",
+      0.13087233901023865
+    ],
+    [
+      "n_events_lag1",
+      0.11019358783960342
+    ],
+    [
+      "distinct_actors_lag1",
+      0.10064370185136795
+    ],
+    [
+      "n_events_lag2",
+      0.08823758363723755
+    ],
+    [
+      "material_conflict_share_lag2",
+      0.08005465567111969
+    ],
+    [
+      "mean_goldstein_delta",
+      0.07383675873279572
+    ],
+    [
+      "distinct_actors_lag2",
+      0.0730486661195755
+    ],
+    [
+      "mean_goldstein_lag2",
+      0.07047095149755478
+    ],
+    [
+      "mean_tone_delta",
+      0.0627623051404953
+    ],
+    [
+      "material_conflict_share_lag1",
+      0.057860367000103
+    ],
+    [
+      "material_conflict_share_delta",
+      0.046186354011297226
+    ],
+    [
+      "n_events_delta",
+      0.04587063938379288
+    ],
+    [
+      "distinct_actors_delta",
+      0.034002844244241714
+    ],
+    [
+      "mean_goldstein_lag1",
+      0.025959253311157227
+    ]
+  ],
+  "gbm_feature_importance_2w": [
+    [
+      "mean_goldstein_lag2",
+      0.14217078685760498
+    ],
+    [
+      "mean_tone_lag1",
+      0.13384369015693665
+    ],
+    [
+      "mean_goldstein_lag1",
+      0.0987725481390953
+    ],
+    [
+      "material_conflict_share_lag1",
+      0.0986061543226242
+    ],
+    [
+      "n_events_lag1",
+      0.09837556630373001
+    ],
+    [
+      "distinct_actors_lag2",
+      0.07176137715578079
+    ],
+    [
+      "material_conflict_share_lag2",
+      0.06165819987654686
+    ],
+    [
+      "material_conflict_share_delta",
+      0.059185940772295
+    ],
+    [
+      "distinct_actors_lag1",
+      0.05190703272819519
+    ],
+    [
+      "distinct_actors_delta",
+      0.04324604198336601
+    ],
+    [
+      "n_events_lag2",
+      0.04269306734204292
+    ],
+    [
+      "mean_tone_delta",
+      0.03877878189086914
+    ],
+    [
+      "n_events_delta",
+      0.03280588239431381
+    ],
+    [
+      "mean_goldstein_delta",
+      0.02619481272995472
+    ]
+  ]
+}

@@ -1,0 +1,88 @@
+163 curated + 987 random = 1150 total, across tracks: ['A_original_small_gdelt', 'B_large_scraped_gdelt', 'C_pure_ucdp']
+RESUMING: 323 iterations already in results_v2/grand_search_v2_log.jsonl, continuing from #324
+[330/1150] random#330: [A_original_small_gdelt] graph+tone_only | gbm | label_roo AP=0.14127885497298415 best[A_original_small_gdelt]=0.5909 elapsed=0.9m ETA=2.3m
+[340/1150] random#340: [B_large_scraped_gdelt] gkg_embed | label_spreading | labe AP=0.1226215644820296 best[B_large_scraped_gdelt]=0.2875 elapsed=1.4m ETA=3.4m
+[350/1150] random#350: [B_large_scraped_gdelt] volume_only+root_taxonomy | label_ AP=0.1373068183638569 best[B_large_scraped_gdelt]=0.2875 elapsed=1.7m ETA=3.8m
+[360/1150] random#360: [B_large_scraped_gdelt] volume_only | gbm | label_quad_4 | AP=0.15986729346931217 best[B_large_scraped_gdelt]=0.2875 elapsed=2.6m ETA=5.7m
+[370/1150] random#370: [B_large_scraped_gdelt] tone_only+volume_only | label_spre AP=0.13132254011442746 best[B_large_scraped_gdelt]=0.2875 elapsed=3.0m ETA=6.3m
+[380/1150] random#380: [C_pure_ucdp] ucdp_core | gbm | label_2 | cats=None        AP=0.7006154090519323 best[C_pure_ucdp]=0.8649 elapsed=3.9m ETA=7.9m
+[390/1150] random#390: [B_large_scraped_gdelt] root_taxonomy+goldstein_only+core  AP=0.14764361884632976 best[B_large_scraped_gdelt]=0.2875 elapsed=6.1m ETA=11.8m
+[400/1150] random#400: [C_pure_ucdp] ucdp_core | label_spreading | label_8 | cats AP=0.621825129713458 best[C_pure_ucdp]=0.8649 elapsed=8.7m ETA=16.4m
+[410/1150] random#410: [A_original_small_gdelt] volume_only+climate_only | gbm |  AP=0.22466627661434882 best[A_original_small_gdelt]=0.5909 elapsed=9.4m ETA=16.9m
+[420/1150] random#420: [B_large_scraped_gdelt] volume_only+tone_only+core | rando AP=0.16618272222436117 best[B_large_scraped_gdelt]=0.2875 elapsed=11.2m ETA=19.4m
+[430/1150] random#430: [C_pure_ucdp] ucdp_core | gbm | label_2 | cats=['country'] AP=0.7944526591778723 best[C_pure_ucdp]=0.8649 elapsed=12.8m ETA=21.5m
+[440/1150] random#440: [B_large_scraped_gdelt] root_taxonomy+gkg_embed+goldstein_ AP=0.14531970754254592 best[B_large_scraped_gdelt]=0.2875 elapsed=15.4m ETA=24.9m
+[450/1150] random#450: [C_pure_ucdp] ucdp_core | ensemble | label_1 | cats=None   AP=0.7724375084564706 best[C_pure_ucdp]=0.8704 elapsed=16.3m ETA=25.4m
+[460/1150] random#460: [A_original_small_gdelt] election_only+graph | gbm | label AP=0.27783359180694356 best[A_original_small_gdelt]=0.5909 elapsed=17.4m ETA=26.1m
+[470/1150] random#470: [C_pure_ucdp] ucdp_core | gbm | label_2 | cats=['country'] AP=0.7980160923985993 best[C_pure_ucdp]=0.8704 elapsed=18.4m ETA=26.7m
+[480/1150] random#480: [B_large_scraped_gdelt] goldstein_only+root_taxonomy | hyp AP=0.1968039835667892 best[B_large_scraped_gdelt]=0.2875 elapsed=20.3m ETA=28.3m
+[490/1150] random#490: [C_pure_ucdp] ucdp_core | logreg | label_4 | cats=None     AP=0.6732977114138182 best[C_pure_ucdp]=0.8704 elapsed=22.0m ETA=29.6m
+[500/1150] random#500: [B_large_scraped_gdelt] goldstein_only | gbm | label_quad_ AP=0.1542399901328261 best[B_large_scraped_gdelt]=0.2875 elapsed=22.5m ETA=29.3m
+[510/1150] random#510: [A_original_small_gdelt] goldstein_only+climate_only+gkg_o AP=None best[A_original_small_gdelt]=0.7500 elapsed=24.6m ETA=30.8m
+[520/1150] random#520: [C_pure_ucdp] ucdp_core | logreg | label_2 | cats=['countr AP=0.762635821321183 best[C_pure_ucdp]=0.8704 elapsed=25.6m ETA=31.0m
+[530/1150] random#530: [B_large_scraped_gdelt] tone_only | random_forest | label_ AP=0.12784007555877663 best[B_large_scraped_gdelt]=0.2875 elapsed=27.4m ETA=32.1m
+[540/1150] random#540: [B_large_scraped_gdelt] core+goldstein_only | ensemble | l AP=0.14423033806609548 best[B_large_scraped_gdelt]=0.2875 elapsed=28.1m ETA=31.8m
+[550/1150] random#550: [C_pure_ucdp] ucdp_core | gbm | label_4 | cats=['country'] AP=0.7796351498016179 best[C_pure_ucdp]=0.8704 elapsed=29.5m ETA=32.2m
+[560/1150] random#560: [C_pure_ucdp] ucdp_core | ensemble | label_4 | cats=['coun AP=0.797142828027243 best[C_pure_ucdp]=0.8704 elapsed=30.6m ETA=32.2m
+[570/1150] random#570: [C_pure_ucdp] ucdp_core | logreg | label_2 | cats=['countr AP=0.7912915347816547 best[C_pure_ucdp]=0.8704 elapsed=33.0m ETA=33.6m
+[580/1150] random#580: [A_original_small_gdelt] root_taxonomy | gbm | label_quad_ AP=0.1938998616096431 best[A_original_small_gdelt]=0.7500 elapsed=34.5m ETA=33.9m
+[590/1150] random#590: [C_pure_ucdp] ucdp_core | hypergraph_nn | label_8 | cats=N AP=0.7005738275730226 best[C_pure_ucdp]=0.8704 elapsed=35.4m ETA=33.6m
+[600/1150] random#600: [C_pure_ucdp] ucdp_core | logreg | label_2 | cats=['countr AP=0.7912915347816547 best[C_pure_ucdp]=0.8704 elapsed=37.4m ETA=34.2m
+[610/1150] random#610: [B_large_scraped_gdelt] volume_only | logreg | label_quad_ AP=0.13098008952894288 best[B_large_scraped_gdelt]=0.2875 elapsed=38.1m ETA=33.7m
+[620/1150] random#620: [A_original_small_gdelt] climate_only | random_forest | la AP=0.22335358888130702 best[A_original_small_gdelt]=0.7500 elapsed=39.3m ETA=33.6m
+[630/1150] random#630: [C_pure_ucdp] ucdp_core | random_forest | label_2 | cats=[ AP=0.7689650398530756 best[C_pure_ucdp]=0.8704 elapsed=40.1m ETA=33.1m
+[640/1150] random#640: [B_large_scraped_gdelt] tone_only+gkg_embed | random_fores AP=0.12755538420888107 best[B_large_scraped_gdelt]=0.2875 elapsed=40.5m ETA=32.3m
+[650/1150] random#650: [A_original_small_gdelt] gkg_only+climate_only | random_fo AP=0.1999804929986843 best[A_original_small_gdelt]=0.7500 elapsed=41.5m ETA=31.9m
+[660/1150] random#660: [C_pure_ucdp] ucdp_core | logreg | label_4 | cats=['countr AP=0.7463984217481304 best[C_pure_ucdp]=0.8704 elapsed=43.1m ETA=32.0m
+[670/1150] random#670: [B_large_scraped_gdelt] gkg_embed | logreg | label_quad_2  AP=0.12942428224639224 best[B_large_scraped_gdelt]=0.2875 elapsed=43.7m ETA=31.3m
+[680/1150] random#680: [A_original_small_gdelt] election_only | gbm | label_root_ AP=0.3428096913897077 best[A_original_small_gdelt]=0.7500 elapsed=45.0m ETA=31.1m
+[690/1150] random#690: [B_large_scraped_gdelt] root_taxonomy+volume_only | gbm |  AP=0.15300610329362974 best[B_large_scraped_gdelt]=0.2875 elapsed=46.1m ETA=30.7m
+[700/1150] random#700: [A_original_small_gdelt] goldstein_only | gbm | label_root AP=0.0959316817767112 best[A_original_small_gdelt]=0.7500 elapsed=46.7m ETA=30.0m
+[710/1150] random#710: [C_pure_ucdp] ucdp_core | label_spreading | label_1 | cats AP=0.7384588777461272 best[C_pure_ucdp]=0.8704 elapsed=47.3m ETA=29.3m
+[720/1150] random#720: [B_large_scraped_gdelt] volume_only+root_taxonomy+goldstei AP=0.16965679306194598 best[B_large_scraped_gdelt]=0.2875 elapsed=48.6m ETA=29.0m
+[730/1150] random#730: [B_large_scraped_gdelt] volume_only | gbm | label_quad_2 | AP=0.16239139570783193 best[B_large_scraped_gdelt]=0.2875 elapsed=49.2m ETA=28.3m
+[740/1150] random#740: [B_large_scraped_gdelt] tone_only | gbm | label_quad_2 | c AP=0.13424337247506107 best[B_large_scraped_gdelt]=0.2875 elapsed=49.6m ETA=27.5m
+[750/1150] random#750: [B_large_scraped_gdelt] volume_only+core | gbm | label_qua AP=0.14157533942034306 best[B_large_scraped_gdelt]=0.2875 elapsed=50.8m ETA=27.1m
+[760/1150] random#760: [B_large_scraped_gdelt] gkg_embed+goldstein_only | random_ AP=0.15157175597819547 best[B_large_scraped_gdelt]=0.2875 elapsed=52.4m ETA=26.9m
+[770/1150] random#770: [B_large_scraped_gdelt] volume_only+gkg_embed | gbm | labe AP=0.1585563050080733 best[B_large_scraped_gdelt]=0.2875 elapsed=53.4m ETA=26.4m
+[780/1150] random#780: [C_pure_ucdp] ucdp_core | gbm | label_1 | cats=['country'] AP=0.8504330925403105 best[C_pure_ucdp]=0.8704 elapsed=54.7m ETA=25.9m
+[790/1150] random#790: [C_pure_ucdp] ucdp_core | logreg | label_8 | cats=None     AP=0.6291513731060161 best[C_pure_ucdp]=0.8704 elapsed=55.6m ETA=25.3m
+[800/1150] random#800: [A_original_small_gdelt] food_price_only | gbm | label_qua AP=0.2522575256340774 best[A_original_small_gdelt]=0.7500 elapsed=55.8m ETA=24.4m
+[810/1150] random#810: [C_pure_ucdp] ucdp_core | gbm | label_8 | cats=['country'] AP=0.7731235616923738 best[C_pure_ucdp]=0.8704 elapsed=56.7m ETA=23.8m
+[820/1150] random#820: [A_original_small_gdelt] food_price_only+core | gbm | labe AP=0.24150582374412344 best[A_original_small_gdelt]=0.7500 elapsed=58.1m ETA=23.4m
+[830/1150] random#830: [A_original_small_gdelt] goldstein_only+election_only | lo AP=0.41988838218214114 best[A_original_small_gdelt]=0.7500 elapsed=58.9m ETA=22.7m
+[840/1150] random#840: [C_pure_ucdp] ucdp_core | gbm | label_2 | cats=['country'] AP=0.7782695158268174 best[C_pure_ucdp]=0.8704 elapsed=59.6m ETA=22.0m
+[850/1150] random#850: [B_large_scraped_gdelt] gkg_embed | logreg | label_quad_4  AP=0.12900599581475589 best[B_large_scraped_gdelt]=0.2875 elapsed=60.0m ETA=21.2m
+[860/1150] random#860: [C_pure_ucdp] ucdp_core | random_forest | label_4 | cats=N AP=0.6999162564647443 best[C_pure_ucdp]=0.8704 elapsed=62.0m ETA=20.9m
+[870/1150] random#870: [B_large_scraped_gdelt] tone_only+root_taxonomy | gbm | la AP=0.15123369039580048 best[B_large_scraped_gdelt]=0.2875 elapsed=62.8m ETA=20.2m
+[880/1150] random#880: [B_large_scraped_gdelt] volume_only+goldstein_only | ensem AP=0.1474302108888241 best[B_large_scraped_gdelt]=0.2875 elapsed=64.1m ETA=19.7m
+[890/1150] random#890: [B_large_scraped_gdelt] root_taxonomy+volume_only | logreg AP=0.1550373742905794 best[B_large_scraped_gdelt]=0.2875 elapsed=64.8m ETA=18.9m
+[900/1150] random#900: [A_original_small_gdelt] gkg_only | logreg | label_root_1  AP=0.2619606820490418 best[A_original_small_gdelt]=0.7500 elapsed=66.3m ETA=18.4m
+[910/1150] random#910: [A_original_small_gdelt] tone_only+core | gbm | label_quad AP=0.31733043696140256 best[A_original_small_gdelt]=0.7500 elapsed=66.9m ETA=17.6m
+[920/1150] random#920: [B_large_scraped_gdelt] goldstein_only | gbm | label_quad_ AP=0.13213191801523982 best[B_large_scraped_gdelt]=0.2875 elapsed=68.2m ETA=17.0m
+[930/1150] random#930: [B_large_scraped_gdelt] goldstein_only+gkg_embed | random_ AP=0.15107045623521403 best[B_large_scraped_gdelt]=0.2875 elapsed=70.4m ETA=16.7m
+[940/1150] random#940: [A_original_small_gdelt] goldstein_only+graph+core | label AP=0.2987169693052046 best[A_original_small_gdelt]=0.7500 elapsed=71.0m ETA=15.9m
+[950/1150] random#950: [B_large_scraped_gdelt] tone_only | gbm | label_quad_2 | c AP=0.1373006656420789 best[B_large_scraped_gdelt]=0.2875 elapsed=71.7m ETA=15.1m
+[960/1150] random#960: [C_pure_ucdp] ucdp_core | logreg | label_1 | cats=['countr AP=0.8196632170395338 best[C_pure_ucdp]=0.8704 elapsed=72.1m ETA=14.3m
+[970/1150] random#970: [B_large_scraped_gdelt] goldstein_only | random_forest | l AP=0.13325155156234011 best[B_large_scraped_gdelt]=0.2875 elapsed=72.8m ETA=13.5m
+[980/1150] random#980: [B_large_scraped_gdelt] volume_only | label_spreading | la AP=0.135860480480667 best[B_large_scraped_gdelt]=0.2875 elapsed=73.0m ETA=12.7m
+[990/1150] random#990: [C_pure_ucdp] ucdp_core | gbm | label_8 | cats=['country'] AP=0.7891897532382667 best[C_pure_ucdp]=0.8704 elapsed=73.5m ETA=11.9m
+[1000/1150] random#1000: [C_pure_ucdp] ucdp_core | ensemble | label_4 | cats=None  AP=0.7188493275821768 best[C_pure_ucdp]=0.8704 elapsed=74.2m ETA=11.1m
+[1010/1150] random#1010: [B_large_scraped_gdelt] root_taxonomy | logreg | label_qu AP=0.18406957250102468 best[B_large_scraped_gdelt]=0.2875 elapsed=75.4m ETA=10.5m
+[1020/1150] random#1020: [A_original_small_gdelt] structural_only | random_forest  AP=0.2576887375946937 best[A_original_small_gdelt]=0.7500 elapsed=76.2m ETA=9.7m
+[1030/1150] random#1030: [A_original_small_gdelt] gkg_only | gbm | label_root_8 |  AP=0.19073763496909155 best[A_original_small_gdelt]=0.7500 elapsed=77.3m ETA=9.0m
+[1040/1150] random#1040: [C_pure_ucdp] ucdp_core | gbm | label_4 | cats=None       AP=0.6885577061631365 best[C_pure_ucdp]=0.8708 elapsed=77.9m ETA=8.2m
+[1050/1150] random#1050: [C_pure_ucdp] ucdp_core | gbm | label_8 | cats=['country' AP=0.7846621692146588 best[C_pure_ucdp]=0.8708 elapsed=78.3m ETA=7.5m
+[1060/1150] random#1060: [C_pure_ucdp] ucdp_core | gbm | label_4 | cats=['country' AP=0.7695280649597988 best[C_pure_ucdp]=0.8708 elapsed=79.9m ETA=6.8m
+[1070/1150] random#1070: [B_large_scraped_gdelt] volume_only+root_taxonomy | gbm | AP=0.15233675015209697 best[B_large_scraped_gdelt]=0.2875 elapsed=80.5m ETA=6.0m
+[1080/1150] random#1080: [C_pure_ucdp] ucdp_core | ensemble | label_1 | cats=['cou AP=0.8407967137840265 best[C_pure_ucdp]=0.8708 elapsed=81.8m ETA=5.3m
+[1090/1150] random#1090: [C_pure_ucdp] ucdp_core | ensemble | label_1 | cats=None  AP=0.7320021568506058 best[C_pure_ucdp]=0.8708 elapsed=83.5m ETA=4.6m
+[1100/1150] random#1100: [A_original_small_gdelt] election_only+root_taxonomy | gb AP=0.18955034853369687 best[A_original_small_gdelt]=0.7500 elapsed=85.0m ETA=3.9m
+[1110/1150] random#1110: [C_pure_ucdp] ucdp_core | logreg | label_2 | cats=None    AP=0.666873313100651 best[C_pure_ucdp]=0.8708 elapsed=85.5m ETA=3.1m
+[1120/1150] random#1120: [B_large_scraped_gdelt] gkg_embed+goldstein_only | logreg AP=0.14286090255544798 best[B_large_scraped_gdelt]=0.2875 elapsed=86.0m ETA=2.3m
+[1130/1150] random#1130: [B_large_scraped_gdelt] tone_only+goldstein_only+volume_o AP=0.15550540852566402 best[B_large_scraped_gdelt]=0.2875 elapsed=87.0m ETA=1.5m
+[1140/1150] random#1140: [B_large_scraped_gdelt] goldstein_only+volume_only | gbm  AP=0.17012053614089193 best[B_large_scraped_gdelt]=0.2875 elapsed=87.5m ETA=0.8m
+[1150/1150] random#1150: [C_pure_ucdp] ucdp_core | random_forest | label_8 | cats= AP=0.665077922816992 best[C_pure_ucdp]=0.8708 elapsed=89.3m ETA=0.0m
+
+done: 1150 real iterations in 89.3m
+best AP by track: {'A_original_small_gdelt': 0.75, 'B_large_scraped_gdelt': 0.2874624638381203, 'C_pure_ucdp': 0.8708478373964574}
