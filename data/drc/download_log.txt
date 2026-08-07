@@ -1,0 +1,74 @@
+  20250614: FAILED (HTTP Error 404: Not Found)
+  20250615: FAILED (HTTP Error 404: Not Found)
+  20250616: FAILED (HTTP Error 404: Not Found)
+  20250617: FAILED (HTTP Error 404: Not Found)
+  20250618: FAILED (HTTP Error 404: Not Found)
+  20250619: FAILED (HTTP Error 404: Not Found)
+  20250620: FAILED (HTTP Error 404: Not Found)
+  20250621: FAILED (HTTP Error 404: Not Found)
+  20250622: FAILED (HTTP Error 404: Not Found)
+  20250623: FAILED (HTTP Error 404: Not Found)
+  20250624: FAILED (HTTP Error 404: Not Found)
+  20250625: FAILED (HTTP Error 404: Not Found)
+  20250626: FAILED (HTTP Error 404: Not Found)
+  20250627: FAILED (HTTP Error 404: Not Found)
+  20250628: FAILED (HTTP Error 404: Not Found)
+  20250629: FAILED (HTTP Error 404: Not Found)
+  20250630: FAILED (HTTP Error 404: Not Found)
+  20250701: FAILED (HTTP Error 404: Not Found)
+  20260807: FAILED (HTTP Error 404: Not Found)
+[1/1095] 20230809: total 37 rows, 0 failed, elapsed 0.0m ETA 15.1m
+[21/1095] 20230829: total 770 rows, 0 failed, elapsed 0.3m ETA 14.8m
+[41/1095] 20230918: total 1534 rows, 0 failed, elapsed 0.6m ETA 14.4m
+[61/1095] 20231008: total 2426 rows, 0 failed, elapsed 0.8m ETA 14.3m
+[81/1095] 20231028: total 3150 rows, 0 failed, elapsed 1.1m ETA 14.3m
+[101/1095] 20231117: total 3929 rows, 0 failed, elapsed 1.4m ETA 14.0m
+[121/1095] 20231207: total 4823 rows, 0 failed, elapsed 1.7m ETA 13.6m
+[141/1095] 20231227: total 6622 rows, 0 failed, elapsed 2.0m ETA 13.2m
+[161/1095] 20240116: total 7675 rows, 0 failed, elapsed 2.2m ETA 12.8m
+[181/1095] 20240205: total 8742 rows, 0 failed, elapsed 2.5m ETA 12.6m
+[201/1095] 20240225: total 10105 rows, 0 failed, elapsed 2.8m ETA 12.3m
+[221/1095] 20240316: total 10944 rows, 0 failed, elapsed 3.1m ETA 12.1m
+[241/1095] 20240405: total 11752 rows, 0 failed, elapsed 3.3m ETA 11.8m
+[261/1095] 20240425: total 12402 rows, 0 failed, elapsed 3.6m ETA 11.5m
+[281/1095] 20240515: total 13376 rows, 0 failed, elapsed 3.9m ETA 11.3m
+[301/1095] 20240604: total 14560 rows, 0 failed, elapsed 4.2m ETA 11.0m
+[321/1095] 20240624: total 15447 rows, 0 failed, elapsed 4.4m ETA 10.7m
+[341/1095] 20240714: total 16280 rows, 0 failed, elapsed 4.7m ETA 10.4m
+[361/1095] 20240803: total 16841 rows, 0 failed, elapsed 5.0m ETA 10.1m
+[381/1095] 20240823: total 17884 rows, 0 failed, elapsed 5.2m ETA 9.8m
+[401/1095] 20240912: total 19181 rows, 0 failed, elapsed 5.5m ETA 9.4m
+[421/1095] 20241002: total 20072 rows, 0 failed, elapsed 5.7m ETA 9.1m
+[441/1095] 20241022: total 20766 rows, 0 failed, elapsed 6.0m ETA 8.9m
+[461/1095] 20241111: total 21133 rows, 0 failed, elapsed 6.2m ETA 8.6m
+[481/1095] 20241201: total 21691 rows, 0 failed, elapsed 6.5m ETA 8.3m
+[501/1095] 20241221: total 22798 rows, 0 failed, elapsed 6.7m ETA 8.0m
+[521/1095] 20250110: total 23182 rows, 0 failed, elapsed 7.0m ETA 7.7m
+[541/1095] 20250130: total 25350 rows, 0 failed, elapsed 7.2m ETA 7.4m
+[561/1095] 20250219: total 28528 rows, 0 failed, elapsed 7.5m ETA 7.1m
+[581/1095] 20250311: total 30277 rows, 0 failed, elapsed 7.8m ETA 6.9m
+[601/1095] 20250331: total 31639 rows, 0 failed, elapsed 8.0m ETA 6.6m
+[621/1095] 20250420: total 32949 rows, 0 failed, elapsed 8.3m ETA 6.3m
+[641/1095] 20250510: total 34095 rows, 0 failed, elapsed 8.5m ETA 6.0m
+[661/1095] 20250530: total 34955 rows, 0 failed, elapsed 8.8m ETA 5.8m
+[701/1095] 20250709: total 35780 rows, 18 failed, elapsed 12.8m ETA 7.2m
+[721/1095] 20250729: total 36853 rows, 18 failed, elapsed 13.0m ETA 6.7m
+[741/1095] 20250818: total 37850 rows, 18 failed, elapsed 13.2m ETA 6.3m
+[761/1095] 20250907: total 39028 rows, 18 failed, elapsed 13.5m ETA 5.9m
+[781/1095] 20250927: total 39981 rows, 18 failed, elapsed 13.7m ETA 5.5m
+[801/1095] 20251017: total 41054 rows, 18 failed, elapsed 14.0m ETA 5.1m
+[821/1095] 20251106: total 41546 rows, 18 failed, elapsed 14.2m ETA 4.7m
+[841/1095] 20251126: total 42330 rows, 18 failed, elapsed 14.5m ETA 4.4m
+[861/1095] 20251216: total 43665 rows, 18 failed, elapsed 14.7m ETA 4.0m
+[881/1095] 20260105: total 44298 rows, 18 failed, elapsed 14.9m ETA 3.6m
+[901/1095] 20260125: total 44861 rows, 18 failed, elapsed 15.2m ETA 3.3m
+[921/1095] 20260214: total 45822 rows, 18 failed, elapsed 15.4m ETA 2.9m
+[941/1095] 20260306: total 46580 rows, 18 failed, elapsed 15.7m ETA 2.6m
+[961/1095] 20260326: total 47224 rows, 18 failed, elapsed 15.9m ETA 2.2m
+[981/1095] 20260415: total 47693 rows, 18 failed, elapsed 16.1m ETA 1.9m
+[1001/1095] 20260505: total 48302 rows, 18 failed, elapsed 16.3m ETA 1.5m
+[1021/1095] 20260525: total 50263 rows, 18 failed, elapsed 16.6m ETA 1.2m
+[1041/1095] 20260614: total 52115 rows, 18 failed, elapsed 16.8m ETA 0.9m
+[1061/1095] 20260704: total 53375 rows, 18 failed, elapsed 17.0m ETA 0.5m
+[1081/1095] 20260724: total 54195 rows, 18 failed, elapsed 17.3m ETA 0.2m
+DONE. 55044 rows across 1095 days (19 failed)

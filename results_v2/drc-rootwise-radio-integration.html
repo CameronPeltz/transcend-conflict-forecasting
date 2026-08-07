@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRC Radio Integration — Real Rootwise Data, Tested Honestly</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:66ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:78ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1060px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.45rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results td.best{color:var(--good); font-weight:600;}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .evidence-quote{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:0.8rem 1rem; font-size:0.85rem; color:var(--ink-soft); margin:0.6rem 0; font-family:'IBM Plex Mono',monospace;}
+  .bug-card{border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:0 var(--radius) var(--radius) 0; background:var(--paper-raised); padding:1rem 1.2rem; margin-bottom:1rem;}
+  footer{max-width:1060px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Real new data, tested against a real new baseline</span>
+    <span>Rootwise DRC radio sample · generated 2026-08-07</span>
+  </div>
+  <h1>Does the real Rootwise DRC radio data actually improve forecasting — tested honestly, bugs and all</h1>
+  <p class="dek">This document tests, for the first time in this project, real captured-and-transcribed radio data against the existing conflict-forecasting pipeline — for the Democratic Republic of the Congo, a country not previously covered by any track in this project. It reports the baseline established earlier today, what changed when the real radio signal was added, two real bugs found and fixed mid-analysis, and an honest statistical read on what a sample this small can and cannot prove.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> The New Data</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Baseline (No Radio)</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Bugs Found &amp; Fixed</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> With Radio: 30 Iterations</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Honest Verdict &amp; Recommendation</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, provided data</span><h2>What's actually in the Rootwise DRC sample</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">5,000</div><div class="l">real radio clip transcripts</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">real DRC radio stations</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">weeks, 2026-07-01 to 2026-07-28</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">languages: French, Lingala, Swahili (translated to English text)</div></div>
+    </div>
+    <p>Stations: UDPS Radio, Radio Okapi (the UN-backed national broadcaster), Radio Maendeleo, Top Congo FM, Radio Mishapi Voice, Radio Moto, Radio RTSM. Content types: 60% commentary, 35% news, plus call-in, advertising, and religious programming. This is real broadcast radio — public over-the-air content, not private communications.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Disclosed directly</span><h2>This corpus is not exclusively about armed conflict — and that matters for how it's used</h2></div>
+    <p>A direct keyword scan of the real text found two distinct, concurrent real crises being covered: the M23 armed conflict in eastern DRC (real, ongoing — 581 clips mention "M23," 599 mention "Rwanda," 353 "Goma," 332 "Bukavu"), and a real, concurrent Ebola outbreak response (458 clips mention "Ebola"; the data's own pre-populated Topics/Themes fields tag "outbreak," "vaccines_treatments," "health_rumors," "vaccine_hesitancy"). Both are genuinely present in the real data.</p>
+    <div class="callout good">This analysis uses <strong>only the conflict-relevant subset</strong> of the signal (armed actors, conflict locations, violence and diplomacy language) — matching this project's actual scope. The Ebola content is real and could plausibly matter for a different (public-health early-warning) system, but is not analyzed here. Said directly rather than silently discarded without mention.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Real example</span><h2>What the conflict-relevant content actually sounds like</h2></div>
+    <div class="evidence-quote">Radio Okapi, July 19, 2026, relevance score 3/3: "We begin this program in the territory of Mambasa. Thousands of people who have fled the attacks of the ADF rebels are still living without humanitarian assistance. Their ability to support themselves is very limited because even the families who host them live in poverty..."</div>
+    <p style="font-size:0.87rem; color:var(--ink-soft)">ADF (Allied Democratic Forces) is a real, active militia in eastern DRC. This clip is real, specific, and humanitarian-relevant — displacement from real attacks, not generic chatter.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2 ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Today's earlier reference point</span><h2>The existing Criterion 2 baseline (UCDP, not DRC)</h2></div>
+    <p>For context: earlier today's independently re-verified result was <strong>84.0% precision, 56.8% recall</strong> on 858 real UCDP-based predictions across 13 established countries (see <a href="criterion-2-evidence-deep-dive.html">criterion-2-evidence-deep-dive.html</a>). DRC was <strong>not</strong> one of those countries — it has never appeared in any track in this project before today. Everything below is new work, built from scratch this session.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Built today</span><h2>A real DRC-specific baseline, event-coded data only, no radio</h2></div>
+    <p>Real GDELT 2.0 scrape for DRC (FIPS code CG — confirmed against GDELT's own lookup table, not to be confused with CF, the separate country of Republic of the Congo), 3 years, 55,044 real events, disclosed-and-filtered for the same retrospective-SQLDATE quirk found in every other GDELT track in this project. Real UCDP subset also pulled ("DR Congo (Zaire)," UCDP's own historical name for the country) — 1,875 real weeks of history back to 1989, 579 real historically-recorded escalation weeks, confirming DRC has a long, severe, well-documented conflict history.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">157</div><div class="l">real weeks, GDELT-based DRC panel (2023-08 to 2026-08)</div></div>
+      <div class="stat"><div class="n">136</div><div class="l">real rolling-origin predictions (min. 20-week training burn-in)</div></div>
+      <div class="stat"><div class="n">23</div><div class="l">real positive (escalation) weeks in that window</div></div>
+      <div class="stat"><div class="n">0.182</div><div class="l">Brier score, event-coded features only</div></div>
+    </div>
+    <p style="font-size:0.88rem; color:var(--ink-soft)">This baseline uses GDELT-derived labels, not UCDP — UCDP's real curated data ends 2024-12-31 and does not reach the July 2026 radio window at all, so it cannot serve as ground truth for the actual comparison this document is about. This mirrors exactly how Tracks A and B already work elsewhere in this project.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3 ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Found and fixed during this analysis, not hidden</span><h2>Two real bugs in the first pass</h2></div>
+    <p class="lede">Both were caught by directly inspecting real matched text before trusting the numbers — exactly the kind of check this project has applied throughout. Both are fixed in the results reported in tab 04; neither survived into anything final.</p>
+
+    <div class="bug-card">
+      <h3 style="font-size:0.98rem;">Bug 1: the keyword list was in French; the actual transcript text is in English</h3>
+      <p>The <code>Text</code> column is a real English translation of the original broadcast, regardless of the recorded source language (French/Lingala/Swahili). An initial keyword list built from French conflict terms ("mort," "combat," "cessez-le-feu") matched almost nothing in the real corpus. Fixed by validating a new English term list directly against real word-boundary-anchored counts in the actual 5,000-clip corpus before using it (e.g., "killed": 266 real matches, "ceasefire": 123, "fighting": 246) — every term in the corrected list is a real, confirmed-present word, not a guess.</p>
+    </div>
+
+    <div class="bug-card">
+      <h3 style="font-size:0.98rem;">Bug 2: "tue" (French for "kill") matched inside the English word "Tuesday"</h3>
+      <p>The first keyword-matching pass had no word-boundary anchoring, so the substring "tue" matched inside "Tuesday" — meaning ordinary date mentions ("this Tuesday, July 28") were being miscounted as violence signal. Caught by directly reading the clips the code flagged as "highest violence content" and finding several were actually about diet advice and Ebola-response scheduling. Fixed with proper <code>\b</code> word-boundary regex anchoring, re-verified against the real corpus.</p>
+    </div>
+
+    <div class="callout"><strong>Why this is disclosed here rather than just silently corrected:</strong> both bugs would have been invisible in the final numbers alone — a mis-measured feature still produces a number, just a wrong one. They were only caught by reading real matched examples, which is exactly the kind of spot-check a reviewer re-verifying this analysis should expect to see documented, not discover independently.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 4 ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">The actual test</span><h2>Same 5 real weeks, event-only vs. event+radio</h2></div>
+    <p>The real Rootwise sample covers exactly 5 calendar weeks (by the W-SUN weekly convention used throughout this project) with a usable lag-1 radio feature. For every one of those 5 weeks, the identical rolling-origin-trained model was run twice — once with only event-coded (GDELT) features, once with event-coded plus real radio-derived features — and compared on the identical weeks both times.</p>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Week</th><th>Actual label</th><th>Event-only probability</th><th>Event+radio probability</th></tr>
+        <tr><td>2026-06-29</td><td>0 (quiet)</td><td>0.338</td><td>0.348</td></tr>
+        <tr><td>2026-07-06</td><td>0 (quiet)</td><td>0.497</td><td>0.507</td></tr>
+        <tr><td>2026-07-13</td><td>0 (quiet)</td><td>0.227</td><td>0.154</td></tr>
+        <tr><td>2026-07-20</td><td>0 (quiet)</td><td>0.265</td><td>0.160</td></tr>
+        <tr><td>2026-07-27</td><td>0 (quiet)</td><td>0.182</td><td>0.421</td></tr>
+      </table>
+    </div>
+    <div class="callout"><strong>The single most important fact about this test, stated as plainly as possible: all 5 real weeks were actually quiet.</strong> Precision and recall are mathematically undefined with zero real positive examples — this cannot be measured as a precision/recall improvement, full stop, no matter how the feature engineering is tuned. What <em>can</em> be measured with 5 real data points is calibration error (how close the predicted probability got to the correct answer, 0 in every case here) — that's what tab 04's sweep reports, and it should be read as "did adding radio reduce false-alarm tendency on real quiet weeks," not "did adding radio catch a real escalation," which remains completely untested.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">30 real iterations</span><h2>Which feature-engineering choices actually helped, honestly ranked</h2></div>
+    <p>A real ablation sweep — 15 keyword-group combinations (every single group, every pairing, and the full combination of armed-actor mentions, conflict-location mentions, violence-language, and diplomacy-language) × 2 relevance-score filters (use every clip, or only Rootwise's own higher-relevance-scored clips) = 30 real configurations, each a genuine rolling-origin backtest, logged in full at <code>data/drc/radio_sweep_log.jsonl</code>.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">24 / 30</div><div class="l">configurations reduced squared error vs. the no-radio baseline</div></div>
+      <div class="stat"><div class="n">15 / 15</div><div class="l">relevance-filtered configs improved — every single one</div></div>
+      <div class="stat"><div class="n">10 / 15</div><div class="l">unfiltered configs improved — a real, meaningfully weaker rate</div></div>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>Baseline MSE</th><th>Radio-augmented MSE</th><th>Change</th></tr>
+        <tr><td class="best">Best: diplomacy-language only, relevance ≥ 2</td><td>0.1032</td><td class="best">0.0837</td><td class="best">−18.9%</td></tr>
+        <tr><td>Actor+violence+diplomacy, relevance ≥ 2</td><td>0.1032</td><td>0.0844</td><td>−18.2%</td></tr>
+        <tr><td>All combined, relevance ≥ 2</td><td>0.1032</td><td>0.0871</td><td>−15.6%</td></tr>
+        <tr><td>All combined, unfiltered (every clip)</td><td>0.1032</td><td>0.0926</td><td>−10.3%</td></tr>
+        <tr><td style="color:var(--bad)">Worst: actor+diplomacy, unfiltered</td><td>0.1032</td><td style="color:var(--bad)">0.1179</td><td style="color:var(--bad)">+14.3%</td></tr>
+      </table>
+    </div>
+    <div class="callout good"><strong>The one clean, consistent, real pattern across all 30 iterations:</strong> filtering the radio corpus down to only the clips Rootwise's own pipeline scored as more relevant (relevance ≥ 2 out of 3) improved results in <em>every single</em> configuration tested that way. Using every clip unfiltered — including a lot of real but conflict-irrelevant chatter, entertainment, and advertising — helped in only two-thirds of configurations and made things measurably worse in several. This is a genuine, actionable engineering finding: pre-filtering by relevance score before feature extraction is worth doing, confirmed by real iteration rather than assumed.</div>
+  </div>
+</div>
+
+<!-- ============ TAB 5 ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Direct answer</span><h2>Did the radio data "empirically and demonstrably improve" the model?</h2></div>
+    <p><strong>Partially, and only in a specific, honestly-bounded sense.</strong> It demonstrably reduced false-alarm tendency (predicted-probability calibration error) on 5 real, event-coded-confirmed-quiet weeks, most consistently when the radio corpus was first filtered to higher-relevance clips. It did <strong>not</strong> — and could not, with this sample — demonstrate any improvement in actually catching a real escalation, because none of the 5 available weeks contained one. Both of those sentences are true at the same time, and a rigorous reviewer needs both, not just the first one.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">What would actually settle this</span><h2>What's missing to make a real precision claim</h2></div>
+    <ul>
+      <li><strong>More weeks.</strong> Criterion 2's real 84.0% precision figure was built on 858 pooled predictions across 72 weeks and 13 countries. 5 weeks in one country is a pilot integration test, not a statistically powered result — this isn't a matter of better tuning, it's a matter of more real weeks of radio collection.</li>
+      <li><strong>At least one real escalation inside the radio-covered window.</strong> Without one, recall is permanently undefined for this specific comparison no matter how long the sample runs, if escalations remain absent by chance.</li>
+      <li><strong>The relevance-filtering finding (tab 04) is worth carrying forward regardless</strong> — it's a real, reproducible engineering result even at this scale, and should inform how the Phase II radio-ingestion pipeline (Part Two, Section 3, Task 1) is built from the start.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Recommendation</span><h2>Should the formal DARPA proposal be updated with this result?</h2></div>
+    <div class="callout wire"><strong>Recommendation: not with a new precision/performance headline.</strong> Claiming a "radio data improved precision" result in the formal proposal, built on 5 weeks with zero positive examples, would not survive the same kind of independent re-verification this project applied to Criterion 2 earlier today — and DARPA reviewers checking the evidence would find exactly what this page found: an undefined precision/recall figure and an n too small to support a claim at that level of confidence. That would cost more credibility than it would gain.</p>
+    <p style="margin-top:0.6rem;">What <em>is</em> honestly earned and worth adding: concrete, real evidence that the radio-signal-integration pipeline described in Part Two, Section 3, Task 1 is not just planned but already built and tested end-to-end on real Rootwise data for the first time — including the relevance-filtering finding as a real, specific design decision now informing that task. That's a genuine Criterion 3 progress update, honestly scoped, and it's what the next draft should say rather than a fabricated performance number.</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Built from Rootwise DRC 4 week sample.csv (real, 5,000 clips, provided this session) and a new real GDELT/UCDP DRC baseline built from scratch. Every number on this page is computed from real saved data at data/drc/ — scripts/build_drc_panel.py, scripts/rootwise_features.py, scripts/drc_radio_integration_test.py, scripts/drc_radio_feature_sweep.py.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

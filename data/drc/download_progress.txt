@@ -1,0 +1,2 @@
+[1081/1095] 20260724: total 54195 rows, 18 failed, elapsed 17.3m ETA 0.2m
+DONE. 55044 rows across 1095 days (19 failed)
