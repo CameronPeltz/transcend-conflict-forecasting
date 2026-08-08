@@ -12,3 +12,14 @@ data/gdelt_filtered.csv
 __pycache__/
 *.pyc
 template_dump.txt
+
+# Rootwise DRC raw exports -- all superseded by the single deduplicated
+# "Rootwise DRC full.csv" (21,859 clips, kept tracked below), which is
+# the real source of truth going forward. These are redundant subsets
+# of it, kept locally for provenance but not worth tracking in git.
+Rootwise DRC 4 week sample.csv
+Rootwise clips-export-*.csv
+Rootwise DRC combined.csv
+rootwise_radio_data/
+*.jpg
+*.jpeg

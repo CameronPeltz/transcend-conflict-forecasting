@@ -64,7 +64,7 @@ def _term_pattern(terms):
     return re.compile(r"\b(?:" + "|".join(re.escape(t) for t in terms) + r")\b", re.IGNORECASE)
 
 
-def load_rootwise_raw(path="Rootwise DRC combined.csv"):
+def load_rootwise_raw(path="Rootwise DRC full.csv"):
     df = pd.read_csv(path, encoding="utf-8-sig")
     df["dt"] = pd.to_datetime(df["Date/Time"], utc=True).dt.tz_localize(None)
     df["week"] = df["dt"].dt.to_period(WEEK_FREQ).dt.start_time

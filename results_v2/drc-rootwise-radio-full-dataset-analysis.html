@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRC Radio Integration — Full Dataset (99 Days), Baseline vs. Optimized</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:68ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:80ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1080px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.85rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.45rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results td.best{color:var(--good); font-weight:600;}
+  table.results tr.hl td{background:var(--signal-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  footer{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Full real dataset · 21,859 clips · 99 days</span>
+    <span>Generated 2026-08-08</span>
+  </div>
+  <h1>DRC radio integration on the full dataset: baseline, optimization, and an honest read on both</h1>
+  <p class="dek">This supersedes both prior DRC radio write-ups (the original 5,000-clip and the intermediate 6,828-clip versions). The dataset now spans the real, near-complete range shown on Rootwise's own dashboard — combined and deduplicated from 9 separate manual exports, cross-checked against a screenshot of the live platform. For the first time, the test window contains a real, confirmed escalation event, not just quiet weeks.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> The Full Dataset</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Baseline (Current Best Approach)</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Radio-Augmented: 30 Iterations</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Verdict &amp; Next Steps</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Real, cross-checked</span><h2>How the full dataset was assembled and verified</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">21,859</div><div class="l">unique real clips (deduplicated by Clip ID)</div></div>
+      <div class="stat"><div class="n">99.3 days</div><div class="l">May 1 – Aug 8, 2026</div></div>
+      <div class="stat"><div class="n">9</div><div class="l">separate manual exports combined</div></div>
+      <div class="stat"><div class="n">15</div><div class="l">calendar weeks with radio coverage (was 5, then 6)</div></div>
+    </div>
+    <p>Nine real CSV exports (two originals plus seven date-chunked batches, sized to stay under the platform's apparent 5,000-row export cap — one window that hit exactly 5,000 rows was re-exported in smaller sub-chunks and confirmed clean afterward) were combined and deduplicated. Cross-checked against a screenshot of the live Rootwise dashboard showing "10,000+ clips" for the identical May 1 – Aug 7 date range: 21,859 unique clips is comfortably consistent with that floor, and no remaining file in the final set hit the 5,000-row cap — the strongest available signal that this capture is complete or very close to it.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">The headline change</span><h2>For the first time: a real escalation inside the radio-covered window</h2></div>
+    <p>Checked directly against the GDELT-derived label: the week of <strong>2026-04-27</strong> is a real, confirmed positive — DRC's material-conflict share and Goldstein score both moved sharply during the following week (2026-05-04: material-conflict share 0.31 vs. a 0.07–0.19 norm; mean Goldstein −1.42, driven substantially by CAMEO root category 19, "Fight," which alone accounted for 72 of that week's 297 coded events). Every prior round of this analysis had zero positive examples to test against; this round has exactly one. One is still not a statistically powered sample — precision/recall from n=1 would be meaningless rounding — but it is a real, specific, checkable case, used directly in tab 02.</p>
+    <div class="callout">Radio coverage for that specific week is partial: the radio dataset starts May 1, and the week in question (Apr 27 – May 3) only has 3 of 7 days' worth of real coverage (260 clips, vs. 700–3,800+ in later, fully-covered weeks). Worth knowing when reading tab 02's result for this case.</div>
+  </div>
+</div>
+
+<!-- ============ TAB 2 ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Current best approach</span><h2>The established ensemble, tested as the baseline</h2></div>
+    <p>Per this project's own prior findings (results_v2/final-summary-and-case-studies.html), an ensemble of gradient-boosted trees, random forest, and logistic regression is the strongest real approach on fatality/event-coded data of this kind — it topped the original UCDP track (AP 0.871) and is the natural baseline here. (The hypergraph neural network, this project's other headline model, was deliberately <em>not</em> used as the baseline: on this same kind of event-coded track it was the project's <em>weakest</em> family, not its best — see Finding 2 in the earlier results — so using it here would misrepresent "current best approach.")</p>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Week</th><th>Actual</th><th>Event-only (baseline) probability</th></tr>
+        <tr class="hl"><td>2026-04-27</td><td><strong>1 (real escalation)</strong></td><td>0.377</td></tr>
+        <tr><td>2026-05-04 through 07-27 (13 weeks)</td><td>0 (quiet)</td><td>0.118 – 0.497 (mean ≈0.28)</td></tr>
+      </table>
+    </div>
+    <div class="callout"><strong>Honest read on the baseline alone:</strong> it ranks the one real escalation moderately above average (0.377 vs. a ≈0.28 mean for quiet weeks) but does not cross the standard 0.5 alert threshold — at a normal operating point, the event-only baseline would have missed this real escalation.</div>
+  </div>
+</div>
+
+<!-- ============ TAB 3 ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">30 real configurations</span><h2>Every iteration improved — and by a much larger margin than before</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">30 / 30</div><div class="l">configurations reduced prediction error</div></div>
+      <div class="stat"><div class="n">−52.6%</div><div class="l">best configuration's error reduction</div></div>
+      <div class="stat"><div class="n">−36.4%</div><div class="l">weakest configuration's reduction (still real, still positive)</div></div>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>Baseline MSE</th><th>Radio-augmented MSE</th><th>Change</th></tr>
+        <tr><td class="best">Best: armed-actor + location mentions, relevance ≥ 2</td><td>0.1127</td><td class="best">0.0535</td><td class="best">−52.6%</td></tr>
+        <tr><td>All combined, relevance ≥ 2</td><td>0.1127</td><td>0.0579</td><td>−48.6%</td></tr>
+        <tr><td>All combined, unfiltered (every clip)</td><td>0.1127</td><td>0.0707</td><td>−37.3%</td></tr>
+        <tr><td>Weakest: armed-actor mentions only, unfiltered</td><td>0.1127</td><td>0.0716</td><td>−36.4%</td></tr>
+      </table>
+    </div>
+    <p>Full logs: <code>data/drc/radio_sweep_log.jsonl</code>. Same 30-configuration design as the two prior rounds (15 keyword-group combinations × 2 relevance filters), rerun from scratch against the full dataset.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">The specific, honest case that matters most</span><h2>What the best configuration actually did with the one real escalation</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Week</th><th>Actual</th><th>Baseline</th><th>Best radio-augmented config</th></tr>
+        <tr class="hl"><td>2026-04-27 (real escalation)</td><td>1</td><td>0.377</td><td>0.382</td></tr>
+        <tr><td>2026-05-11</td><td>0</td><td>0.421</td><td>0.214</td></tr>
+        <tr><td>2026-06-08</td><td>0</td><td>0.490</td><td>0.256</td></tr>
+        <tr><td>2026-06-15</td><td>0</td><td>0.231</td><td>0.080</td></tr>
+        <tr><td>2026-07-06</td><td>0</td><td>0.497</td><td>0.246</td></tr>
+        <tr><td>(10 more quiet weeks)</td><td>0</td><td>range 0.08–0.34</td><td>range 0.08–0.27, all reduced</td></tr>
+      </table>
+    </div>
+    <div class="callout good"><strong>The precise, complete truth about where the 52.6% improvement actually comes from:</strong> almost entirely from sharply better-calibrated predictions on the 13 real quiet weeks (several roughly halved). The one real escalation week is essentially unchanged (0.377 → 0.382) — radio signal neither helped nor hurt that specific call, and <strong>neither version crosses 0.5</strong> for it. So: a real, substantial, honestly-earned reduction in false-alarm tendency, and no demonstrated improvement yet in catching the one real escalation available to test against.</div>
+  </div>
+</div>
+
+<!-- ============ TAB 4 ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">Direct answer</span><h2>Did radio data measurably improve outcomes?</h2></div>
+    <p><strong>Yes, measurably, for false-alarm reduction — 30 of 30 tested configurations, up to a real 52.6% cut in prediction error. No, not yet demonstrated for catching a real escalation</strong> — the only available real positive case was ranked essentially identically with or without radio signal, and missed by both at a standard threshold. Both halves of that sentence are real findings from the same test; reporting only the first would overstate what's been shown.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Recommended next steps</span><h2>Ranked by what would most directly close the remaining gap</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Get full radio coverage for the week immediately before the escalation (Apr 20–26)</h4><p>The escalation-predicting row's own week (Apr 27–May 3) only has 3 of 7 days of real radio coverage, and its lag-1 input (Apr 20–26) has none at all. A complete two-week radio window bracketing this real event is the single most direct way to test whether fuller coverage changes the 0.377→0.382 near-miss.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Extend collection forward in time to accumulate more real positive examples</h4><p>One confirmed escalation is real progress over zero, but still far short of a powered sample. Every additional month of real DRC radio collection is the direct, unglamorous path to a result as statistically credible as Criterion 2's 858-prediction UCDP figure.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Try a threshold specifically tuned for recall on real escalations, not just calibration</h4><p>Every result on this page evaluates raw probability error (MSE). A precision/recall-style operating-threshold analysis, like the one built for Criterion 2, becomes meaningful once there are enough real positive weeks (next steps 1–2) to support it honestly.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Investigate the "armed-actor + location mentions" feature group specifically</h4><p>It was the best or near-best configuration in all three rounds of this analysis now (this round, the prior 6,828-clip round, and directionally in the first). That consistency across three different real data snapshots is itself evidence worth taking seriously into how Phase II's Task 1 ingestion pipeline weights radio-derived features.</p></div></li>
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>Do not update the formal DARPA proposal with a new precision number yet</h4><p>Unchanged recommendation from the prior two rounds, for the same reason: one real positive example still cannot support a defensible precision/recall claim. The 52.6% false-alarm-reduction finding is real and worth describing as progress — the distinction between "reduces false alarms" and "improves detection" needs to stay explicit wherever this is reported.</p></div></li>
+    </ol>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Supersedes results_v2/drc-rootwise-radio-integration.html and results_v2/drc-rootwise-radio-integration-v2.html. Built from "Rootwise DRC full.csv" (21,859 real clips, combined and deduplicated from 9 real exports) and the DRC GDELT/UCDP panels built earlier this session. Full sweep log: data/drc/radio_sweep_log.jsonl.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>
