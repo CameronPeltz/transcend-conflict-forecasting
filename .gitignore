@@ -23,3 +23,19 @@ Rootwise DRC combined.csv
 rootwise_radio_data/
 *.jpg
 *.jpeg
+
+# Proposal drafts, templates, and internal drafting/process artifacts --
+# this repo is the technical evidence base (scripts, data, results), not
+# a home for the proposal document itself or the process that produced
+# it. These stay local only; never tracked or pushed.
+Transcend_DARPA_SBIR_Volume_2_*
+AP_Strategies_DARPA_SBIR_Volume_2_Technical_Template.docx
+TemporalKnowledgeGraphForecastingPaper2023.pdf
+darpa-proposal-critical-review-and-rebuild-prompt.html
+*-feedback-response.html
+prompt_from_*.txt
+fill_darpa_proposal*.py
+*rewrite_volume2*.py
+watch_claude_processes.ps1
+*.url
+~$*
