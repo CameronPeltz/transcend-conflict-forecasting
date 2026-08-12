@@ -1,0 +1,47 @@
+Loading mega dataset...
+228851 rows, 60 cols
+
+===== GROUP A0: solo-model controls (XGB, LogReg) =====
+[A0_xgb_solo_label_10day] label_10day: HOLDOUT precision=0.724 recall=0.087 (2.6s)
+[A0_logreg_solo_label_10day] label_10day: HOLDOUT precision=0.624 recall=0.086 (2.4s)
+[A0_xgb_solo_label_14day] label_14day: HOLDOUT precision=0.684 recall=0.121 (2.5s)
+[A0_logreg_solo_label_14day] label_14day: HOLDOUT precision=0.610 recall=0.112 (2.3s)
+
+===== GROUP A: stacking meta-learner =====
+[A1_stack4_10day] label_10day: HOLDOUT precision=0.775 recall=0.080 meta_coefs={'lgbm': 0.034, 'rf': 2.084, 'xgb': 1.813, 'logreg': 1.474} (38.8s)
+[A2_stack4_14day] label_14day: HOLDOUT precision=0.740 recall=0.113 meta_coefs={'lgbm': 0.169, 'rf': 2.568, 'xgb': 1.359, 'logreg': 1.357} (37.7s)
+[A3_stack3_notree_10day] label_10day: HOLDOUT precision=0.788 recall=0.077 meta_coefs={'lgbm': -0.057, 'rf': 2.902, 'xgb': 2.499} (34.9s)
+[A4_stack3_notree_14day] label_14day: HOLDOUT precision=0.743 recall=0.113 meta_coefs={'lgbm': 0.072, 'rf': 3.328, 'xgb': 1.991} (35.6s)
+
+  --> stacking beats tuned single at 10-day: True; at 14-day: False
+  stacking looked competitive at 10-day -> adaptive follow-up: meta-learner regularization sweep
+[A5_stack4_10day_metaC0.05] label_10day: HOLDOUT precision=0.775 recall=0.079 meta_coefs={'lgbm': 0.479, 'rf': 1.746, 'xgb': 1.552, 'logreg': 1.59} (36.9s)
+[A5_stack4_10day_metaC5.0] label_10day: HOLDOUT precision=0.776 recall=0.080 meta_coefs={'lgbm': 0.003, 'rf': 2.108, 'xgb': 1.832, 'logreg': 1.472} (35.5s)
+
+===== GROUP B: support-filter threshold push =====
+[B1_supportpush_10day] label_10day: HOLDOUT precision=0.761 recall=0.078 (5.7s)
+[B2_supportpush_14day] label_14day: HOLDOUT precision=0.755 recall=0.109 (26.9s)
+
+===== GROUP C: two-stage severity, mega features + tuned models =====
+[C1_twostage_matchedwinner_10day] label_10day severity: HOLDOUT precision=0.933 recall=0.006 (7.6s)
+[C2_twostage_matchedwinner_14day] label_14day severity: HOLDOUT precision=0.870 recall=0.015 (36.0s)
+[C3_twostage_lgbmseverity_14day] label_14day severity: HOLDOUT precision=1.000 recall=0.003 (29.1s)
+[C4_twostage_rfseverity_10day] label_10day severity: HOLDOUT precision=1.000 recall=0.007 (12.8s)
+[C5_singlestage_lgbmseverity_10day] label_10day_severe: HOLDOUT precision=0.882 recall=0.006 (5.7s)
+[C6_singlestage_lgbmseverity_14day] label_14day_severe: HOLDOUT precision=0.000 recall=0.000 (5.4s)
+
+===== GROUP D: WorldPop population feature (partial real coverage) =====
+  WorldPop coverage this run: 100.0% of 214 cells have a real extracted value
+[D1_worldpop_10day] label_10day: HOLDOUT precision=0.740 recall=0.080 (5.5s)
+[D2_worldpop_14day] label_14day: HOLDOUT precision=0.756 recall=0.106 (27.0s)
+
+===== GROUP E: combined best-of-round6 configuration =====
+  decisions from groups A/D: use_stacking_10day=True, use_stacking_14day=False, use_worldpop=True
+[E1_combined_10day] label_10day: HOLDOUT precision=0.782 recall=0.081 meta_coefs={'lgbm': 0.196, 'rf': 1.955, 'xgb': 1.875, 'logreg': 1.382} (35.0s)
+[E2_combined_14day] label_14day: HOLDOUT precision=0.756 recall=0.106 (27.5s)
+[E3_combined_severity_10day] label_10day severity: HOLDOUT precision=0.938 recall=0.006 (7.4s)
+[E4_combined_severity_14day] label_14day severity: HOLDOUT precision=1.000 recall=0.002 (29.4s)
+
+
+TOTAL: 24 real iterations logged, 8.2 min
+Saved ../results/round6_results.json and ../results/round6_log.jsonl

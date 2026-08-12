@@ -1,0 +1,28 @@
+Loading round-3 dataset...
+228851 rows
+
+########## Pooled rolling-CV: two-stage combined vs occurrence-only, vs round-3 single-stage severe ##########
+
+--- 10day ---
+  two-stage combined:      precision=0.452 recall=0.349 AP=0.376 AUC=0.874
+  occurrence-score-only:   precision=0.167 recall=0.790 AP=0.359 AUC=0.868
+
+--- 14day ---
+  two-stage combined:      precision=0.513 recall=0.372 AP=0.435 AUC=0.872
+  occurrence-score-only:   precision=0.208 recall=0.787 AP=0.417 AUC=0.865
+
+
+########## Frozen-threshold @ 80% target: two-stage combined severity model ##########
+
+--- 10day ---
+  stage-2 trained on 18726 real 'event occurred' rows (9382 of them severe)
+  SELECT:  precision=0.786 recall=0.001
+  HOLDOUT: precision=1.000 recall=0.001 n=102752
+
+--- 14day ---
+  stage-2 trained on 23632 real 'event occurred' rows (12254 of them severe)
+  SELECT:  precision=0.800 recall=0.078
+  HOLDOUT: precision=0.592 recall=0.039 n=102752
+
+
+Saved ../results/two_stage_severity_results.json

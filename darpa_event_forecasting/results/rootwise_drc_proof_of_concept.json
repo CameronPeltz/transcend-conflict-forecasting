@@ -1,0 +1,77 @@
+{
+  "n_files": 7,
+  "n_clips_total": 21859,
+  "date_range": [
+    "2026-05-01",
+    "2026-08-08"
+  ],
+  "n_stations": 11,
+  "n_distinct_languages_detected": 32,
+  "languages_detected": [
+    "Arabic",
+    "BNT",
+    "Bambara",
+    "Bemba (Zambia)",
+    "Chinese",
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Kanyok",
+    "Kikuyu",
+    "Kinyarwanda",
+    "Kongo",
+    "Konzo",
+    "Limburgan",
+    "Lingala",
+    "Luba-Katanga",
+    "Luba-Lulua",
+    "MASHI",
+    "Mundari",
+    "Nande",
+    "Noy",
+    "Portuguese",
+    "Rundi",
+    "Russian",
+    "Somali",
+    "Spanish",
+    "Swahili",
+    "Tachelhit",
+    "Tsuvan",
+    "Yaka (Democratic Republic of Congo)",
+    "Yoruba"
+  ],
+  "content_type_counts": {
+    "commentary": 10465,
+    "news": 6415,
+    "advertising": 308,
+    "call_in": 242,
+    "other": 124,
+    "entertainment": 50,
+    "religious": 32
+  },
+  "relevance_score_counts": {
+    "1": 16528,
+    "3": 4688,
+    "2": 643
+  },
+  "top_topics_current_feed_configuration": {
+    "capacity": 11373,
+    "united_nations": 5793,
+    "illness": 4104,
+    "treatments": 1295,
+    "conspiracy": 768,
+    "vaccines": 287,
+    "bmgf": 99
+  },
+  "top_themes_current_feed_configuration": {
+    "outbreak": 3851,
+    "vaccines_treatments": 1834,
+    "health_rumors": 931,
+    "herbal_remedies": 299,
+    "vaccine_hesitancy": 37
+  },
+  "conflict_keyword_match_count": 4735,
+  "conflict_keyword_match_rate": 0.21661558168260214,
+  "note": "Keyword match is a simple, UNVALIDATED directional signal, not a trained or validated classifier -- no ground truth exists to check it against (this feed's dates, 2026-05 through 2026-08, are later than the project's real UCDP coverage, which ends 2025-12-31, so no backtest is possible against this specific window). Reported as evidence that conflict/security-relevant content is present and extractable in principle, not as a validated feature."
+}

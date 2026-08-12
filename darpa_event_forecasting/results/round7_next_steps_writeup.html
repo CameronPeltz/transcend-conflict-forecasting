@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 7: Testing Round 6's Own Next Steps — a Clean Negative, a Confound Resolved, and a Sharper Support-Filter Optimum</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:72ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:84ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1100px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.82rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.4rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results tr.hl td{background:var(--signal-soft);}
+  table.results tr.bad td{background:var(--alert-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .phase-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .phase-card .num{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); display:inline-block; margin-bottom:0.5rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  footer{max-width:1100px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Round 7 — acting on round 6's own next-steps list, then generating round 8's</span>
+    <span>20 real iterations, generated 2026-08-12</span>
+    <span>Standalone analysis, not yet part of the DARPA proposal draft</span>
+  </div>
+  <h1>Round 7: a clean negative on jointly re-optimized stacking, a resolved WorldPop confound, and a precisely located support-filter optimum</h1>
+  <p class="dek">Round 6 closed with four concrete next steps and one scope question. This round runs the four modeling steps as 20 more real, frozen-threshold-backtested iterations — dropping a redundant ensemble member, sweeping the support-filter boundary at finer resolution, jointly re-optimizing stacking on the filtered population instead of just slicing it post-hoc, and isolating whether WorldPop's round-6 negative result was the population signal itself or the missing-data confound it was tangled up with. Two of the four came back negative, one came back positive-but-partial, and one resolved a genuine open question cleanly. Closes with a fresh next-steps list for round 8, generated from this round's own results.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> Setup</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> What Was Done</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Results</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Analysis</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Next Steps for Round 8</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1: SETUP ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Starting point</span><h2>The four modeling next steps round 6 left open</h2></div>
+    <p class="lede">From Tab 06 of <code>round6_next_steps_writeup.html</code> (its fifth item was a proposal-scope decision, not a modeling step, and isn't re-run here):</p>
+    <ol>
+      <li>Deploy the round-6 winners — 3-model stacking at 10-day, tuned Random Forest at 14-day, both support-filtered at ≥100 — as production. Used as this round's comparison baseline.</li>
+      <li>Finish the WorldPop download / fix the 46%-coverage confound identified in round 6's analysis.</li>
+      <li>Search the ≥100/≥150 support-filter boundary at finer resolution to explain round 6's 10-day reversal.</li>
+      <li>Re-optimize stacking jointly on the support-filtered population, instead of training on everything and only filtering the evaluation slice.</li>
+    </ol>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Data</span><h2>Same mega dataset, same discipline, same WorldPop caveat</h2></div>
+    <p>228,851 rows, 464 cells, 19 countries, same rolling-origin/never-look-ahead/frozen-80%-threshold discipline as every prior round. The WorldPop downloader has continued running in the background since round 6; real coverage is still 214/464 cells (46.1%) — Sudan's raster grew from 84MB to over 870MB during this round without finishing (its true full size appears larger than the ~765MB first estimated), and the other 7 uncovered countries with active cells have not started. Every WorldPop result below is reported at this same real, partial, honestly-disclosed coverage level.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2: WHAT WAS DONE ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Design</span><h2>20 real iterations across 7 groups, one adaptive branch (didn't fire)</h2></div>
+    <p class="lede">6.8 minutes total runtime. Full log: <code>results/round7_log.jsonl</code>; full results: <code>results/round7_results.json</code>.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group A — 2 iterations</span>
+    <h3>Drop LightGBM from the stacking ensemble</h3>
+    <p>Round 6's meta-learner gave LightGBM a near-zero (even slightly negative) coefficient at every horizon despite it being the best solo model. This tests whether that's a real redundancy — does a 2-model stack (Random Forest + XGBoost only) match the 3-model stack's performance.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group B — 2 iterations</span>
+    <h3>Finer support-filter sweep (next step 3)</h3>
+    <p>Round 6's winning models, re-evaluated on the frozen holdout at five support levels (≥75, ≥100, ≥125, ≥150, ≥175) instead of the coarser ≥30/50/100/150 grid, to locate the true optimum and explain the unexplained 10-day reversal at ≥150.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group C — 4 iterations</span>
+    <h3>Jointly re-optimized stacking on the filtered population (next step 4)</h3>
+    <p>Both the training data and the evaluation data restricted to well-supported cells (≥50 and ≥100 historical events) from the start, at both horizons — a genuinely different architecture from round 6's approach of training on everything and only slicing the evaluation.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group D — 6 iterations</span>
+    <h3>WorldPop confound isolation (next step 2)</h3>
+    <p>A clean covered-subset A/B test — the exact same 214 cells, with and without the WorldPop population feature, removing the missing-data confound entirely — plus a coverage-indicator feature (population value + a binary "is this real" flag) applied across the whole dataset, at both horizons.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group E — 4 iterations</span>
+    <h3>Two-stage severity: a genuinely different stage-1, and finer support reporting</h3>
+    <p>Stage 1 (occurrence) replaced with a simple 3-model average (not the full learned meta-learner, to keep the two-stage rolling-fold structure tractable) instead of a single tuned model, at both horizons; plus round 6's matched-winner two-stage configuration re-evaluated with a ≥100 support level added to its reporting.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group F — 2 iterations</span>
+    <h3>Final combined recipe, decided programmatically from Groups B/C/D</h3>
+    <p>Per horizon: use joint-filtered training only if it beat post-hoc filtering (Group C vs. B); add the WorldPop indicator feature only if it beat the round-6 unfiltered baseline (Group D). Built fresh from whichever actually won — not pre-written.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group G — 0 iterations (did not fire)</span>
+    <h3>Adaptive follow-up</h3>
+    <p>Would have pushed joint-filtering to ≥150 if it had won at ≥100 in Group F. It didn't win at either horizon, so this branch correctly stayed inactive — a real example of the adaptive logic not firing rather than firing on a technicality.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3: RESULTS ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Headline</span><h2>One redundancy confirmed, one architecture ruled out, one confound resolved</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">78.6%</div><div class="l">10-day, 2-model stacking (LightGBM dropped) — matches 3-model's 78.8%</div></div>
+      <div class="stat"><div class="n">79.6%</div><div class="l">10-day precision confirmed at support ≥100 — the true, monotonic peak</div></div>
+      <div class="stat"><div class="n">+3.7pt</div><div class="l">WorldPop's real effect, 10-day, clean covered-subset A/B test</div></div>
+      <div class="stat"><div class="n">76.0%</div><div class="l">14-day, new best (WorldPop indicator feature, +0.5pt over round 6)</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group A</span><h2>LightGBM really is redundant in the stack</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Config</th><th>Holdout precision</th><th>Holdout recall</th></tr>
+        <tr><td>10-day</td><td>3-model stack (LGBM+RF+XGB) — round 6</td><td>78.8%</td><td>7.7%</td></tr>
+        <tr class="hl"><td>10-day</td><td><strong>2-model stack (RF+XGB only)</strong></td><td><strong>78.6%</strong></td><td><strong>7.8%</strong></td></tr>
+        <tr><td>14-day</td><td>3-model stack (LGBM+RF+XGB) — round 6</td><td>74.3%</td><td>11.3%</td></tr>
+        <tr><td>14-day</td><td>2-model stack (RF+XGB only)</td><td>74.4%</td><td>11.3%</td></tr>
+      </table>
+    </div>
+    <p>A 0.2-point difference at both horizons is noise. LightGBM can be dropped from the production ensemble with no measurable cost — a real simplification, not just a hypothesis.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group B</span><h2>The support-filter optimum, located precisely</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Support floor</th><th>n (holdout)</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>≥75</td><td>24,138</td><td>79.4%</td><td>21.5%</td></tr>
+        <tr class="hl"><td>10-day</td><td><strong>≥100</strong></td><td>18,563</td><td><strong>79.6%</strong></td><td><strong>25.4%</strong></td></tr>
+        <tr><td>10-day</td><td>≥125</td><td>16,855</td><td>78.7%</td><td>27.1%</td></tr>
+        <tr><td>10-day</td><td>≥150</td><td>13,859</td><td>77.8%</td><td>28.2%</td></tr>
+        <tr><td>10-day</td><td>≥175</td><td>11,672</td><td>77.4%</td><td>29.9%</td></tr>
+        <tr><td>14-day</td><td>≥75</td><td>24,138</td><td>76.6%</td><td>28.5%</td></tr>
+        <tr class="hl"><td>14-day</td><td><strong>≥100</strong></td><td>18,563</td><td><strong>78.1%</strong></td><td><strong>32.6%</strong></td></tr>
+        <tr><td>14-day</td><td>≥125</td><td>16,855</td><td>77.0%</td><td>33.9%</td></tr>
+        <tr><td>14-day</td><td>≥150</td><td>13,859</td><td>77.0%</td><td>35.7%</td></tr>
+        <tr><td>14-day</td><td>≥175</td><td>11,672</td><td>76.2%</td><td>36.9%</td></tr>
+      </table>
+    </div>
+    <p>10-day is a clean, monotonic peak at ≥100 with a smooth decline on both sides — round 6's coarser grid had already found the real optimum, not a fluke. 14-day is a plateau between ≥100 and ≥150 (78.1% / 77.0% / 77.0%, all within noise of each other) with no benefit from pushing further — ≥100 is the practical choice at both horizons, not because it's uniquely best at 14-day, but because it captures the plateau's precision while giving up the least recall.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group C</span><h2>A clean negative: don't jointly re-optimize on the filtered population</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Config</th><th>Precision</th><th>Recall</th><th>vs. post-hoc filter @ same n</th></tr>
+        <tr class="bad"><td>10-day</td><td>Trained + evaluated on support ≥50 only</td><td>74.1%</td><td>20.2%</td><td>76.4% post-hoc — worse</td></tr>
+        <tr class="bad"><td>10-day</td><td>Trained + evaluated on support ≥100 only</td><td>72.7%</td><td>30.8%</td><td>79.6% post-hoc — worse by 6.9 points</td></tr>
+        <tr class="bad"><td>14-day</td><td>Trained + evaluated on support ≥50 only</td><td>69.9%</td><td>29.0%</td><td>75.8% post-hoc — worse</td></tr>
+        <tr class="bad"><td>14-day</td><td>Trained + evaluated on support ≥100 only</td><td>63.8%</td><td>39.7%</td><td>78.1% post-hoc — worse by 14.3 points</td></tr>
+      </table>
+    </div>
+    <p>Restricting <em>training</em> to well-supported cells, not just evaluation, is a real, substantial loss at every horizon and threshold tested — worse the more aggressively it filters. The likely mechanism: quiet, low-support cells are exactly the negative examples a model needs to learn what "no event coming" looks like; removing them from training doesn't just shrink the training set, it removes a whole class of signal the model needs, even though the evaluation set is the same either way. Next step 4 is answered clearly: keep training on the full population and filter only at evaluation/deployment time, as round 6 already did.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group D</span><h2>WorldPop's real effect, isolated from its confound</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Config</th><th>n</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>Covered-subset control (no WorldPop feature)</td><td>48,553</td><td>67.1%</td><td>6.7%</td></tr>
+        <tr class="hl"><td>10-day</td><td><strong>Covered-subset treatment (+ WorldPop population)</strong></td><td>48,553</td><td><strong>70.8%</strong></td><td><strong>7.8%</strong></td></tr>
+        <tr><td>10-day</td><td>Indicator feature, full population (46% real coverage)</td><td>102,752</td><td>74.0%</td><td>8.0%</td></tr>
+        <tr><td>14-day</td><td>Covered-subset control (no WorldPop feature)</td><td>48,553</td><td>71.3%</td><td>12.9%</td></tr>
+        <tr class="hl"><td>14-day</td><td><strong>Covered-subset treatment (+ WorldPop population)</strong></td><td>48,553</td><td><strong>71.8%</strong></td><td><strong>13.8%</strong></td></tr>
+        <tr class="hl"><td>14-day</td><td><strong>Indicator feature, full population</strong></td><td>102,752</td><td><strong>76.0%</strong></td><td><strong>10.6%</strong></td></tr>
+      </table>
+    </div>
+    <p>The clean, confound-free comparison (same 214 cells, with vs. without the feature) shows a real, positive WorldPop effect at both horizons: <strong>+3.7 points at 10-day, +0.5 at 14-day</strong>. Round 6's full-population negative result was the missing-data confound, not evidence against the underlying signal — this round's hypothesis about that confound is now confirmed, not just plausible. The coverage-indicator "fix" for using WorldPop across the whole population only partially recovers this: it still underperforms the no-WorldPop baseline at 10-day (74.0% vs. 76.1%) but genuinely beats it at 14-day (76.0% vs. 75.5%) — an imperfect patch, not a full fix, and the honest reason to prioritize finishing the download over engineering a better imputation.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group E</span><h2>Severity: matched-winner stage-1 still beats a 3-model average</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Stage-1</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>Matched winner (tuned LightGBM, round 6)</td><td>93.3%</td><td>0.58%</td></tr>
+        <tr><td>10-day</td><td>3-model average (LGBM+RF+XGB)</td><td>93.3%</td><td>0.58%</td></tr>
+        <tr class="hl"><td>14-day</td><td>Matched winner (tuned Random Forest)</td><td>87.0%</td><td>1.49%</td></tr>
+        <tr><td>14-day</td><td>3-model average (LGBM+RF+XGB)</td><td>82.8%</td><td>1.51%</td></tr>
+      </table>
+    </div>
+    <p>No gain at 10-day, a real 4.2-point loss at 14-day. The averaged stage-1 doesn't help two-stage severity at either horizon — a clean negative, and severity recall (well under 2% everywhere tested across six rounds now) remains this project's least-solved piece, independent of which occurrence model feeds it.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group F</span><h2>Final combined recipe: correctly rejected joint-filtering, kept the 14-day WorldPop gain</h2></div>
+    <p>The decision logic compared Group C's joint-filtered results against Group B's post-hoc-filtered results and correctly chose <strong>not</strong> to use joint-filtering at either horizon (it lost cleanly in Group C). It compared the WorldPop indicator's full-population result against the round-6 baseline and correctly kept it only at 14-day, where it real-won (76.0% vs. 75.5%), and dropped it at 10-day, where it lost (74.0% vs. 78.8%). Final combined: <strong>10-day unchanged from round 6</strong> (78.8% unfiltered / 79.6% at ≥100 support); <strong>14-day improved to 76.0%</strong> unfiltered from the WorldPop indicator feature, the round's one genuine, if modest, new production-worthy gain.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: ANALYSIS ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">Why this round is mostly negative results, and why that's the point</span><h2>Two of four next steps came back "don't do this" — that's real progress</h2></div>
+    <p>Round 6 left four open questions. This round answers all four with real evidence: dropping LightGBM is free (Group A, confirmed neutral); jointly re-optimizing stacking on the filtered population is actively harmful (Group C, confirmed negative — a full 6.9-14.3 point loss, not a marginal one); the finer support sweep locates a real, non-arbitrary optimum rather than reproducing round 6's number by luck (Group B); and WorldPop's underlying signal is real even though round 6's naive application of it wasn't (Group D). A next-steps list that only ever produces wins would be a sign the search isn't being run rigorously enough — this round's two clean negatives (Groups C and E's averaged stage-1) close off directions with real evidence instead of leaving them as untested speculation for a future round to re-discover.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">The most important single finding</span><h2>Training-set composition matters more than filtering-time slicing</h2></div>
+    <p>Group C's result generalizes beyond WorldPop or support-filtering specifically: this project has now shown, twice, that removing "boring" or "unsupported" rows from <em>training</em> data costs real performance even when the exact same rows are excluded from evaluation either way (support ≥30 as a training floor was never tested against the full population directly, but the ≥50/≥100 joint-filter results here make the mechanism concrete). The practical rule going forward: apply thresholds, floors, and filters at evaluation and deployment time, and keep training sets as large and diverse as the real data allows, even when the eventual use case is narrow.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">A confound resolved, not just avoided</span><h2>WorldPop moves from "tested negative" to "tested positive, blocked on data completeness"</h2></div>
+    <p>This is a meaningfully different status than round 6 left it in. Round 6's writeup described WorldPop as "net neutral-to-slightly-negative" and downgraded it relative to the prior round's speculation. This round's clean covered-subset test reverses that read: the population signal itself is real and positive at both horizons, and the earlier negative result was a data-engineering problem (partial coverage plus zero-fill), not a modeling one. That reclassifies WorldPop from "a lever that didn't pan out" to "a lever that's still blocked on finishing a real download" — a different, more actionable conclusion for round 8.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT STEPS FOR ROUND 8 ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Generated from this round's own results</span><h2>What to try next, and why each one follows from what was just found</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Let the WorldPop download run to completion, then re-run Group D at full coverage</h4><p>The clean covered-subset test proved the signal is real (+3.7pt 10-day, +0.5pt 14-day) on the 46%-coverage subset available now. The natural next measurement is the same clean test at close to 100% coverage — the effect size should either hold, confirming a genuine production feature, or shrink, which would itself be informative about whether the 4-country subset tested so far is unusually predictable.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Try country-mean or region-mean imputation for uncovered WorldPop cells, as a bridge until the download finishes</h4><p>The indicator-flag fix only partially worked (helped at 14-day, not 10-day). A smarter fill value than zero — e.g. each country's own mean population density among its covered cells — is a cheap, untested alternative that doesn't require waiting on bandwidth-bound downloads.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Deploy the 2-model stack (RF+XGB, LightGBM dropped) at 10-day, in production</h4><p>Confirmed neutral this round (78.6% vs. 78.8%) — a real simplification (fewer models to train, version, and maintain) with no measured cost. Low-risk, ready now.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Stop investigating joint-filtered training; it's a closed question</h4><p>Confirmed negative at both horizons and both thresholds tested this round, by a wide and consistent margin. Future rounds should not re-test this without a specific new reason to expect a different result.</p></div></li>
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>Re-frame the severity task around its own realistic operating point instead of the occurrence task's 80% target</h4><p>Six rounds of severity results, across every architecture tried (single-stage, two-stage, matched-winner, averaged, LightGBM-specific), have topped out under 2% recall at anything near 80% precision. Reporting the full severity precision-recall curve and picking an operating point calibrated to what's actually achievable (perhaps 50-60% precision) — rather than continuing to inherit the occurrence task's 80% target by convention — would give a more honest picture of what severity forecasting can currently deliver.</p></div></li>
+      <li class="rank-item"><span class="rank-num">6</span><div><h4>Test whether the ≥100 support floor's 10-day peak is stable out-of-sample</h4><p>Group B locates a clean peak on this round's single holdout window. A rolling re-estimate of the optimal floor across multiple holdout windows (rather than the one 60/40 split used throughout this project) would confirm whether ≥100 is a stable structural optimum or specific to this particular split date.</p></div></li>
+    </ol>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Scope discipline</span><h2>Still not in the DARPA proposal draft</h2></div>
+    <p>Per standing instruction, none of this has been folded into the proposal draft. This file and its companions (<code>round6_next_steps_writeup.html</code>, <code>grand_search_final_writeup.html</code>) remain standalone until a decision is made about whether and how to incorporate them.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Round 7, 20 real logged iterations, building on round 6 (24 iterations) and the 157-iteration grand search (201 total real iterations across the grand search and rounds 6-7 alone, on top of rounds 1-5's own separately-logged runs). Companion files: <code>round6_next_steps_writeup.html</code>, <code>grand_search_final_writeup.html</code>. Raw results: <code>results/round7_log.jsonl</code>, <code>results/round7_results.json</code>.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

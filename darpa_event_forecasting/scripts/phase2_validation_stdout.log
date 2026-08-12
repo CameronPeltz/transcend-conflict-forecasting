@@ -1,0 +1,20 @@
+Loading mega dataset...
+228851 rows
+[1/16] round4_established_best (ensemble_3way) / 10day: HOLDOUT precision=0.740 recall=0.089 (14s)
+[2/16] round4_established_best (ensemble_3way) / 14day: HOLDOUT precision=0.712 recall=0.119 (14s)
+[3/16] everything_minus_chirps (ensemble_3way) / 10day: HOLDOUT precision=0.742 recall=0.090 (18s)
+[4/16] everything_minus_chirps (ensemble_3way) / 14day: HOLDOUT precision=0.698 recall=0.120 (18s)
+[5/16] everything_all (ensemble_3way) / 10day: HOLDOUT precision=0.741 recall=0.090 (20s)
+[6/16] everything_all (ensemble_3way) / 14day: HOLDOUT precision=0.696 recall=0.122 (21s)
+[7/16] everything_all_rf_only (rf_default) / 10day: HOLDOUT precision=0.733 recall=0.094 (16s)
+[8/16] everything_all_rf_only (rf_default) / 14day: HOLDOUT precision=0.716 recall=0.133 (17s)
+[9/16] graphdiff_plus_cell_rf (rf_default) / 10day: HOLDOUT precision=0.718 recall=0.095 (9s)
+[10/16] graphdiff_plus_cell_rf (rf_default) / 14day: HOLDOUT precision=0.707 recall=0.133 (9s)
+[11/16] all_external_sources (ensemble_3way) / 10day: HOLDOUT precision=0.735 recall=0.089 (16s)
+[12/16] all_external_sources (ensemble_3way) / 14day: HOLDOUT precision=0.706 recall=0.117 (17s)
+[13/16] everything_lgbm (lgbm_default) / 10day: HOLDOUT precision=0.757 recall=0.083 (5s)
+[14/16] everything_lgbm (lgbm_default) / 14day: HOLDOUT precision=0.679 recall=0.118 (4s)
+[15/16] everything_4way_ensemble (ensemble_4way_lgbm) / 10day: HOLDOUT precision=0.750 recall=0.088 (24s)
+[16/16] everything_4way_ensemble (ensemble_4way_lgbm) / 14day: HOLDOUT precision=0.697 recall=0.123 (24s)
+
+Saved phase2_validation_results.json. Total time 4.1 min

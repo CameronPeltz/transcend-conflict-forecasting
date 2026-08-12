@@ -1,0 +1,512 @@
+{
+  "feature_sweep": [
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.3472902982557101,
+      "recall": 0.6956158829842204,
+      "f1": 0.46328356628547224,
+      "false_positive_rate": 0.1788230688935282,
+      "specificity": 0.8211769311064718,
+      "average_precision": 0.5117470846647579,
+      "roc_auc": 0.8402925250530149,
+      "horizon": "10day",
+      "feature_set": "round2_best",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.3446935490203777,
+      "recall": 0.6978814738264637,
+      "f1": 0.46146365822568564,
+      "false_positive_rate": 0.18147616562282534,
+      "specificity": 0.8185238343771747,
+      "average_precision": 0.5114402733638935,
+      "roc_auc": 0.8402323169017007,
+      "horizon": "10day",
+      "feature_set": "plus_momentum",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "cell_count_30d_delta",
+        "cell_count_90d_delta",
+        "momentum_ratio_30_90"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.34840997848091176,
+      "recall": 0.6950196748678406,
+      "f1": 0.464145885038555,
+      "false_positive_rate": 0.1777901009046625,
+      "specificity": 0.8222098990953375,
+      "average_precision": 0.5116606743102522,
+      "roc_auc": 0.8407899527057668,
+      "horizon": "10day",
+      "feature_set": "plus_ring2_spatial",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "neighbor_count_30d_ring2"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.34581831787479567,
+      "recall": 0.6980007154497396,
+      "f1": 0.462496707927311,
+      "false_positive_rate": 0.18060629784272791,
+      "specificity": 0.8193937021572721,
+      "average_precision": 0.5123968093396081,
+      "roc_auc": 0.8408393281352381,
+      "horizon": "10day",
+      "feature_set": "plus_momentum_plus_ring2",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "cell_count_30d_delta",
+        "cell_count_90d_delta",
+        "momentum_ratio_30_90",
+        "neighbor_count_30d_ring2"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.4138275985730734,
+      "recall": 0.6886425026697657,
+      "f1": 0.5169832230985982,
+      "false_positive_rate": 0.17520323597939716,
+      "specificity": 0.8247967640206029,
+      "average_precision": 0.5656452270897606,
+      "roc_auc": 0.8385196068831342,
+      "horizon": "14day",
+      "feature_set": "round2_best",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.41262700108724176,
+      "recall": 0.6913750863747723,
+      "f1": 0.5168106686701728,
+      "false_positive_rate": 0.17677158024788867,
+      "specificity": 0.8232284197521114,
+      "average_precision": 0.5657133013152541,
+      "roc_auc": 0.8385179057250289,
+      "horizon": "14day",
+      "feature_set": "plus_momentum",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "cell_count_30d_delta",
+        "cell_count_90d_delta",
+        "momentum_ratio_30_90"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.41503317535545026,
+      "recall": 0.6876374144104529,
+      "f1": 0.5176384357119214,
+      "false_positive_rate": 0.17408057227641222,
+      "specificity": 0.8259194277235878,
+      "average_precision": 0.5658520289662894,
+      "roc_auc": 0.839201075794064,
+      "horizon": "14day",
+      "feature_set": "plus_ring2_spatial",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "neighbor_count_30d_ring2"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.41376063869850116,
+      "recall": 0.6901815440668384,
+      "f1": 0.5173639724059991,
+      "false_positive_rate": 0.17564327501875807,
+      "specificity": 0.8243567249812419,
+      "average_precision": 0.5661295486547723,
+      "roc_auc": 0.8392369347822811,
+      "horizon": "14day",
+      "feature_set": "plus_momentum_plus_ring2",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth",
+        "cell_count_30d_delta",
+        "cell_count_90d_delta",
+        "momentum_ratio_30_90",
+        "neighbor_count_30d_ring2"
+      ]
+    }
+  ],
+  "frozen_80_baseline": {
+    "10day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.9247491856218684,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 15774,
+        "precision": 0.7998531930511378,
+        "recall": 0.20723976163306707,
+        "f1": 0.32918785559639496,
+        "false_positive_rate": 0.009086263968186969,
+        "specificity": 0.990913736031813,
+        "average_precision": 0.5699805340617293,
+        "roc_auc": 0.8405433350275877
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 8936,
+        "precision": 0.7134404057480981,
+        "recall": 0.09444941808415398,
+        "f1": 0.16681490265836546,
+        "false_positive_rate": 0.003613456126886672,
+        "specificity": 0.9963865438731133,
+        "average_precision": 0.3784955727412233,
+        "roc_auc": 0.8259176986730496
+      }
+    },
+    "14day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.8813531859385518,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 19879,
+        "precision": 0.799915337942712,
+        "recall": 0.2851753106293073,
+        "f1": 0.4204553882667062,
+        "false_positive_rate": 0.016503532314568033,
+        "specificity": 0.983496467685432,
+        "average_precision": 0.6292507221238224,
+        "roc_auc": 0.8404802322167502
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 11441,
+        "precision": 0.6813186813186813,
+        "recall": 0.13005856131457041,
+        "f1": 0.21842201834862385,
+        "false_positive_rate": 0.007622301803725729,
+        "specificity": 0.9923776981962743,
+        "average_precision": 0.4250390446717799,
+        "roc_auc": 0.8227967928806413
+      }
+    }
+  },
+  "frozen_80_combined_features": {
+    "10day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.9229225835483726,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 15774,
+        "precision": 0.7999513263567778,
+        "recall": 0.2083808799289971,
+        "f1": 0.33063421012925615,
+        "false_positive_rate": 0.00913069557683336,
+        "specificity": 0.9908693044231667,
+        "average_precision": 0.5694349029645814,
+        "roc_auc": 0.840602038466658
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 8936,
+        "precision": 0.7233856893542757,
+        "recall": 0.09277081468218443,
+        "f1": 0.1644514977187066,
+        "false_positive_rate": 0.0033789545493306044,
+        "specificity": 0.9966210454506694,
+        "average_precision": 0.3786423773259567,
+        "roc_auc": 0.8270113083600128
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 5153,
+        "precision": 0.7229020979020979,
+        "recall": 0.16048903551329322,
+        "f1": 0.2626647609973003,
+        "false_positive_rate": 0.007010637592056085,
+        "specificity": 0.9929893624079439,
+        "average_precision": 0.47339420450668884,
+        "roc_auc": 0.8637832254501946
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    },
+    "14day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.8813536021331515,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 19879,
+        "precision": 0.79994360637248,
+        "recall": 0.28542683233563054,
+        "f1": 0.4207326115972119,
+        "false_positive_rate": 0.01651517091281526,
+        "specificity": 0.9834848290871847,
+        "average_precision": 0.629301578584183,
+        "roc_auc": 0.8408018273125002
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 11441,
+        "precision": 0.6875891583452212,
+        "recall": 0.1263875535355301,
+        "f1": 0.21352628470171295,
+        "false_positive_rate": 0.007195190064723856,
+        "specificity": 0.9928048099352761,
+        "average_precision": 0.4247362235452349,
+        "roc_auc": 0.8235171004470401
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 6464,
+        "precision": 0.6865384615384615,
+        "recall": 0.22091584158415842,
+        "f1": 0.3342696629213483,
+        "false_positive_rate": 0.014849906618685373,
+        "specificity": 0.9851500933813147,
+        "average_precision": 0.5205224989057591,
+        "roc_auc": 0.8620352244421363
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    }
+  },
+  "frozen_80_severe_label": {
+    "10day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.9819446235165481,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 7944,
+        "precision": 0.7916666666666666,
+        "recall": 0.002391742195367573,
+        "f1": 0.004769076305220884,
+        "false_positive_rate": 5.109548724656638e-05,
+        "specificity": 0.9999489045127534,
+        "average_precision": 0.41757462547364643,
+        "roc_auc": 0.8678895271674036
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 2395,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "specificity": 1.0,
+        "average_precision": 0.18985893872326498,
+        "roc_auc": 0.8317225542391948
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 1478,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "specificity": 1.0,
+        "average_precision": 0.2580598769998739,
+        "roc_auc": 0.8728281920871244
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    },
+    "14day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.983905003575111,
+      "target_precision_on_select": 0.8,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 10379,
+        "precision": 0.75,
+        "recall": 0.0008671355621928895,
+        "f1": 0.001732268309113656,
+        "false_positive_rate": 3.143962020938787e-05,
+        "specificity": 0.9999685603797906,
+        "average_precision": 0.48963740566932834,
+        "roc_auc": 0.8689517164788155
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 3151,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "specificity": 1.0,
+        "average_precision": 0.21242214144873053,
+        "roc_auc": 0.8261001924495621
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 1910,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "specificity": 1.0,
+        "average_precision": 0.28595809893508684,
+        "roc_auc": 0.8701021515018594
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    }
+  },
+  "frozen_50_combined_features": {
+    "10day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.6629789245367022,
+      "target_precision_on_select": 0.5,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 15774,
+        "precision": 0.4999730472750795,
+        "recall": 0.5879928997083809,
+        "f1": 0.5404224326292789,
+        "false_positive_rate": 0.10303690045098082,
+        "specificity": 0.8969630995490192,
+        "average_precision": 0.5694349029645814,
+        "roc_auc": 0.840602038466658
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 8936,
+        "precision": 0.4090152388269945,
+        "recall": 0.35743061772605195,
+        "f1": 0.38148701104807403,
+        "false_positive_rate": 0.049192035473693184,
+        "specificity": 0.9508079645263068,
+        "average_precision": 0.3786423773259567,
+        "roc_auc": 0.8270113083600128
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 5153,
+        "precision": 0.4241008874357777,
+        "recall": 0.5286241024645837,
+        "f1": 0.47062888735314445,
+        "false_positive_rate": 0.08180551562465445,
+        "specificity": 0.9181944843753456,
+        "average_precision": 0.47339420450668884,
+        "roc_auc": 0.8637832254501946
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    },
+    "14day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.5628711248268311,
+      "target_precision_on_select": 0.5,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 19879,
+        "precision": 0.4999814958735798,
+        "recall": 0.6796116504854369,
+        "f1": 0.5761194029850746,
+        "false_positive_rate": 0.1572491009182854,
+        "specificity": 0.8427508990817146,
+        "average_precision": 0.629301578584183,
+        "roc_auc": 0.8408018273125002
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 11441,
+        "precision": 0.3920621587568249,
+        "recall": 0.48955510881915915,
+        "f1": 0.43541804330081235,
+        "false_positive_rate": 0.09511449880080165,
+        "specificity": 0.9048855011991983,
+        "average_precision": 0.4247362235452349,
+        "roc_auc": 0.8235171004470401
+      },
+      "holdout_window_supportfiltered": {
+        "n": 50370,
+        "n_positives": 6464,
+        "precision": 0.41762114537444933,
+        "recall": 0.6599628712871287,
+        "f1": 0.5115414593201031,
+        "false_positive_rate": 0.13549400993030566,
+        "specificity": 0.8645059900696943,
+        "average_precision": 0.5205224989057591,
+        "roc_auc": 0.8620352244421363
+      },
+      "support_filter_min_events": 30,
+      "support_filter_rows_kept": 50370,
+      "support_filter_rows_total": 102752
+    }
+  }
+}

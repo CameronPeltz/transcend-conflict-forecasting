@@ -1,0 +1,23 @@
+Loading real GDELT historical events (chunked, ~30M rows)...
+  processed chunk, kept 2000000 rows (running total 2000000)
+  processed chunk, kept 2000000 rows (running total 4000000)
+  processed chunk, kept 2000000 rows (running total 6000000)
+  processed chunk, kept 2000000 rows (running total 8000000)
+  processed chunk, kept 2000000 rows (running total 10000000)
+  processed chunk, kept 2000000 rows (running total 12000000)
+  processed chunk, kept 2000000 rows (running total 14000000)
+  processed chunk, kept 2000000 rows (running total 16000000)
+  processed chunk, kept 2000000 rows (running total 18000000)
+  processed chunk, kept 2000000 rows (running total 20000000)
+  processed chunk, kept 2000000 rows (running total 22000000)
+  processed chunk, kept 2000000 rows (running total 24000000)
+  processed chunk, kept 2000000 rows (running total 26000000)
+  processed chunk, kept 2000000 rows (running total 28000000)
+  processed chunk, kept 1723311 rows (running total 29723311)
+Concatenating and aggregating to country-week...
+
+Wrote ../data/gdelt_countryweek_panel_2015_2025.csv: 13197 country-week rows, 19 countries, 1919-12-29 00:00:00 to 2025-11-24 00:00:00
+
+Joining onto discrete-event candidates (never-look-ahead: prior completed week only)...
+  228847/228851 candidate rows (100.0%) matched to a real GDELT prior-week record
+Wrote ../data/discrete_event_candidates_v4.csv

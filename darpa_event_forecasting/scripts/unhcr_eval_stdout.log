@@ -1,0 +1,9 @@
+[pooled] 10day/round3_combined: precision=0.346 recall=0.698 AUC=0.841
+[pooled] 10day/plus_unhcr: precision=0.343 recall=0.701 AUC=0.840
+[pooled] 14day/round3_combined: precision=0.414 recall=0.690 AUC=0.839
+[pooled] 14day/plus_unhcr: precision=0.411 recall=0.694 AUC=0.839
+[frozen80] 10day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.723 r=0.093
+[frozen80] 10day/plus_unhcr: SELECT p=0.800 -> HOLDOUT p=0.729 r=0.093
+[frozen80] 14day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.688 r=0.126
+[frozen80] 14day/plus_unhcr: SELECT p=0.800 -> HOLDOUT p=0.696 r=0.122
+Saved ../results/unhcr_results.json

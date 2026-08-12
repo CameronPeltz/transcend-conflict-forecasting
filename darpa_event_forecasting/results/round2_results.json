@@ -1,0 +1,916 @@
+{
+  "feature_sweep": [
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.3441581156716418,
+      "recall": 0.7038833021980206,
+      "f1": 0.46228545324022713,
+      "false_positive_rate": 0.1834714248434238,
+      "specificity": 0.8165285751565762,
+      "average_precision": 0.512370898452682,
+      "roc_auc": 0.8410360077288404,
+      "horizon": "10day",
+      "feature_set": "cell_plus_spatial",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.3472902982557101,
+      "recall": 0.6956158829842204,
+      "f1": 0.46328356628547224,
+      "false_positive_rate": 0.1788230688935282,
+      "specificity": 0.8211769311064718,
+      "average_precision": 0.5117470846647579,
+      "roc_auc": 0.8402925250530149,
+      "horizon": "10day",
+      "feature_set": "cell_plus_spatial_plus_acled",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.4118117410788999,
+      "recall": 0.6955838934606445,
+      "f1": 0.5173392512994218,
+      "false_positive_rate": 0.17844711351314757,
+      "specificity": 0.8215528864868524,
+      "average_precision": 0.5665977559842404,
+      "roc_auc": 0.8394351975343559,
+      "horizon": "14day",
+      "feature_set": "cell_plus_spatial",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d"
+      ]
+    },
+    {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.4138275985730734,
+      "recall": 0.6886425026697657,
+      "f1": 0.5169832230985982,
+      "false_positive_rate": 0.17520323597939716,
+      "specificity": 0.8247967640206029,
+      "average_precision": 0.5656452270897606,
+      "roc_auc": 0.8385196068831342,
+      "horizon": "14day",
+      "feature_set": "cell_plus_spatial_plus_acled",
+      "features": [
+        "cell_count_30d",
+        "cell_count_60d",
+        "cell_count_90d",
+        "cell_count_365d",
+        "days_since_last_event",
+        "neighbor_count_30d",
+        "acled_civ_targeting_events_prevmonth",
+        "acled_civ_targeting_fatalities_prevmonth"
+      ]
+    }
+  ],
+  "frozen_threshold_validation": {
+    "10day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.6605625948852204,
+      "target_precision_on_select": 0.5,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 15774,
+        "precision": 0.4999731946603764,
+        "recall": 0.5912260682135159,
+        "f1": 0.5417840648328347,
+        "false_positive_rate": 0.10360340346122231,
+        "specificity": 0.8963965965387777,
+        "average_precision": 0.5699805340617293,
+        "roc_auc": 0.8405433350275877
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 8936,
+        "precision": 0.40638625288535524,
+        "recall": 0.354632945389436,
+        "f1": 0.3787498506035616,
+        "false_positive_rate": 0.049341263750319775,
+        "specificity": 0.9506587362496802,
+        "average_precision": 0.3784955727412233,
+        "roc_auc": 0.8259176986730496
+      }
+    },
+    "14day": {
+      "split_date": "2021-07-19",
+      "chosen_threshold": 0.5615018380212219,
+      "target_precision_on_select": 0.5,
+      "select_window": {
+        "n": 105800,
+        "n_positives": 19879,
+        "precision": 0.49998146156983425,
+        "recall": 0.6783540419538207,
+        "f1": 0.575667022411953,
+        "false_positive_rate": 0.15695813596210473,
+        "specificity": 0.8430418640378953,
+        "average_precision": 0.6292507221238224,
+        "roc_auc": 0.8404802322167502
+      },
+      "holdout_window": {
+        "n": 102752,
+        "n_positives": 11441,
+        "precision": 0.3910828914317611,
+        "recall": 0.4899047286076392,
+        "f1": 0.4349513056299228,
+        "false_positive_rate": 0.09557446528895752,
+        "specificity": 0.9044255347110425,
+        "average_precision": 0.4250390446717799,
+        "roc_auc": 0.8227967928806413
+      }
+    }
+  },
+  "case_studies": {
+    "10day": {
+      "real_hits": [
+        {
+          "issue_date": "2021-07-19",
+          "priogrid_gid": 175450,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 58,
+          "neighbor_count_30d": 46,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-19",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 73,
+          "neighbor_count_30d": 44,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2025-05-05",
+          "priogrid_gid": 149451,
+          "country": "Sudan",
+          "score": 0.989,
+          "cell_count_90d": 48,
+          "neighbor_count_30d": 18,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-26",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 78,
+          "neighbor_count_30d": 39,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-02",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 36,
+          "neighbor_count_30d": 47,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-09",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 37,
+          "neighbor_count_30d": 53,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2025-04-21",
+          "priogrid_gid": 149451,
+          "country": "Sudan",
+          "score": 0.989,
+          "cell_count_90d": 51,
+          "neighbor_count_30d": 18,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-02",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 82,
+          "neighbor_count_30d": 28,
+          "days_since_last_event": 1
+        }
+      ],
+      "real_misses": [
+        {
+          "issue_date": "2024-01-22",
+          "priogrid_gid": 172575,
+          "country": "Pakistan",
+          "score": 0.053,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 3457
+        },
+        {
+          "issue_date": "2022-08-29",
+          "priogrid_gid": 146589,
+          "country": "Sudan",
+          "score": 0.055,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2279
+        },
+        {
+          "issue_date": "2022-08-22",
+          "priogrid_gid": 146589,
+          "country": "Sudan",
+          "score": 0.055,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2272
+        },
+        {
+          "issue_date": "2024-04-08",
+          "priogrid_gid": 176190,
+          "country": "Pakistan",
+          "score": 0.055,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2272
+        },
+        {
+          "issue_date": "2025-02-10",
+          "priogrid_gid": 178348,
+          "country": "Pakistan",
+          "score": 0.056,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2141
+        },
+        {
+          "issue_date": "2025-02-03",
+          "priogrid_gid": 178348,
+          "country": "Pakistan",
+          "score": 0.056,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2134
+        },
+        {
+          "issue_date": "2022-03-28",
+          "priogrid_gid": 145862,
+          "country": "Sudan",
+          "score": 0.057,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2086
+        },
+        {
+          "issue_date": "2022-03-21",
+          "priogrid_gid": 145862,
+          "country": "Sudan",
+          "score": 0.057,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2079
+        }
+      ],
+      "real_false_alarms": [
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 178339,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 49,
+          "neighbor_count_30d": 32,
+          "days_since_last_event": 3
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 182654,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 45,
+          "neighbor_count_30d": 19,
+          "days_since_last_event": 3
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 99,
+          "neighbor_count_30d": 19,
+          "days_since_last_event": 5
+        },
+        {
+          "issue_date": "2021-08-30",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 37,
+          "neighbor_count_30d": 27,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175449,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 62,
+          "neighbor_count_30d": 15,
+          "days_since_last_event": 4
+        },
+        {
+          "issue_date": "2023-10-23",
+          "priogrid_gid": 126201,
+          "country": "Ecuador",
+          "score": 0.987,
+          "cell_count_90d": 47,
+          "neighbor_count_30d": 9,
+          "days_since_last_event": 2
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175450,
+          "country": "Afghanistan",
+          "score": 0.987,
+          "cell_count_90d": 44,
+          "neighbor_count_30d": 55,
+          "days_since_last_event": 5
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 182658,
+          "country": "Afghanistan",
+          "score": 0.987,
+          "cell_count_90d": 49,
+          "neighbor_count_30d": 4,
+          "days_since_last_event": 5
+        }
+      ]
+    },
+    "14day": {
+      "real_hits": [
+        {
+          "issue_date": "2021-08-09",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 37,
+          "neighbor_count_30d": 53,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-19",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 40,
+          "neighbor_count_30d": 64,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 37,
+          "neighbor_count_30d": 50,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-26",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 78,
+          "neighbor_count_30d": 39,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-19",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 73,
+          "neighbor_count_30d": 44,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-07-19",
+          "priogrid_gid": 175450,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 58,
+          "neighbor_count_30d": 46,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-02",
+          "priogrid_gid": 179779,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 36,
+          "neighbor_count_30d": 47,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2021-08-02",
+          "priogrid_gid": 179061,
+          "country": "Afghanistan",
+          "score": 0.99,
+          "cell_count_90d": 49,
+          "neighbor_count_30d": 44,
+          "days_since_last_event": 1
+        }
+      ],
+      "real_misses": [
+        {
+          "issue_date": "2024-01-22",
+          "priogrid_gid": 172575,
+          "country": "Pakistan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 3457
+        },
+        {
+          "issue_date": "2024-01-15",
+          "priogrid_gid": 172575,
+          "country": "Pakistan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 3450
+        },
+        {
+          "issue_date": "2024-04-08",
+          "priogrid_gid": 176190,
+          "country": "Pakistan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2272
+        },
+        {
+          "issue_date": "2024-04-01",
+          "priogrid_gid": 176190,
+          "country": "Pakistan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2265
+        },
+        {
+          "issue_date": "2022-08-29",
+          "priogrid_gid": 146589,
+          "country": "Sudan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2279
+        },
+        {
+          "issue_date": "2022-08-22",
+          "priogrid_gid": 146589,
+          "country": "Sudan",
+          "score": 0.054,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2272
+        },
+        {
+          "issue_date": "2025-02-10",
+          "priogrid_gid": 178348,
+          "country": "Pakistan",
+          "score": 0.058,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2141
+        },
+        {
+          "issue_date": "2025-02-03",
+          "priogrid_gid": 178348,
+          "country": "Pakistan",
+          "score": 0.058,
+          "cell_count_90d": 0,
+          "neighbor_count_30d": 0,
+          "days_since_last_event": 2134
+        }
+      ],
+      "real_false_alarms": [
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 182654,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 45,
+          "neighbor_count_30d": 19,
+          "days_since_last_event": 3
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 178339,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 49,
+          "neighbor_count_30d": 32,
+          "days_since_last_event": 3
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175452,
+          "country": "Afghanistan",
+          "score": 0.989,
+          "cell_count_90d": 99,
+          "neighbor_count_30d": 19,
+          "days_since_last_event": 5
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175449,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 62,
+          "neighbor_count_30d": 15,
+          "days_since_last_event": 4
+        },
+        {
+          "issue_date": "2023-11-20",
+          "priogrid_gid": 126201,
+          "country": "Ecuador",
+          "score": 0.988,
+          "cell_count_90d": 40,
+          "neighbor_count_30d": 6,
+          "days_since_last_event": 1
+        },
+        {
+          "issue_date": "2023-10-23",
+          "priogrid_gid": 126201,
+          "country": "Ecuador",
+          "score": 0.988,
+          "cell_count_90d": 47,
+          "neighbor_count_30d": 9,
+          "days_since_last_event": 2
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 179060,
+          "country": "Afghanistan",
+          "score": 0.988,
+          "cell_count_90d": 39,
+          "neighbor_count_30d": 66,
+          "days_since_last_event": 4
+        },
+        {
+          "issue_date": "2021-08-16",
+          "priogrid_gid": 175450,
+          "country": "Afghanistan",
+          "score": 0.987,
+          "cell_count_90d": 44,
+          "neighbor_count_30d": 55,
+          "days_since_last_event": 5
+        }
+      ]
+    }
+  },
+  "country_breakdown": {
+    "10day": [
+      {
+        "n": 80439,
+        "n_positives": 13487,
+        "precision": 0.38855504903992266,
+        "recall": 0.8342107214354564,
+        "f1": 0.5301698748910303,
+        "false_positive_rate": 0.2644431831760067,
+        "specificity": 0.7355568168239933,
+        "average_precision": 0.6069504233598264,
+        "roc_auc": 0.8682526517283811,
+        "country": "Afghanistan"
+      },
+      {
+        "n": 25771,
+        "n_positives": 2449,
+        "precision": 0.30237741456166417,
+        "recall": 0.4985708452429563,
+        "f1": 0.37644519808848464,
+        "false_positive_rate": 0.1207872395163365,
+        "specificity": 0.8792127604836635,
+        "average_precision": 0.43234623174138714,
+        "roc_auc": 0.7774925520319517,
+        "country": "Somalia"
+      },
+      {
+        "n": 23869,
+        "n_positives": 2643,
+        "precision": 0.3139647491768352,
+        "recall": 0.6133181990162694,
+        "f1": 0.4153215475275429,
+        "false_positive_rate": 0.16687081880712334,
+        "specificity": 0.8331291811928767,
+        "average_precision": 0.3763813579754927,
+        "roc_auc": 0.8025497288624995,
+        "country": "Pakistan"
+      },
+      {
+        "n": 23846,
+        "n_positives": 2017,
+        "precision": 0.2406526172671652,
+        "recall": 0.526524541398116,
+        "f1": 0.33032659409020215,
+        "false_positive_rate": 0.153511383938797,
+        "specificity": 0.846488616061203,
+        "average_precision": 0.27075502102710036,
+        "roc_auc": 0.7823580649276605,
+        "country": "Ethiopia"
+      },
+      {
+        "n": 21118,
+        "n_positives": 1866,
+        "precision": 0.2332846715328467,
+        "recall": 0.42818863879957125,
+        "f1": 0.302022302022302,
+        "false_positive_rate": 0.1364014128402244,
+        "specificity": 0.8635985871597756,
+        "average_precision": 0.25337358427910567,
+        "roc_auc": 0.7316888082673556,
+        "country": "Colombia"
+      },
+      {
+        "n": 16677,
+        "n_positives": 1205,
+        "precision": 0.32700135685210313,
+        "recall": 0.6,
+        "f1": 0.42330210772833726,
+        "false_positive_rate": 0.09617373319544985,
+        "specificity": 0.9038262668045501,
+        "average_precision": 0.449690446899282,
+        "roc_auc": 0.8388607233733968,
+        "country": "Sudan"
+      },
+      {
+        "n": 5516,
+        "n_positives": 206,
+        "precision": 0.16770186335403728,
+        "recall": 0.13106796116504854,
+        "f1": 0.14713896457765668,
+        "false_positive_rate": 0.025235404896421846,
+        "specificity": 0.9747645951035782,
+        "average_precision": 0.0990824354875964,
+        "roc_auc": 0.715801382260984,
+        "country": "South Sudan"
+      },
+      {
+        "n": 5088,
+        "n_positives": 294,
+        "precision": 0.09727626459143969,
+        "recall": 0.08503401360544217,
+        "f1": 0.09074410163339383,
+        "false_positive_rate": 0.04839382561535253,
+        "specificity": 0.9516061743846475,
+        "average_precision": 0.10672510674571702,
+        "roc_auc": 0.665908207254533,
+        "country": "Kenya"
+      },
+      {
+        "n": 3570,
+        "n_positives": 276,
+        "precision": 0.38345864661654133,
+        "recall": 0.5543478260869565,
+        "f1": 0.4533333333333333,
+        "false_positive_rate": 0.07468123861566485,
+        "specificity": 0.9253187613843351,
+        "average_precision": 0.4367053647028112,
+        "roc_auc": 0.8683349392395484,
+        "country": "Venezuela"
+      },
+      {
+        "n": 1436,
+        "n_positives": 505,
+        "precision": 0.4726890756302521,
+        "recall": 0.8910891089108911,
+        "f1": 0.6177076183939602,
+        "false_positive_rate": 0.5392051557465092,
+        "specificity": 0.4607948442534909,
+        "average_precision": 0.7106965266936724,
+        "roc_auc": 0.8017143282534483,
+        "country": "Ecuador"
+      },
+      {
+        "n": 1020,
+        "n_positives": 13,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.020854021847070508,
+        "specificity": 0.9791459781529295,
+        "average_precision": 0.01228284766269725,
+        "roc_auc": 0.45344129554655865,
+        "country": "Kyrgyzstan"
+      },
+      {
+        "n": 745,
+        "n_positives": 198,
+        "precision": 0.4256926952141058,
+        "recall": 0.8535353535353535,
+        "f1": 0.5680672268907563,
+        "false_positive_rate": 0.41681901279707495,
+        "specificity": 0.583180987202925,
+        "average_precision": 0.6014148524714167,
+        "roc_auc": 0.8046737946189501,
+        "country": "Haiti"
+      }
+    ],
+    "14day": [
+      {
+        "n": 80439,
+        "n_positives": 16773,
+        "precision": 0.4643822361616229,
+        "recall": 0.8297859655398557,
+        "f1": 0.5954988875577614,
+        "false_positive_rate": 0.2521440015078692,
+        "specificity": 0.7478559984921308,
+        "average_precision": 0.6692108738591618,
+        "roc_auc": 0.8710584799953583,
+        "country": "Afghanistan"
+      },
+      {
+        "n": 25771,
+        "n_positives": 3140,
+        "precision": 0.35176336746302617,
+        "recall": 0.4923566878980892,
+        "f1": 0.4103516921035169,
+        "false_positive_rate": 0.12588926693473554,
+        "specificity": 0.8741107330652644,
+        "average_precision": 0.4567895407680113,
+        "roc_auc": 0.7694101954733755,
+        "country": "Somalia"
+      },
+      {
+        "n": 23869,
+        "n_positives": 3453,
+        "precision": 0.38557077625570774,
+        "recall": 0.611352447147408,
+        "f1": 0.4728942652329749,
+        "false_positive_rate": 0.16477272727272727,
+        "specificity": 0.8352272727272727,
+        "average_precision": 0.4558784880104843,
+        "roc_auc": 0.8056068441916393,
+        "country": "Pakistan"
+      },
+      {
+        "n": 23846,
+        "n_positives": 2598,
+        "precision": 0.29002957329953527,
+        "recall": 0.5284834488067744,
+        "f1": 0.37452264048008727,
+        "false_positive_rate": 0.15817959337349397,
+        "specificity": 0.841820406626506,
+        "average_precision": 0.31858108200788443,
+        "roc_auc": 0.7792827270397988,
+        "country": "Ethiopia"
+      },
+      {
+        "n": 21118,
+        "n_positives": 2509,
+        "precision": 0.29231995748073347,
+        "recall": 0.43842168194499803,
+        "f1": 0.350765306122449,
+        "false_positive_rate": 0.1431027997205653,
+        "specificity": 0.8568972002794347,
+        "average_precision": 0.31604443852028485,
+        "roc_auc": 0.7305150541826093,
+        "country": "Colombia"
+      },
+      {
+        "n": 16677,
+        "n_positives": 1530,
+        "precision": 0.37831021437578816,
+        "recall": 0.5882352941176471,
+        "f1": 0.4604758250191865,
+        "false_positive_rate": 0.09764309764309764,
+        "specificity": 0.9023569023569024,
+        "average_precision": 0.4796764360106608,
+        "roc_auc": 0.8316506515019908,
+        "country": "Sudan"
+      },
+      {
+        "n": 5516,
+        "n_positives": 280,
+        "precision": 0.20238095238095238,
+        "recall": 0.12142857142857143,
+        "f1": 0.15178571428571427,
+        "false_positive_rate": 0.02559205500381971,
+        "specificity": 0.9744079449961803,
+        "average_precision": 0.12364275617008981,
+        "roc_auc": 0.7057432063734584,
+        "country": "South Sudan"
+      },
+      {
+        "n": 5088,
+        "n_positives": 378,
+        "precision": 0.13076923076923078,
+        "recall": 0.08994708994708994,
+        "f1": 0.10658307210031348,
+        "false_positive_rate": 0.04798301486199576,
+        "specificity": 0.9520169851380043,
+        "average_precision": 0.12554869016283732,
+        "roc_auc": 0.6518114110470798,
+        "country": "Kenya"
+      },
+      {
+        "n": 3570,
+        "n_positives": 340,
+        "precision": 0.44525547445255476,
+        "recall": 0.538235294117647,
+        "f1": 0.4873501997336884,
+        "false_positive_rate": 0.07058823529411765,
+        "specificity": 0.9294117647058824,
+        "average_precision": 0.5031329207036728,
+        "roc_auc": 0.8671667273720634,
+        "country": "Venezuela"
+      },
+      {
+        "n": 1436,
+        "n_positives": 585,
+        "precision": 0.5252525252525253,
+        "recall": 0.8888888888888888,
+        "f1": 0.6603174603174603,
+        "false_positive_rate": 0.5522914218566393,
+        "specificity": 0.44770857814336074,
+        "average_precision": 0.7407946792947584,
+        "roc_auc": 0.796245744071831,
+        "country": "Ecuador"
+      },
+      {
+        "n": 1020,
+        "n_positives": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.02286282306163022,
+        "specificity": 0.9771371769383698,
+        "average_precision": 0.013511004098169141,
+        "roc_auc": 0.4647827321783584,
+        "country": "Kyrgyzstan"
+      },
+      {
+        "n": 745,
+        "n_positives": 238,
+        "precision": 0.5,
+        "recall": 0.865546218487395,
+        "f1": 0.6338461538461538,
+        "false_positive_rate": 0.40631163708086787,
+        "specificity": 0.5936883629191322,
+        "average_precision": 0.6710845426484215,
+        "roc_auc": 0.8159796462963884,
+        "country": "Haiti"
+      }
+    ]
+  },
+  "event_type_generalization": {
+    "10day": {
+      "horizon": "10day",
+      "split_date": "2022-08-22",
+      "n_train": 150713,
+      "n_onesided_positives_hidden_from_training": 2945,
+      "n_test_onesided_positives": 1962,
+      "n_test_negatives": 70857,
+      "mean_score_onesided_positive": 0.49142732352055496,
+      "mean_score_negative": 0.24133198170477957,
+      "auc_ranking_unseen_type_above_negatives": 0.8089245720195923
+    },
+    "14day": {
+      "horizon": "14day",
+      "split_date": "2022-08-22",
+      "n_train": 150713,
+      "n_onesided_positives_hidden_from_training": 3824,
+      "n_test_onesided_positives": 2583,
+      "n_test_negatives": 68815,
+      "mean_score_onesided_positive": 0.4961389558156745,
+      "mean_score_negative": 0.24441313202418696,
+      "auc_ranking_unseen_type_above_negatives": 0.8107192020529832
+    }
+  }
+}

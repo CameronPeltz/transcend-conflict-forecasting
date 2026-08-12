@@ -32,10 +32,24 @@ Transcend_DARPA_SBIR_Volume_2_*
 AP_Strategies_DARPA_SBIR_Volume_2_Technical_Template.docx
 TemporalKnowledgeGraphForecastingPaper2023.pdf
 darpa-proposal-critical-review-and-rebuild-prompt.html
+darpa-panel-review-and-v6-integration.html
 *-feedback-response.html
 prompt_from_*.txt
 fill_darpa_proposal*.py
 *rewrite_volume2*.py
 watch_claude_processes.ps1
+scripts_darpa_review/
 *.url
 ~$*
+
+# darpa_event_forecasting/ -- same large-raw-vs-derived-small split as above.
+# data_raw/ (~16GB: WorldPop rasters, the full GDELT historical pull) and the
+# discrete_event_candidates* derived panels (up to 106MB, over GitHub's 100MB
+# hard limit for the largest one) are regenerable from the documented download
+# and build scripts in scripts/ -- excluded to keep the repo reviewable.
+# scripts/, results/ (every writeup, JSON result, and log), and the small
+# reference CSVs (active_cells, worldpop_cell_population, chirps/gdelt/acled
+# panels, all under 5MB) ARE committed: that's the actual evidence a reviewer
+# reads, and every number in it is reproducible from what's tracked.
+darpa_event_forecasting/data_raw/
+darpa_event_forecasting/data/discrete_event_candidates*.csv

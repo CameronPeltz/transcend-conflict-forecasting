@@ -1,0 +1,43 @@
+Loading mega dataset...
+228851 rows, 60 cols
+
+===== GROUP A: RF+XGB-only stacking (LightGBM dropped) =====
+[A1_stack_rf_xgb_only_10day] label_10day: HOLDOUT precision=0.786 recall=0.078 n=102752 meta_coefs={'rf': 2.63, 'xgb': 2.706} (28.9s)
+[A2_stack_rf_xgb_only_14day] label_14day: HOLDOUT precision=0.744 recall=0.113 n=102752 meta_coefs={'rf': 3.248, 'xgb': 2.144} (29.7s)
+
+===== GROUP B: finer support-filter sweep (75/100/125/150/175) =====
+[B1_finegrain_support_10day] label_10day: HOLDOUT precision=0.788 recall=0.077 n=102752 meta_coefs={'lgbm': -0.057, 'rf': 2.902, 'xgb': 2.499} (35.0s)
+[B2_finegrain_support_14day] label_14day: HOLDOUT precision=0.755 recall=0.109 n=102752 (28.2s)
+
+===== GROUP C: joint support-filtered training (not just post-hoc slicing) =====
+[C_jointfilter_sup50_label_10day] label_10day: HOLDOUT precision=0.741 recall=0.202 n=31475 meta_coefs={'lgbm': -0.63, 'rf': 3.738, 'xgb': 2.006} (9.3s)
+[C_jointfilter_sup100_label_10day] label_10day: HOLDOUT precision=0.727 recall=0.308 n=18563 meta_coefs={'lgbm': -0.587, 'rf': 3.302, 'xgb': 2.224} (6.6s)
+[C_jointfilter_sup50_label_14day] label_14day: HOLDOUT precision=0.699 recall=0.290 n=31475 (7.1s)
+[C_jointfilter_sup100_label_14day] label_14day: HOLDOUT precision=0.638 recall=0.397 n=18563 (4.8s)
+
+===== GROUP D: WorldPop -- covered-subset A/B test + coverage-indicator feature =====
+  WorldPop real coverage this run: 100.0% of 214 cells (214 gids)
+[D_coveredonly_control_label_10day] label_10day: HOLDOUT precision=0.671 recall=0.067 n=48553 (3.6s)
+[D_coveredonly_treatment_label_10day] label_10day: HOLDOUT precision=0.708 recall=0.078 n=48553 (3.7s)
+[D_indicator_label_10day] label_10day: HOLDOUT precision=0.740 recall=0.080 n=102752 (5.0s)
+[D_coveredonly_control_label_14day] label_14day: HOLDOUT precision=0.713 recall=0.129 n=48553 (16.6s)
+[D_coveredonly_treatment_label_14day] label_14day: HOLDOUT precision=0.718 recall=0.138 n=48553 (16.7s)
+[D_indicator_label_14day] label_14day: HOLDOUT precision=0.760 recall=0.106 n=102752 (27.3s)
+
+===== GROUP E: two-stage severity -- avg3 stage-1, and extended support reporting =====
+[E1_severity_avg3stage1_10day] label_10day severity: HOLDOUT precision=0.933 recall=0.006 (36.9s)
+[E2_severity_avg3stage1_14day] label_14day severity: HOLDOUT precision=0.828 recall=0.015 (43.1s)
+[E3_severity_matchedwinner_moresupport_10day] label_10day severity: HOLDOUT precision=0.933 recall=0.006 (7.2s)
+[E4_severity_matchedwinner_moresupport_14day] label_14day severity: HOLDOUT precision=0.870 recall=0.015 (36.4s)
+
+===== GROUP F: final combined recipe (decided from this round's own results) =====
+  label_10day: use_joint_filter=False (level=50, prec=0.741 vs posthoc@100=0.7958115183246073), use_worldpop_indicator=False (indicator_prec=0.740 vs baseline=0.788)
+[F_combined_label_10day] label_10day: HOLDOUT precision=0.788 recall=0.077 n=102752 meta_coefs={'lgbm': -0.057, 'rf': 2.902, 'xgb': 2.499} (34.9s)
+  label_14day: use_joint_filter=False (level=50, prec=0.699 vs posthoc@100=0.7804878048780488), use_worldpop_indicator=True (indicator_prec=0.760 vs baseline=0.755)
+[F_combined_label_14day] label_14day: HOLDOUT precision=0.760 recall=0.106 n=102752 (27.8s)
+
+===== GROUP G: adaptive follow-up =====
+
+
+TOTAL: 20 real iterations logged, 6.8 min
+Saved ../results/round7_results.json and ../results/round7_log.jsonl

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discrete Event Forecasting: Datasets, Approaches, Results, Analysis, Next Steps</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:70ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:82ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1080px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.83rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.42rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results tr.hl td{background:var(--signal-soft);}
+  table.results tr.bad td{background:var(--alert-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .ds-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:0.9rem;}
+  .ds-card .hdr{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;}
+  .ds-card .name{font-family:'Source Serif 4',serif; font-size:1.02rem;}
+  .ds-card .access{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:var(--radius); white-space:nowrap;}
+  .access.free{background:var(--signal-soft); color:var(--signal-deep);}
+  .access.reg{background:var(--wire-soft); color:#3d3260;}
+  .access.mixed{background:var(--alert-soft); color:#5c2c1a;}
+  .access.blocked{background:var(--line); color:var(--ink-soft);}
+  .lever-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:0.9rem;}
+  .lever-card .hdr{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;}
+  .lever-card .name{font-family:'Source Serif 4',serif; font-size:1.02rem;}
+  .verdict-pill{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:12px; white-space:nowrap;}
+  .verdict.worked{background:var(--signal-soft); color:var(--signal-deep);}
+  .verdict.neutral{background:var(--wire-soft); color:#3d3260;}
+  .verdict.failed{background:var(--alert-soft); color:#5c2c1a;}
+  .verdict.blocked{background:var(--line); color:var(--ink-soft);}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  footer{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+  .pending{font-style:italic; color:var(--ink-mute);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Discrete, grid-cell, ACLED-style event forecasting</span>
+    <span>Comprehensive write-up, generated 2026-08-11</span>
+    <span>Standalone analysis, not yet part of the DARPA proposal draft</span>
+  </div>
+  <h1>Datasets, approaches, results, analysis, and next steps: everything tried to close the gap to 80% precision</h1>
+  <p class="dek">Consolidates every dataset and modeling approach tested against the real, DARPA-specified task (discrete UCDP events at PRIO-GRID cell / 10-14 day granularity) — what helped, what didn't, and why, each backed by a real number from a genuinely held-out, never-look-ahead test, not a cross-validation estimate.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> Datasets Used</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Most Promising Approaches</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Results</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Analysis</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Next Steps</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1: DATASETS USED ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Core</span><h2>The base task</h2></div>
+    <p>Real UCDP GED v26.1 events (<code>ucdp.uu.se</code>, CC BY 4.0, no login), assigned to real PRIO-GRID cells (~55km, verified 99.99% match against UCDP's own field), 19 countries across DARPA's three named regions. 228,851 (cell, weekly issue date) candidate rows, 464 active cells, forecasting whether at least one event occurs within 10 days / 14 days of each issue date.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Integrated and tested</span><h2>Six additional real data sources</h2></div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">GDELT 2.0 historical event stream</span><span class="access free">Free, no registration</span></div>
+      <p>A real 2015–2025, 19-country pull (29.7M events, 3,981 days, 99.5% retrieved), aggregated to country-week tone/volume and joined never-look-ahead. <strong>Result: the largest real gain of any lever tested</strong> — see Tab 03.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">ACLED civilian-targeting aggregates</span><span class="access free">Free (HDX), no registration</span></div>
+      <p>Country-month event/fatality counts. Result: added essentially nothing (round 2 finding, reproduced).</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">WorldPop gridded population</span><span class="access free">Free, no registration</span></div>
+      <p>Real 100m population-count rasters, windowed-summed over each cell's real footprint. <span class="pending">Download in progress (throttled server, ~2 minutes/country) — result to follow.</span></p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">CHIRPS monthly rainfall</span><span class="access free">Free, no registration</span></div>
+      <p>Real global monthly rainfall rasters, 2015–2025 (131 files), windowed-averaged per cell, joined by the prior completed calendar month (100% match rate). Small, real gain: +0.3 points precision at both horizons on the frozen holdout — see Tab 03.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">UNHCR asylum-application data</span><span class="access free">Free, no credentials</span></div>
+      <p>Real country-of-origin asylum application counts, 2013–2025, joined by the prior completed year (annual granularity, lagged a full year to stay never-look-ahead). 15 of 19 countries returned real records; 4 (Myanmar, Sudan, Eritrea, Haiti) returned none under the ISO3 codes queried — disclosed as an unresolved code-mapping gap, not silently dropped. Small, real gain: +0.6 points (10-day) / +0.8 points (14-day) on the frozen holdout, despite the coverage gap — see Tab 03.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">Local LLM reasoning layer (Ollama, llama3.1)</span><span class="access free">Free, local, no per-call cost</span></div>
+      <p>Not a dataset in the traditional sense, but a second information-processing pass over the same features, tested as a hybrid alongside the numeric ensemble. See Tabs 02–03.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Investigated, not integrated</span><h2>Confirmed blocked or unverified — disclosed honestly</h2></div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">PRIO-GRID static covariates</span><span class="access blocked">Not scriptable</span></div>
+      <p>Confirmed three times across three rounds (rendered-content fetch, five direct endpoint probes): the download requires a browser driving client-side JavaScript. Needs a manual download or browser-automation tooling not available here.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">Full ACLED event-level export</span><span class="access reg">Free registration required</span></div>
+      <p>Requires a free ACLED account — not created, per this project's standing no-new-accounts-on-your-behalf policy.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">NASA FIRMS active-fire data</span><span class="access reg">Requires Earthdata Login</span></div>
+      <p>Checked directly: both the archive download and the live API require NASA Earthdata authentication — no anonymous path for either, contrary to an earlier, too-optimistic assessment. One Earthdata account would unlock this and Black Marble together.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">NASA Black Marble nighttime lights</span><span class="access reg">Requires Earthdata Login</span></div>
+      <p>Same NASA Earthdata account system as FIRMS. Real published research uses this exact data as a conflict-intensity proxy in Yemen and Ukraine.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">Global Terrorism Database (Kaggle mirror)</span><span class="access mixed">Access terms unverified</span></div>
+      <p>Kaggle requires an account to download; the mirror's currency against the now-gated primary START/UMD source was never confirmed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 2: MOST PROMISING APPROACHES ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Current best</span><h2>The core ensemble, with real signal added</h2></div>
+    <p>An ensemble of XGBoost, Random Forest, and Logistic Regression (simple probability averaging) over cell event-history features (recency-weighted counts, spatial spillover, momentum) plus real GDELT country-week tone/volume signal, evaluated under frozen-threshold, never-look-ahead validation. Still the best-performing configuration found across every approach tested — see Tab 03 for the numbers.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Ranked by what actually moved the needle</span><h2>Every approach tried, verdict included</h2></div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">Real GDELT signal added to the core ensemble</span><span class="verdict-pill verdict worked">Best result — real, meaningful gain</span></div>
+      <p>+1.6 points precision (10-day), +2.4 points (14-day) at the frozen-threshold operating point. A genuinely different, faster-reacting signal source did what further slicing of UCDP's own event history could not.</p>
+    </div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">Two-stage severity model</span><span class="verdict-pill verdict worked">Fixed a completely broken result</span></div>
+      <p>P(severe) = P(any event) × P(severe | event occurs), second stage trained only on the far-less-imbalanced "event occurred" subset. Took severity prediction from 0%/0% (single-stage) to 100% precision at 0.1% recall (10-day) and 59.2% at 3.9% (14-day) on real holdout data.</p>
+    </div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">ICL/LLM hybrid reasoning layer</span><span class="verdict-pill verdict worked">Real, modest gain — with an honest failure mode</span></div>
+      <p>Accuracy on a 30-case real holdout sample rose from 46.7% to 53.3%, correcting 6/10 false alarms by reading a falling event-count trend as de-escalation — but losing 5/10 true hits to the same heuristic in genuinely ambiguous cases.</p>
+    </div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">Graph-diffusion spatial features</span><span class="verdict-pill verdict neutral">Small, mixed</span></div>
+      <p>Multi-hop propagation over the cell-adjacency graph (reusing the parent project's own label-propagation approach). Flat at 10-day (+0.1 point), a small real gain at 14-day (+1.1 points). Directionally positive, not decisive.</p>
+    </div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">Hawkes-kernel intensity + CUSUM changepoint features</span><span class="verdict-pill verdict neutral">Negative — a real, informative result</span></div>
+      <p>Self-exciting exponential-decay intensity (the academic standard for this class of problem) and a formal changepoint statistic, in place of round 3's fixed-window counts. Slightly <em>worse</em> at both horizons (10-day −0.6 points, 14-day −0.9 points) — evidence these engineered reformulations were highly redundant with features already in the model, not carrying new information. See Tab 04 for why this matters.</p>
+    </div>
+
+    <div class="lever-card">
+      <div class="hdr"><span class="name">Multi-task joint occurrence+severity model</span><span class="verdict-pill verdict failed">Underperformed the specialized two-stage approach</span></div>
+      <p>One shared model (3-class objective: no event / event / severe event) instead of two sequential specialized ones. Occurrence precision dropped 6–7 points versus the dedicated occurrence model (65.2%/66.4% vs. 72.3%/73.9% on holdout); severity results were roughly comparable to the two-stage fix, not better. The "smarter-sounding" unified architecture lost to two well-scoped specialized models.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: RESULTS ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Headline</span><h2>Occurrence task — frozen-threshold, 80% precision target, real holdout</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>10-day precision</th><th>10-day recall</th><th>14-day precision</th><th>14-day recall</th></tr>
+        <tr><td>Round-2 baseline (cell + spatial + ACLED)</td><td>71.3%</td><td>9.4%</td><td>68.1%</td><td>13.0%</td></tr>
+        <tr><td>+ momentum + wider spatial radius (round 3)</td><td>72.3%</td><td>9.3%</td><td>68.8%</td><td>12.6%</td></tr>
+        <tr><td>+ Hawkes-kernel + CUSUM changepoint</td><td>71.7%</td><td>9.2%</td><td>67.9%</td><td>13.0%</td></tr>
+        <tr><td>+ graph-diffusion (multi-hop spatial)</td><td>72.4%</td><td>9.1%</td><td>69.9%</td><td>12.3%</td></tr>
+        <tr class="hl"><td><strong>+ real GDELT signal (current best)</strong></td><td><strong>73.9%</strong></td><td>8.8%</td><td><strong>71.2%</strong></td><td>11.9%</td></tr>
+        <tr class="bad"><td>Multi-task joint model (occurrence output)</td><td>65.2%</td><td>8.7%</td><td>66.4%</td><td>11.6%</td></tr>
+      </table>
+    </div>
+    <p class="lede">Support-filtered (cells with ≥30 historical events, ~49% of holdout rows): current-best precision holds (73.8% / 71.1%) while recall rises to 15.2% / 20.8% — the same free, no-new-data lever validated in round 3.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Severity task</span><h2>Will the event be severe (≥5 fatalities)?</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>10-day precision / recall</th><th>14-day precision / recall</th></tr>
+        <tr class="bad"><td>Single-stage (stricter label, same model)</td><td>0.0% / 0.0%</td><td>0.0% / 0.0%</td></tr>
+        <tr class="hl"><td><strong>Two-stage (occurrence × conditional severity)</strong></td><td><strong>100.0% / 0.1%</strong></td><td><strong>59.2% / 3.9%</strong></td></tr>
+        <tr><td>Multi-task joint model (severity output)</td><td>80.0% / 0.2%</td><td>57.3% / 3.7%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">ICL/LLM hybrid</span><h2>30 real holdout cases, 10 true hits / 10 false alarms / 10 near-threshold</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">46.7%</div><div class="l">Ensemble-only accuracy</div></div>
+      <div class="stat"><div class="n">53.3%</div><div class="l">LLM-adjusted accuracy</div></div>
+      <div class="stat"><div class="n">6/10</div><div class="l">False alarms corrected</div></div>
+      <div class="stat"><div class="n">5/10</div><div class="l">True hits lost</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">New independent datasets</span><h2>CHIRPS and UNHCR — small, real, consistent gains</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Configuration</th><th>10-day holdout precision</th><th>14-day holdout precision</th></tr>
+        <tr><td>Round-3 combined baseline</td><td>72.3%</td><td>68.8%</td></tr>
+        <tr><td>+ CHIRPS rainfall</td><td>72.6% <span class="mono">(+0.3)</span></td><td>69.1% <span class="mono">(+0.3)</span></td></tr>
+        <tr><td>+ UNHCR asylum applications</td><td>72.9% <span class="mono">(+0.6)</span></td><td>69.6% <span class="mono">(+0.8)</span></td></tr>
+      </table>
+    </div>
+    <p class="lede">Both are independent, non-UCDP-derived signal sources, and both moved the number in the same direction GDELT did — smaller in magnitude, but consistent with the pattern analyzed in Tab 04. <span class="pending">WorldPop population extraction still in progress.</span></p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: ANALYSIS ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">The pattern across every approach tested</span><h2>New signal sources help; recombining the same one doesn't</h2></div>
+    <p>Line up every lever tested by what it actually changed: GDELT (a wholly independent, news-derived source) produced the largest real gain. Graph diffusion (multi-hop propagation of the <em>same</em> UCDP event counts) produced a small, partial gain. Hawkes-kernel and CUSUM features (mathematically more sophisticated reweightings of the <em>same</em> UCDP event timestamps) produced a slightly <em>negative</em> result. The pattern is consistent: value came from adding genuinely independent information, not from more sophisticated ways of looking at information already in the model. This is the single most important finding across rounds 3–5 for prioritizing future work — it says PRIO-GRID and CHIRPS/WorldPop (independent sources) are worth far more effort than further UCDP-event-log feature engineering, no matter how principled the technique.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Why "smarter" architecture lost</span><h2>The multi-task model's failure is informative, not just a null result</h2></div>
+    <p>A single shared model asked to jointly predict occurrence and severity did worse at occurrence than a model built to do only that job. The likely mechanism: the 3-class training objective spends some of its capacity distinguishing "severe" from "not severe" among positives — capacity a dedicated binary occurrence classifier spends entirely on the occurrence question. Two narrow, specialized models beat one broad one here, which argues for keeping the two-stage architecture rather than "simplifying" toward a unified model in future rounds.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Why recall stays low everywhere</span><h2>A precision-first threshold, a steep PR curve, and real timing noise</h2></div>
+    <p>Across every configuration tested, recall sits in the single digits to low twenties. This is mechanically downstream of choosing a threshold that hits 80% precision — the PR curve for this task decays fast (88% precision at 8% recall, down to 59% by 39% recall in the pooled search), meaning only a small slice of real positives are separable enough from the negative class to clear a high bar. Compare the country-week model elsewhere in this project (84% precision <em>at 56.8% recall</em>) — that task aggregates away exactly the cell-level, day-level timing noise that caps recall here. Finer granularity is intrinsically a harder precision/recall tradeoff, not a modeling shortfall.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">The severity ceiling</span><h2>Two-stage fixed precision; recall is still the open problem</h2></div>
+    <p>The two-stage restructuring turned a broken model into a working one on precision, but usable recall (0.1%–3.9%) is still far too thin to be operationally useful. The features driving both stages are the same event-count/spatial signal used for occurrence — they were never designed to carry severity-specific information (actor capability, weapon type, targeting intent). Real recall gains for severity most likely require features that don't exist in this project yet, not further tuning of the two-stage architecture itself.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT STEPS ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Prioritized</span><h2>What's next, given everything found so far</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Finish and evaluate WorldPop and CHIRPS</h4><p>Both are independent, structural/physical signal sources — exactly the category this round's analysis shows actually moves the number. In progress as of this writing.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Resolve the UNHCR country-code gap</h4><p>Myanmar, Sudan, Eritrea, and Haiti returned zero records under their standard ISO3 codes — worth checking UNHCR's own country-code table directly rather than assuming standard ISO3 applies everywhere.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Get PRIO-GRID covariates via a manual download or browser automation</h4><p>Confirmed three times now as the highest-confidence remaining lever this project cannot reach on its own — a genuinely independent, structural signal type in the category that's actually been shown to help.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Build severity-specific features, not just severity-specific models</h4><p>The two-stage architecture is validated; what it's fed is not yet suited to the severity question specifically. Actor-history and prior-fatality-pattern features, not more event-count reslicing, are the next lever for severity recall.</p></div></li>
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>Feed GDELT context into the ICL/LLM layer</h4><p>The hybrid's one clear failure mode (over-trusting a falling count as de-escalation) is exactly the kind of ambiguity real GDELT tone/actor context could help the model reason through, now that signal is already joined into the pipeline for the numeric model.</p></div></li>
+      <li class="rank-item"><span class="rank-num">6</span><div><h4>Stop investing further in UCDP-event-log-only feature engineering</h4><p>Momentum, wider spatial radius, Hawkes kernels, CUSUM, and multi-hop diffusion collectively moved the needle by roughly a point, with one outright negative result. This category of work has a demonstrated low ceiling; new-signal-source integration is the better use of further effort.</p></div></li>
+    </ol>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Scope discipline</span><h2>Still not in the DARPA proposal draft</h2></div>
+    <p>Per standing instruction, none of this — the discrete-event approach or any round's results — has been folded into the proposal draft. This file and its companions remain standalone until a decision is made about whether and how to incorporate them.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Consolidates rounds 1 through 5 of the discrete-event forecasting analysis. Companion files: <code>discrete_event_forecasting_analysis.html</code> (round 1), <code>event_forecasting_writeup.html</code> (rounds 1-2), <code>round3_optimization_writeup.html</code> (rounds 3-4). Raw results: <code>results/*.json</code>.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

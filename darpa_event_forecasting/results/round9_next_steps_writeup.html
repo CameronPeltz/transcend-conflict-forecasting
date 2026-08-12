@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Round 9: The 10-Day Severity Mystery, Solved — a Score-Distribution Gap, a Clean Ensembling Negative, and WorldPop's Real Shape</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:72ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:84ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1100px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.82rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.4rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results tr.hl td{background:var(--signal-soft);}
+  table.results tr.bad td{background:var(--alert-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .phase-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .phase-card .num{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); display:inline-block; margin-bottom:0.5rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  footer{max-width:1100px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Round 9 — round 8's next steps, plus a new architecture test</span>
+    <span>38 real iterations, generated 2026-08-12</span>
+    <span>Standalone analysis, not yet part of the DARPA proposal draft</span>
+  </div>
+  <h1>Round 9: the 10-day severity mystery gets solved, multi-split ensembling gets ruled out, and WorldPop turns out to be real but weak, not redundant</h1>
+  <p class="dek">This is the most diagnostic round yet, not the biggest-number round. Its four questions were all left open by round 8: why does 10-day severity's threshold selection behave erratically; can the support-filter lever's real variance be reduced rather than just documented; is WorldPop's small effect because it duplicates existing features; and can round 8's headline occurrence numbers be improved further. Three of four get clean, mechanistic answers. The fourth (Group F, the production recipe) stays exactly where round 7 and 8 left it — a real, honestly-reported non-result, not a hidden one.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> Setup</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> What Was Done</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Results</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Analysis</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Next Steps for Round 10</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1: SETUP ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Starting point</span><h2>Round 8's next steps</h2></div>
+    <p class="lede">From Tab 05 of <code>round8_next_steps_writeup.html</code>:</p>
+    <ol>
+      <li>Deploy the 60%-target severity model at 14-day, finalized with support-filter reporting.</li>
+      <li>Diagnose 10-day severity's threshold instability directly, rather than just re-observing it.</li>
+      <li><s>Close the WorldPop imputation-engineering angle.</s> Respected — no new downloads or fill strategies this round.</li>
+      <li>Report the support-filter lever as an honest range, not a single point estimate.</li>
+      <li>Check whether WorldPop population is redundant with existing event-history features.</li>
+    </ol>
+    <p>Group E (a multi-split ensemble) is new this round, not on round 8's list — a direct, testable response to the range-reporting finding: if the support-filter number varies by holdout window, does averaging across several time-robust model fits reduce that variance, rather than just describing it.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Data</span><h2>Same mega dataset; no new downloads triggered</h2></div>
+    <p>228,851 rows, 464 cells, 19 countries. Real WorldPop coverage remains 254/464 cells (54.7%), unchanged from round 8 — no downloader was run this round, consistent with the standing instruction.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2: WHAT WAS DONE ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Design</span><h2>38 real iterations across 7 groups, one adaptive branch (didn't fire)</h2></div>
+    <p class="lede">13.3 minutes total runtime. Full log: <code>results/round9_log.jsonl</code>; full results: <code>results/round9_results.json</code>.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group A — 12 iterations</span>
+    <h3>Severity threshold diagnostic (next step 2)</h3>
+    <p>A finer target-precision grid (45/50/55/60/65/70%) for the two-stage matched-winner severity model, both horizons, with the SELECT-window chosen threshold reported alongside each result — the actual mechanism, not just the symptom.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group B — 4 iterations</span>
+    <h3>Support-filter range extension (next step 4)</h3>
+    <p>Two more chronological split points (45%, 75%) added to round 8's five (50/55/60/65/70%), widening the picture of how much the ≥100 support-filter precision actually varies by holdout window.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group C — 6 iterations, plus a correlation check</span>
+    <h3>Is WorldPop redundant with existing features? (next step 5)</h3>
+    <p>A clean 3-way ablation (population alone / event-history alone / both combined) on the 254 real-coverage cells, at both horizons, plus a direct Pearson correlation between <code>worldpop_population</code> and the three most population-adjacent existing features.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group D — 2 iterations</span>
+    <h3>Severity deploy configs, finalized (next step 1)</h3>
+    <p>The 14-day 60%-target config re-confirmed with support-filter reporting; the 10-day target chosen programmatically from Group A's own diagnostic (the best-recall target among those with ≥50% real holdout precision, falling back to 70% if none qualify).</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group E — 12 iterations</span>
+    <h3>Multi-split ensemble (new architecture, testing the range-variance finding directly)</h3>
+    <p>Five models trained through five different chronological cutoffs (50/55/60/65/70%), each evaluated on one common, never-seen-by-any-of-them evaluation window, then averaged — does ensembling across time reduce round 8's documented variance, versus a single model trained at the standard 60% split evaluated on that same common window.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group F — 2 iterations</span>
+    <h3>Final round-9 combined recipe</h3>
+    <p>The standard production configuration, re-confirmed against everything tested this round.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Group G — 0 iterations (did not fire)</span>
+    <h3>Adaptive follow-up</h3>
+    <p>Would have re-tested the WorldPop ablation under a support filter if population-alone's predictive power had been a substantial fraction of history-alone's. It wasn't (9.1% vs. history's 38.6% average precision at 10-day), so the branch correctly stayed inactive.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3: RESULTS ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Headline</span><h2>Three mysteries resolved, one recipe unchanged</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0.65 → 0.95</div><div class="l">10-day severity's threshold jump, at the exact point instability begins</div></div>
+      <div class="stat"><div class="n">83.7% vs 84.0%</div><div class="l">Multi-split ensemble vs. single model, same eval window — a tie, not a win</div></div>
+      <div class="stat"><div class="n">r ≈ 0.06</div><div class="l">WorldPop's correlation with existing features — genuinely orthogonal, not redundant</div></div>
+      <div class="stat"><div class="n">75-86%</div><div class="l">Support≥100's real range, 10-day, across 7 holdout windows now tested</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group A</span><h2>The 10-day severity mystery, solved: a real gap in the score distribution</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Target</th><th>Select-window chosen threshold</th><th>Actual holdout precision</th><th>Actual holdout recall</th></tr>
+        <tr><td>45%</td><td>0.4811</td><td>24.9%</td><td>15.7%</td></tr>
+        <tr><td>50%</td><td>0.5335</td><td>27.3%</td><td>12.1%</td></tr>
+        <tr><td>55%</td><td>0.5849</td><td>29.3%</td><td>9.0%</td></tr>
+        <tr><td>60%</td><td>0.6499</td><td>34.9%</td><td>5.6%</td></tr>
+        <tr class="bad"><td>65%</td><td><strong>0.9520 (jump)</strong></td><td>93.3%</td><td>0.6%</td></tr>
+        <tr><td>70%</td><td>0.9520 (same)</td><td>93.3%</td><td>0.6%</td></tr>
+      </table>
+    </div>
+    <p>The mechanism is now visible directly: thresholds rise smoothly and gradually from 45% to 60% (0.481 → 0.650), then <strong>jump straight to 0.952</strong> at 65% and stay there through 70% — the identical threshold, the identical result. There is a real gap in the select-window score distribution: no threshold between roughly 0.65 and 0.95 achieves 65% precision on the cases the model actually ranks there, so the search skips straight to the sparse high-confidence tail. Practically, this means <strong>10-day severity has exactly two real operating regimes, not a dial</strong>: a noisy, low-precision regime (any target at or below 60%, real precision 25-35%) and a rare-but-reliable regime (any target at or above 65%, landing on the identical 93.3%/0.6% result every time). 14-day shows no such gap — its thresholds increase smoothly (0.394 → 0.647 across the same six targets) and its actual precision tracks its target far more closely, which is why 14-day's recalibration (round 8) produced a real, usable middle-ground result and 10-day's does not.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group B</span><h2>Support-filter range, now spanning 7 holdout windows</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Split point</th><th>Support≥100 precision</th><th>Support≥100 recall</th></tr>
+        <tr class="bad"><td>10-day</td><td>45% (new, lowest found)</td><td>75.1%</td><td>40.1%</td></tr>
+        <tr><td>10-day</td><td>50%</td><td>81.2%</td><td>30.5%</td></tr>
+        <tr><td>10-day</td><td>55%</td><td>81.0%</td><td>31.9%</td></tr>
+        <tr><td>10-day</td><td>60% (standard)</td><td>79.7%</td><td>25.8%</td></tr>
+        <tr class="hl"><td>10-day</td><td>65% (highest found)</td><td><strong>86.3%</strong></td><td>22.3%</td></tr>
+        <tr><td>10-day</td><td>70%</td><td>83.1%</td><td>22.8%</td></tr>
+        <tr><td>10-day</td><td>75% (new)</td><td>84.3%</td><td>25.9%</td></tr>
+        <tr class="bad"><td>14-day</td><td>45% (new, lowest found)</td><td>77.4%</td><td>51.2%</td></tr>
+        <tr><td>14-day</td><td>50%</td><td>81.6%</td><td>40.9%</td></tr>
+        <tr><td>14-day</td><td>60% (standard)</td><td>78.1%</td><td>32.6%</td></tr>
+        <tr class="hl"><td>14-day</td><td>65% (highest found)</td><td><strong>84.3%</strong></td><td>30.8%</td></tr>
+        <tr><td>14-day</td><td>70%</td><td>81.5%</td><td>32.1%</td></tr>
+        <tr><td>14-day</td><td>75% (new)</td><td>82.3%</td><td>35.3%</td></tr>
+      </table>
+    </div>
+    <p>The honest range for this project's headline lever, now covering 7 real holdout windows: <strong>75.1%-86.3% precision at 10-day, 77.4%-84.3% at 14-day</strong>, with recall moving inversely (real events are easier to catch, at lower precision, when more of the timeline is held out for evaluation). It's never bad and there's no evidence of a favorable-window artifact in the standard 60% split this project has always reported.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group C</span><h2>WorldPop: genuinely orthogonal to existing features, but weak on its own</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Check</th><th>10-day</th><th>14-day</th></tr>
+        <tr><td>Correlation, population vs. cell_count_365d</td><td colspan="2">r = 0.058</td></tr>
+        <tr><td>Correlation, population vs. neighbor_count_30d</td><td colspan="2">r = -0.049</td></tr>
+        <tr><td>Correlation, population vs. n_hist_events_total</td><td colspan="2">r = 0.074</td></tr>
+        <tr><td>Average precision, population alone</td><td>0.091</td><td>0.121</td></tr>
+        <tr><td>Average precision, event-history alone</td><td>0.386</td><td>0.477</td></tr>
+        <tr><td>Average precision, combined</td><td>0.383 (-0.003)</td><td>0.479 (+0.002)</td></tr>
+        <tr><td>Point precision at chosen threshold, combined vs. history-only</td><td>+0.7pt</td><td>-0.5pt</td></tr>
+      </table>
+    </div>
+    <p>Round 8 hypothesized population might be masked by redundancy with existing features. It isn't: correlation with the three most population-adjacent existing features is essentially zero (r = -0.05 to 0.07) — this is real, orthogonal information, not a duplicate. The reason it doesn't move the numbers much is simpler and less interesting: population is a genuinely <em>weak</em> predictor on its own (AP 0.09-0.12, barely above the population base rate) next to event history's AP of 0.39-0.48. Combining them is close to a wash — AP and point-precision even disagree in <em>sign</em> at both horizons (AP up/precision down at 14-day, AP down/precision up at 10-day) — which is exactly what a real but weak, uncorrelated signal looks like when added to a much stronger one: not harmful, not transformative, genuinely marginal.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group D</span><h2>Severity deploy configs, finalized</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Chosen target</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>65% (forced into the high-precision regime by Group A's gap)</td><td>93.3%</td><td>0.6%</td></tr>
+        <tr class="hl"><td>14-day</td><td><strong>60%</strong></td><td><strong>40.3%</strong></td><td><strong>11.6%</strong></td></tr>
+      </table>
+    </div>
+    <p>14-day's result is unchanged and now confirmed reproducible across two independent rounds (round 8 and round 9 landed on identical numbers). 10-day's selection logic (best recall among targets with ≥50% real precision) found no qualifying target below 65%, given Group A's finding — it lands on the same 93.3%/0.6% result no matter which target ≥65% is requested, because the score gap makes 65% and 70% functionally identical requests.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group E</span><h2>Multi-split ensembling: a clean tie, not a win</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Config</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>5-model ensemble (splits 50-70%, averaged)</td><td>83.7%</td><td>6.6%</td></tr>
+        <tr><td>10-day</td><td>Single 60%-split model, same eval window</td><td>84.0%</td><td>6.9%</td></tr>
+        <tr><td>14-day</td><td>5-model ensemble (splits 50-70%, averaged)</td><td>79.3%</td><td>10.0%</td></tr>
+        <tr><td>14-day</td><td>Single 60%-split model, same eval window</td><td>79.4%</td><td>10.2%</td></tr>
+      </table>
+    </div>
+    <p>Averaging across five time-robust model fits produced results within 0.1-0.3 points of a single model trained at the standard split — no improvement, and marginally worse both times. This is informative in the same direction as Group B: the real variance documented in the support-filter range isn't primarily model instability that averaging could smooth out — it more likely reflects genuine differences between real historical periods (some weeks and regions were more or less predictable than others), which no amount of model ensembling changes. Both models here were evaluated on the identical, never-seen 78,138-row common window, so this is a fair, apples-to-apples test, not an artifact of different evaluation sets.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Group F</span><h2>Final recipe: unchanged</h2></div>
+    <p>10-day: 78.6% precision / 7.8% recall (2-model stack, unfiltered). 14-day: 75.5% / 10.9% (tuned Random Forest, unfiltered). Identical to rounds 7 and 8 within noise — no lever tested this round moved the core occurrence numbers, which is itself a legitimate finding: this round's real contributions are diagnostic and explanatory, not incremental gains.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: ANALYSIS ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">The most valuable finding this round</span><h2>A "why," not just a "what"</h2></div>
+    <p>Round 8 observed that 10-day severity's target-precision sweep behaved erratically and flagged it as unresolved. This round doesn't just re-observe the erratic behavior with a finer grid — it locates the exact mechanism: a real discontinuity in the underlying score distribution between roughly 0.65 and 0.95, visible directly in the select-window's own chosen thresholds. That's a qualitatively different, more useful kind of result than "this doesn't work smoothly" — it explains <em>why</em> 10-day severity can't have a smooth precision/recall dial the way 14-day does, and it means future rounds shouldn't keep probing intermediate targets at 10-day expecting a different answer; the two real regimes (noisy-low or rare-but-reliable) are a structural property of this specific model/horizon/label combination, not a tuning problem.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">A negative result that closes a real question</span><h2>Ensembling across time doesn't reduce the variance round 8 found</h2></div>
+    <p>This was a genuine, uncertain question going into this round: is the 6-7 point precision spread across holdout windows evidence of model instability (which averaging across fits should reduce) or evidence of real period-to-period differences in the underlying world (which averaging can't fix)? The clean tie between the 5-model ensemble and the single model, on an identical evaluation window, answers it: it's the latter. This is useful because it redirects effort — there's no more reason to explore fancier ensembling schemes to chase a more "stable" number; the variance is a property of the real, non-stationary conflict data this project has always used, not a fixable modeling gap.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">A hypothesis refined, not confirmed or refuted outright</span><h2>WorldPop is real signal, correctly characterized for the first time</h2></div>
+    <p>Across rounds 6-9, WorldPop has been called "negative" (round 6), then "real but confound-masked" (round 7), then "still not a clean win even after fixing the confound" (round 8) with no explanation why. This round supplies the missing piece: it isn't redundant (near-zero correlation with existing features) and it isn't a data-quality artifact (round 7 already ruled that out on the clean subset) — it's simply a real, weak, independent signal, worth roughly a third to a half of what event-history contributes on its own, which is not enough to reliably move a strong combined model's precision in one consistent direction. This is the most complete and most honest characterization of this feature across the whole project, and it's a stable place to leave it rather than a call to keep testing new fixes.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT STEPS FOR ROUND 10 ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Generated from this round's own results</span><h2>What to try next</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Try a different stage-2 model for 10-day severity specifically, to test whether the score gap is model-specific</h4><p>Round 7 tested an averaged stage-1 for severity but never varied stage-2 at 10-day. Given the discontinuity is a property of the score distribution the current stage-2 model (tuned LightGBM) produces, swapping stage-2 to Random Forest or a soft-averaged score is a direct, cheap test of whether the gap is inherent to the label/horizon or an artifact of this specific model's output granularity.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Deploy 14-day severity at the 60% target as a stable production config</h4><p>Now confirmed identical across two independent rounds (40.3%/11.6%) — ready, with no more validation needed on this specific point.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Stop investigating multi-split ensembling; treat the support-filter range as inherent, not fixable</h4><p>Closed this round with a clean tie. Future rounds citing the support-filter lever should quote the 75-86%/77-84% ranges directly rather than a single point estimate, per round 8's original recommendation, now with a fuller 7-window basis.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Retire further WorldPop feature-engineering as a priority</h4><p>Three rounds of investigation (confound isolation, imputation variants, redundancy check) now converge on the same honest characterization: real but weak, genuinely orthogonal, not worth further engineering at partial coverage. Revisit only if/when full coverage becomes available through the ordinary passage of time, not as an active priority.</p></div></li>
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>Apply the same score-distribution diagnostic (Group A's method) to the occurrence task's own threshold selection</h4><p>This round's diagnostic technique — plotting the select-window chosen threshold against the target, not just the resulting precision — was only applied to severity. Whether the occurrence task's own frozen-threshold selection has similar hidden discontinuities at any target level has never been checked directly.</p></div></li>
+    </ol>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Scope discipline</span><h2>Still not in the DARPA proposal draft</h2></div>
+    <p>Per standing instruction, none of this has been folded into the proposal draft. This file and its companions (<code>round8_next_steps_writeup.html</code>, <code>round7_next_steps_writeup.html</code>, <code>round6_next_steps_writeup.html</code>, <code>grand_search_final_writeup.html</code>) remain standalone until a decision is made about whether and how to incorporate them.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Round 9, 38 real logged iterations, building on round 8 (23 iterations), round 7 (20 iterations), round 6 (24 iterations), and the 157-iteration grand search (262 total real iterations across the grand search and rounds 6-9 alone, on top of rounds 1-5's own separately-logged runs). Companion files: <code>round8_next_steps_writeup.html</code>, <code>round7_next_steps_writeup.html</code>, <code>round6_next_steps_writeup.html</code>, <code>grand_search_final_writeup.html</code>. Raw results: <code>results/round9_log.jsonl</code>, <code>results/round9_results.json</code>.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

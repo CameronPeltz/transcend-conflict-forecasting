@@ -1,0 +1,46 @@
+Loading mega dataset...
+228851 rows, 60 cols
+
+===== GROUP A: WorldPop population-mean imputation (uses existing downloads only) =====
+  WorldPop real coverage now: 100.0% of 254 cells (254 gids) -- Sudan finished in the background since round 7, no new download triggered this round; covered-cell population mean = 523,079
+[A1_worldpop_meanfill_10day] label_10day: HOLDOUT precision=0.732 recall=0.084 n=102752 (7.0s)
+[A2_worldpop_meanfill_14day] label_14day: HOLDOUT precision=0.753 recall=0.110 n=102752 (26.7s)
+[A3_worldpop_meanfill_plus_indicator_10day] label_10day: HOLDOUT precision=0.729 recall=0.084 n=102752 (5.4s)
+[A4_worldpop_meanfill_plus_indicator_14day] label_14day: HOLDOUT precision=0.755 recall=0.112 n=102752 (26.4s)
+  --> best WorldPop variant: 10-day=meanfill (0.732 vs baseline 0.788), 14-day=meanfill_indicator (0.755 vs baseline 0.760)
+
+===== GROUP B: 2-model stack (RF+XGB), final deploy recipe with support sweep =====
+[B1_deploy_2model_stack_10day] label_10day: HOLDOUT precision=0.786 recall=0.078 n=102752 (28.1s)
+[B2_deploy_rf_14day] label_14day: HOLDOUT precision=0.755 recall=0.109 n=102752 (26.7s)
+
+===== GROUP C: severity target-precision sweep (50%/60%/70%, vs. the 80% used through round 7) =====
+[C_severity_target50_10day] label_10day severity @ target=0.5: HOLDOUT precision=0.273 recall=0.121 (7.0s)
+[C_severity_target50_14day] label_14day severity @ target=0.5: HOLDOUT precision=0.332 recall=0.209 (34.3s)
+[C_severity_target60_10day] label_10day severity @ target=0.6: HOLDOUT precision=0.349 recall=0.056 (6.8s)
+[C_severity_target60_14day] label_14day severity @ target=0.6: HOLDOUT precision=0.403 recall=0.116 (36.9s)
+[C_severity_target70_10day] label_10day severity @ target=0.7: HOLDOUT precision=0.933 recall=0.006 (7.5s)
+[C_severity_target70_14day] label_14day severity @ target=0.7: HOLDOUT precision=0.507 recall=0.048 (37.1s)
+
+===== GROUP D: support-filter optimum stability across split points (50%/70%, vs. the 60% used throughout) =====
+[D_stability_split50_10day] label_10day: HOLDOUT precision=0.799 recall=0.113 n=126162 (24.9s)
+[D_stability_split50_14day] label_14day: HOLDOUT precision=0.793 recall=0.154 n=126162 (23.7s)
+[D_stability_split65_10day] label_10day: HOLDOUT precision=0.845 recall=0.069 n=90765 (32.4s)
+[D_stability_split65_14day] label_14day: HOLDOUT precision=0.805 recall=0.104 n=90765 (31.9s)
+[D_stability_split70_10day] label_10day: HOLDOUT precision=0.815 recall=0.070 n=78138 (36.0s)
+[D_stability_split70_14day] label_14day: HOLDOUT precision=0.774 recall=0.112 n=78138 (33.2s)
+
+===== GROUP E: final round-8 combined recipe =====
+  decisions: {'10day': {'use_worldpop': False, 'worldpop_variant': 'meanfill'}, '14day': {'use_worldpop': False, 'worldpop_variant': 'meanfill_indicator'}}
+[E1_combined_10day] label_10day: HOLDOUT precision=0.786 recall=0.078 n=102752 (28.7s)
+[E2_combined_14day] label_14day: HOLDOUT precision=0.755 recall=0.109 n=102752 (27.9s)
+[E3_combined_severity_target60_10day] label_10day severity @ target=0.6: HOLDOUT precision=0.349 recall=0.056 (7.4s)
+[E4_combined_severity_target60_14day] label_14day severity @ target=0.6: HOLDOUT precision=0.403 recall=0.116 (35.7s)
+
+===== GROUP F: adaptive follow-up =====
+  10-day support>=100 precision across split points: {0.6: 0.7971576227390181, 0.5: 0.8116646415552855, 0.65: 0.8631386861313869, 0.7: 0.8310679611650486} (spread=0.066)
+  spread > 5 points -> optimum is NOT stable -> adaptive follow-up: test support>=100 at an intermediate split (0.55) to locate where the instability begins
+[F1_stability_split55_10day] label_10day: HOLDOUT precision=0.794 recall=0.110 n=114890 (26.9s)
+
+
+TOTAL: 23 real iterations logged, 9.3 min
+Saved ../results/round8_results.json and ../results/round8_log.jsonl

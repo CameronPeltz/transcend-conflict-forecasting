@@ -1,0 +1,138 @@
+{
+  "pooled": {
+    "10day_round3_combined": {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.34581831787479567,
+      "recall": 0.6980007154497396,
+      "false_positive_rate": 0.18060629784272791,
+      "specificity": 0.8193937021572721,
+      "average_precision": 0.5123968093396081,
+      "roc_auc": 0.8408393281352381
+    },
+    "10day_plus_unhcr": {
+      "n": 209095,
+      "n_positives": 25159,
+      "precision": 0.3427084142646259,
+      "recall": 0.701299733693708,
+      "false_positive_rate": 0.18397703549060543,
+      "specificity": 0.8160229645093946,
+      "average_precision": 0.5119657867881611,
+      "roc_auc": 0.8403064467104732
+    },
+    "14day_round3_combined": {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.41376063869850116,
+      "recall": 0.6901815440668384,
+      "false_positive_rate": 0.17564327501875807,
+      "specificity": 0.8243567249812419,
+      "average_precision": 0.5661295486547723,
+      "roc_auc": 0.8392369347822811
+    },
+    "14day_plus_unhcr": {
+      "n": 209095,
+      "n_positives": 31838,
+      "precision": 0.4106674601551022,
+      "recall": 0.693573716942019,
+      "false_positive_rate": 0.17877432202959545,
+      "specificity": 0.8212256779704046,
+      "average_precision": 0.5661528700551991,
+      "roc_auc": 0.8389107547041068
+    }
+  },
+  "frozen_80": {
+    "10day": {
+      "round3_combined": {
+        "select_window": {
+          "n": 105800,
+          "n_positives": 15774,
+          "precision": 0.7999513263567778,
+          "recall": 0.2083808799289971,
+          "false_positive_rate": 0.00913069557683336,
+          "specificity": 0.9908693044231667,
+          "average_precision": 0.5694349029645814,
+          "roc_auc": 0.840602038466658
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 8936,
+          "precision": 0.7233856893542757,
+          "recall": 0.09277081468218443,
+          "false_positive_rate": 0.0033789545493306044,
+          "specificity": 0.9966210454506694,
+          "average_precision": 0.3786423773259567,
+          "roc_auc": 0.8270113083600128
+        }
+      },
+      "plus_unhcr": {
+        "select_window": {
+          "n": 105800,
+          "n_positives": 15774,
+          "precision": 0.7998068099492877,
+          "recall": 0.2099657664511221,
+          "false_positive_rate": 0.009208450891964544,
+          "specificity": 0.9907915491080355,
+          "average_precision": 0.5696045614292439,
+          "roc_auc": 0.8408923132164986
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 8936,
+          "precision": 0.7285464098073555,
+          "recall": 0.09310653536257833,
+          "false_positive_rate": 0.0033043404110173107,
+          "specificity": 0.9966956595889827,
+          "average_precision": 0.3758036326496403,
+          "roc_auc": 0.8230845222355285
+        }
+      }
+    },
+    "14day": {
+      "round3_combined": {
+        "select_window": {
+          "n": 105800,
+          "n_positives": 19879,
+          "precision": 0.79994360637248,
+          "recall": 0.28542683233563054,
+          "false_positive_rate": 0.01651517091281526,
+          "specificity": 0.9834848290871847,
+          "average_precision": 0.629301578584183,
+          "roc_auc": 0.8408018273125002
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 11441,
+          "precision": 0.6875891583452212,
+          "recall": 0.1263875535355301,
+          "false_positive_rate": 0.007195190064723856,
+          "specificity": 0.9928048099352761,
+          "average_precision": 0.4247362235452349,
+          "roc_auc": 0.8235171004470401
+        }
+      },
+      "plus_unhcr": {
+        "select_window": {
+          "n": 105800,
+          "n_positives": 19879,
+          "precision": 0.7999426769848094,
+          "recall": 0.28079883293928265,
+          "false_positive_rate": 0.016247483153129037,
+          "specificity": 0.9837525168468709,
+          "average_precision": 0.6289692958579187,
+          "roc_auc": 0.840970682419024
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 11441,
+          "precision": 0.6963036963036963,
+          "recall": 0.12184249628528974,
+          "false_positive_rate": 0.006658562495208682,
+          "specificity": 0.9933414375047913,
+          "average_precision": 0.4213558410365837,
+          "roc_auc": 0.8198193832875365
+        }
+      }
+    }
+  }
+}

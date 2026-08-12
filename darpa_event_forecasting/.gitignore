@@ -1,0 +1,5 @@
+# Large raw source files -- regenerable via scripts/build_discrete_event_dataset*.py
+# (real, direct, no-login download URLs documented in README.md and in-script).
+# Derived, model-ready data (the *.csv files directly under data/) IS committed.
+data_raw/
+data/pure_ucdp_v26/

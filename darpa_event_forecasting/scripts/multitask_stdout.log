@@ -1,0 +1,34 @@
+Loading round-3 dataset...
+228851 rows
+
+########## Pooled rolling-CV: multi-task joint model ##########
+
+--- 10day ---
+  occurrence: precision=0.655 recall=0.263 AUC=0.836
+  severity:   precision=0.576 recall=0.148 AUC=0.868
+
+--- 14day ---
+  occurrence: precision=0.687 recall=0.313 AUC=0.835
+  severity:   precision=0.599 recall=0.206 AUC=0.866
+
+
+########## Frozen-threshold @ 80% target: multi-task joint model ##########
+
+--- 10day / occurrence ---
+  SELECT:  precision=0.800 recall=0.185
+  HOLDOUT: precision=0.652 recall=0.087
+
+--- 10day / severity ---
+  SELECT:  precision=0.750 recall=0.001
+  HOLDOUT: precision=0.800 recall=0.002
+
+--- 14day / occurrence ---
+  SELECT:  precision=0.800 recall=0.263
+  HOLDOUT: precision=0.664 recall=0.116
+
+--- 14day / severity ---
+  SELECT:  precision=0.800 recall=0.071
+  HOLDOUT: precision=0.573 recall=0.037
+
+
+Saved ../results/multitask_model_results.json

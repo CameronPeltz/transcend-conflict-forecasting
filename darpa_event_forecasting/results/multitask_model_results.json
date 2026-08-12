@@ -1,0 +1,166 @@
+{
+  "pooled_rolling_cv": {
+    "10day": {
+      "occurrence": {
+        "n": 209095,
+        "n_positives": 25159,
+        "precision": 0.6552955176517256,
+        "recall": 0.26264954886919195,
+        "f1": 0.3749964531963794,
+        "false_positive_rate": 0.01889787752261656,
+        "specificity": 0.9811021224773835,
+        "average_precision": 0.4955463512301274,
+        "roc_auc": 0.8362832129306877
+      },
+      "severity": {
+        "n": 209095,
+        "n_positives": 10764,
+        "precision": 0.5756698044895003,
+        "recall": 0.14771460423634336,
+        "f1": 0.23510276504509833,
+        "false_positive_rate": 0.005909313218810977,
+        "specificity": 0.9940906867811891,
+        "average_precision": 0.3552727088191949,
+        "roc_auc": 0.8678933536669715
+      }
+    },
+    "14day": {
+      "occurrence": {
+        "n": 209095,
+        "n_positives": 31838,
+        "precision": 0.6868457300275482,
+        "recall": 0.3132420378164458,
+        "f1": 0.4302601492730489,
+        "false_positive_rate": 0.025652019384283836,
+        "specificity": 0.9743479806157161,
+        "average_precision": 0.5548335023382341,
+        "roc_auc": 0.8348885437800022
+      },
+      "severity": {
+        "n": 209095,
+        "n_positives": 14048,
+        "precision": 0.5992145514675485,
+        "recall": 0.20636389521640092,
+        "f1": 0.3069998941014508,
+        "false_positive_rate": 0.009941193661015037,
+        "specificity": 0.9900588063389849,
+        "average_precision": 0.41538604571769105,
+        "roc_auc": 0.8659579133782871
+      }
+    }
+  },
+  "frozen_80": {
+    "10day": {
+      "occurrence": {
+        "split_date": "2021-07-19",
+        "chosen_threshold": 0.6724530458450317,
+        "target_precision_on_select": 0.8,
+        "select_window": {
+          "n": 105800,
+          "n_positives": 15774,
+          "precision": 0.7998357064622125,
+          "recall": 0.18517814124508686,
+          "f1": 0.30073097910017504,
+          "false_positive_rate": 0.008119876480127963,
+          "specificity": 0.9918801235198721,
+          "average_precision": 0.5577662276388745,
+          "roc_auc": 0.8369559294383127
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 8936,
+          "precision": 0.6523569023569024,
+          "recall": 0.086727842435094,
+          "f1": 0.15310154089292768,
+          "false_positive_rate": 0.004402234160484352,
+          "specificity": 0.9955977658395156,
+          "average_precision": 0.3581481625058498,
+          "roc_auc": 0.8225203506269039
+        }
+      },
+      "severity": {
+        "split_date": "2021-07-19",
+        "chosen_threshold": 0.961367130279541,
+        "target_precision_on_select": 0.8,
+        "select_window": {
+          "n": 105800,
+          "n_positives": 7944,
+          "precision": 0.75,
+          "recall": 0.0011329305135951663,
+          "f1": 0.0022624434389140274,
+          "false_positive_rate": 3.065729234793983e-05,
+          "specificity": 0.999969342707652,
+          "average_precision": 0.4066720785640731,
+          "roc_auc": 0.8647140596966947
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 2395,
+          "precision": 0.8,
+          "recall": 0.0016701461377870565,
+          "f1": 0.0033333333333333335,
+          "false_positive_rate": 9.964426995625616e-06,
+          "specificity": 0.9999900355730044,
+          "average_precision": 0.17406225855363663,
+          "roc_auc": 0.824381122232877
+        }
+      }
+    },
+    "14day": {
+      "occurrence": {
+        "split_date": "2021-07-19",
+        "chosen_threshold": 0.6407144069671631,
+        "target_precision_on_select": 0.8,
+        "select_window": {
+          "n": 105800,
+          "n_positives": 19879,
+          "precision": 0.7999388192107678,
+          "recall": 0.26309170481412547,
+          "f1": 0.3959571488056933,
+          "false_positive_rate": 0.015223286507373052,
+          "specificity": 0.984776713492627,
+          "average_precision": 0.6195942842086755,
+          "roc_auc": 0.8366991500027665
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 11441,
+          "precision": 0.66449020592667,
+          "recall": 0.11563674503976926,
+          "f1": 0.19699225729600953,
+          "false_positive_rate": 0.007315657478288487,
+          "specificity": 0.9926843425217116,
+          "average_precision": 0.40994824960235576,
+          "roc_auc": 0.8192961922507798
+        }
+      },
+      "severity": {
+        "split_date": "2021-07-19",
+        "chosen_threshold": 0.7939430475234985,
+        "target_precision_on_select": 0.8,
+        "select_window": {
+          "n": 105800,
+          "n_positives": 10379,
+          "precision": 0.7995666305525461,
+          "recall": 0.07110511609981694,
+          "f1": 0.13059635462749955,
+          "false_positive_rate": 0.0019387765795789186,
+          "specificity": 0.998061223420421,
+          "average_precision": 0.4782411885686304,
+          "roc_auc": 0.8641341896586421
+        },
+        "holdout_window": {
+          "n": 102752,
+          "n_positives": 3151,
+          "precision": 0.5728155339805825,
+          "recall": 0.037448429070136464,
+          "f1": 0.07030086386654752,
+          "false_positive_rate": 0.0008835252658105842,
+          "specificity": 0.9991164747341894,
+          "average_precision": 0.19781464624386624,
+          "roc_auc": 0.8177624484944691
+        }
+      }
+    }
+  }
+}

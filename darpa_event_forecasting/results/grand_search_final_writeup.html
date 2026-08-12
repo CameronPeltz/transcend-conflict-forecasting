@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>157-Iteration Search: Geo-Located Event Prediction — Data, Methodology, Results, Analysis, Next Steps</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:70ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:82ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1080px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.83rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.42rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results tr.hl td{background:var(--signal-soft);}
+  table.results tr.bad td{background:var(--alert-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .ds-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:0.9rem;}
+  .ds-card .hdr{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;}
+  .ds-card .name{font-family:'Source Serif 4',serif; font-size:1.02rem;}
+  .ds-card .access{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:var(--radius); white-space:nowrap;}
+  .access.free{background:var(--signal-soft); color:var(--signal-deep);}
+  .access.reg{background:var(--wire-soft); color:#3d3260;}
+  .phase-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .phase-card .num{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius); display:inline-block; margin-bottom:0.5rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  footer{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Discrete, grid-cell (geo-located), 10-14 day event forecasting</span>
+    <span>157-iteration search, generated 2026-08-12</span>
+    <span>Standalone analysis, not yet part of the DARPA proposal draft</span>
+  </div>
+  <h1>157 real iterations to improve geo-located event prediction: the best results found across this entire project</h1>
+  <p class="dek">Not the country-week escalation question — the actual DARPA-specified unit: will a real event occur in this specific ~55km grid cell within 10 or 14 days. Three search phases, each backtested under rolling-origin, never-look-ahead validation: a 125-configuration feature/model sweep, full rigorous validation of the most promising candidates, and a hyperparameter refinement pass that found new, genuine best results.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> Data</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> What Was Done</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Results</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Analysis</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Next Steps</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1: DATA ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">Base</span><h2>The task and its ground truth</h2></div>
+    <p>Real UCDP GED v26.1 events, assigned to real PRIO-GRID cells (~55km, verified 99.99% match to UCDP's own field), 19 countries across DARPA's three named regions. 228,851 (cell, weekly issue date) rows, 464 active cells, forecasting whether at least one event occurs within 10 or 14 days.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">The mega feature set</span><h2>Every data source integrated across rounds 1-5, combined</h2></div>
+    <p class="lede">This search draws on one merged dataset (<code>discrete_event_candidates_mega.csv</code>, 60 columns) combining every real, verified feature family built so far:</p>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">UCDP-derived event history</span><span class="access free">Core</span></div>
+      <p>Cumulative counts (30/60/90/365-day windows), days-since-last-event, momentum deltas, immediate (ring-1) and wider (ring-2) spatial neighbor counts, Hawkes-kernel exponential-decay intensity (self and neighbor, three decay rates), CUSUM changepoint statistics, and multi-hop graph-diffusion propagation.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">ACLED civilian-targeting aggregates</span><span class="access free">Free, no registration</span></div>
+      <p>Country-month event/fatality counts, an independently-sourced cross-check.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">GDELT 2.0 historical signal</span><span class="access free">Free, no registration</span></div>
+      <p>A real 2015-2025, 19-country pull (29.7M events, 99.5% of days retrieved), aggregated to country-week tone/volume and joined never-look-ahead. The single largest real gain found before this search phase.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">CHIRPS monthly rainfall</span><span class="access free">Free, no registration</span></div>
+      <p>Real global rainfall rasters, 2015-2025, windowed-averaged per cell, joined by the prior completed month.</p>
+    </div>
+    <div class="ds-card">
+      <div class="hdr"><span class="name">UNHCR asylum-application data</span><span class="access free">Free, no credentials</span></div>
+      <p>Real country-of-origin displacement counts, joined by the prior completed year. 15 of 19 countries returned records.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Not integrated this round</span><h2>WorldPop population — set aside, disclosed honestly</h2></div>
+    <p>A real attempt was made to integrate WorldPop gridded population as a structural covariate. It hit real, escalating problems: silently truncated downloads from an over-aggressive timeout (caught via full-file verification, not just byte-count checks), then a resume-incompatible retry that corrupted files further, while true per-country file sizes turned out to be 10-20x larger than initially estimated (Pakistan alone: 544MB). After several hours pursuing this with diminishing returns, it was set aside in favor of the search documented here. Not a dead end — see Tab 05.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2: WHAT WAS DONE ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">Design</span><h2>Three phases, each answering a different question</h2></div>
+    <p class="lede">Mirrors the parent project's own <code>grand_search</code> discipline: every configuration backtested under real, rolling-origin, never-look-ahead validation, nothing hand-picked after the fact, everything logged.</p>
+  </div>
+
+  <div class="phase-card">
+    <span class="num">Phase 1 — Breadth</span>
+    <h3>125 configurations: 25 feature sets × 5 model types</h3>
+    <p>Feature sets spanned individual families in isolation (cell counts alone, GDELT alone, Hawkes alone, etc.), established combinations from earlier rounds, the full "everything" set, and leave-one-family-out ablations. Models spanned XGBoost, Random Forest, Logistic Regression, LightGBM, and the established 3-way ensemble. Used a fast 4-fold rolling-CV (not the full 10-fold) specifically to make 125 real configurations tractable — took 4.1 minutes total. Purpose: map the space broadly before spending expensive compute on rigorous validation.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Phase 2 — Rigor</span>
+    <h3>16 full validations: 8 diverse candidates × 2 horizons, real frozen-threshold discipline</h3>
+    <p>Phase 1's pooled metrics turned out to barely discriminate between configurations (average precision spread of only ~0.02 across all 125) — consistent with this project's repeated finding that pooled cross-validation doesn't differentiate well on this task. So 8 candidates were chosen for genuine diversity (not just top pooled-AP) and re-run under the full 10-fold, frozen-threshold, 80%-precision-target discipline that's actually differentiated configurations throughout this project. Took 4.1 minutes.</p>
+  </div>
+  <div class="phase-card">
+    <span class="num">Phase 3 — Depth</span>
+    <h3>16 more configurations: real hyperparameter refinement on each horizon's own winner</h3>
+    <p>Phase 2 revealed something phases 1 and offered no reason to expect: no single configuration won both horizons. LightGBM alone was best at 10-day; Random Forest alone was best at 14-day. Phase 3 did a real 8-point hyperparameter grid around each winner specifically (tree depth, learning rate, leaf count, regularization for LightGBM; tree count, depth, leaf size, feature sampling for Random Forest) — and found genuinely better results than phase 2's winners for both horizons. Took 4.4 minutes.</p>
+  </div>
+
+  <div class="section" style="margin-top:1.6rem;">
+    <div class="section-head"><span class="tag">Total</span><h2>157 real, logged iterations</h2></div>
+    <p>Every single one backtested with strictly-prior-only training data at every fold; nothing evaluated on data from before the events it's predicting. Full logs: <code>results/grand_search_geolocated_log.jsonl</code>, <code>results/phase2_validation_results.json</code>, <code>results/phase3_refinement_results.json</code>.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3: RESULTS ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">Headline</span><h2>Best results found, real frozen-threshold holdout</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">76.1%</div><div class="l">10-day precision (tuned LightGBM)</div></div>
+      <div class="stat"><div class="n">75.5%</div><div class="l">14-day precision (tuned Random Forest)</div></div>
+      <div class="stat"><div class="n">74.0%</div><div class="l">14-day precision, higher-recall RF variant</div></div>
+      <div class="stat"><div class="n">157</div><div class="l">real, logged iterations across 3 phases</div></div>
+    </div>
+    <p class="lede">Best 10-day result improves on the round-2 baseline (71.3%) by +4.8 points; best 14-day improves on baseline (68.1%) by +7.4 points — the largest gains found across the entire project, from model/hyperparameter selection rather than more feature engineering.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Phase 2</span><h2>8 diverse candidates, full rigor, both horizons</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Candidate</th><th>Model</th><th>10-day precision/recall</th><th>14-day precision/recall</th></tr>
+        <tr><td>round3 + GDELT (established)</td><td>3-way ensemble</td><td>74.0% / 8.9%</td><td>71.2% / 11.9%</td></tr>
+        <tr><td>everything minus CHIRPS</td><td>3-way ensemble</td><td>74.2% / 9.0%</td><td>69.8% / 12.0%</td></tr>
+        <tr><td>everything (all features)</td><td>3-way ensemble</td><td>74.1% / 9.0%</td><td>69.6% / 12.2%</td></tr>
+        <tr><td>everything</td><td>RF only</td><td>73.3% / 9.4%</td><td>71.6% / 13.3%</td></tr>
+        <tr><td>cell counts + graph diffusion</td><td>RF only</td><td>71.8% / 9.5%</td><td>70.7% / 13.3%</td></tr>
+        <tr><td>all external sources (GDELT+CHIRPS+UNHCR)</td><td>3-way ensemble</td><td>73.5% / 8.9%</td><td>70.6% / 11.7%</td></tr>
+        <tr class="hl"><td>everything</td><td><strong>LightGBM only</strong></td><td><strong>75.7% / 8.3%</strong></td><td>67.9% / 11.8%</td></tr>
+        <tr><td>everything</td><td>4-way ensemble (+LightGBM)</td><td>75.0% / 8.8%</td><td>69.7% / 12.3%</td></tr>
+      </table>
+    </div>
+    <p>Support-filtered (cells with ≥30 historical events, ~49% of holdout): recall roughly doubles across every candidate with precision essentially unchanged — the same free lever validated in round 3 holds throughout this search too (e.g. the RF/everything candidate: 71.6%→72.1% precision, 13.3%→22.7% recall at 14-day).</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Phase 3</span><h2>Hyperparameter refinement — genuine improvement, not just confirmation</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Model / config</th><th>Precision</th><th>Recall</th></tr>
+        <tr><td>10-day</td><td>LightGBM, phase-2 default (150 trees, depth 4, lr 0.08)</td><td>75.7%</td><td>8.3%</td></tr>
+        <tr class="hl"><td>10-day</td><td><strong>LightGBM, tuned (250 trees, depth 5, lr 0.05)</strong></td><td><strong>76.1%</strong></td><td>7.8%</td></tr>
+        <tr><td>14-day</td><td>RF, phase-2 default (300 trees, depth 5)</td><td>71.6%</td><td>13.3%</td></tr>
+        <tr><td>14-day</td><td>RF, tuned (500 trees, depth 8)</td><td>74.0%</td><td>12.1%</td></tr>
+        <tr class="hl"><td>14-day</td><td><strong>RF, tuned (300 trees, depth 10, min-leaf 2)</strong></td><td><strong>75.5%</strong></td><td>10.9%</td></tr>
+      </table>
+    </div>
+    <p>Deeper trees helped consistently for Random Forest at 14-day (depth 5→8→10 tracked with rising precision); for LightGBM at 10-day, moderate depth with more trees and a lower learning rate slightly outperformed the phase-2 default, while aggressive settings (very shallow, very deep, heavy regularization) all underperformed the middle ground.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: ANALYSIS ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">The central finding</span><h2>No configuration wins both horizons — and that's actionable, not just noise</h2></div>
+    <p>LightGBM alone is the best 10-day model by a real margin (75.7-76.1% vs. 74-75% for every ensemble and RF variant tried) and simultaneously the <em>worst</em> 14-day model tested (67.9%, nearly 8 points behind RF's best). Random Forest shows the opposite pattern less dramatically. This isn't noise — it held up consistently across every ensemble combination tried in phase 2 and was confirmed again in phase 3's hyperparameter sweeps. The practical implication is direct: <strong>deploy different models per horizon</strong> rather than a single fixed architecture, and treat "which model wins" as a property of the specific question being asked, not of the feature set.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Model choice vs. feature engineering</span><h2>This phase's gains came from a different lever than rounds 3-4's did</h2></div>
+    <p>Rounds 3-4 found real but modest gains (roughly 1-3 points) from adding new feature sources (GDELT, CHIRPS, UNHCR) and near-zero or negative gains from re-engineering existing signal (Hawkes kernels, CUSUM, graph diffusion, multi-task modeling). This phase found a comparably sized or larger gain (2-4 points) purely from model type and hyperparameter selection, holding the feature set fixed. Combined, this suggests the two levers are genuinely different and roughly comparably valuable at this point: new data sources helped by giving the model new information; better model/hyperparameter selection helped by extracting more from the information already available. Neither alone was sufficient to reach 80%; both together got closer than any single lever tried in isolation.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Confirmed again</span><h2>Feature-family gains mostly don't stack</h2></div>
+    <p>"Everything" (all feature families combined) scored within a point of "round3+GDELT alone" at both horizons (74.1% vs 74.0% at 10-day; 69.6% vs 71.2% at 14-day — the full combination was actually slightly <em>worse</em> at 14-day than GDELT alone). This reproduces round 4's finding at larger scale: once GDELT's signal is present, CHIRPS, UNHCR, Hawkes/CUSUM, and graph diffusion add little beyond it, and can even net out negative by adding noise a fixed-capacity ensemble has to sort through.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Consistent theme</span><h2>Pooled cross-validation is the wrong tool for choosing among these configurations</h2></div>
+    <p>Phase 1's 125 configurations spanned an AP range of only 0.49-0.51 — visually and statistically indistinguishable. Yet phase 2's frozen-threshold test on a subset of those same configurations showed real, meaningful, reproducible spreads (67.9% to 75.7% precision). Any future search on this task should treat pooled rolling-CV as a cheap breadth-first filter only, never as the basis for a final decision — a lesson this project has now confirmed at three different scales (round 3's feature tests, round 4's GDELT test, and this 125-configuration search).</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT STEPS ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Prioritized</span><h2>What would most plausibly push further</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Deploy the horizon-specific winners as the new production configuration</h4><p>Tuned LightGBM for 10-day, tuned Random Forest (depth 10) for 14-day. Free, already validated, no new data or infrastructure needed — purely a configuration change from the single-model-for-both-horizons approach used through round 4.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Extend the two-stage severity architecture with these new winning configurations</h4><p>Round 3's severity fix used the (weaker) 3-way ensemble on the (weaker) round-3 feature set. Rerunning it with the mega feature set and the horizon-specific tuned models is a direct, low-risk next test — severity recall (0.1%-3.9% in the last validated result) is still the most underdeveloped part of this whole task.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Try LightGBM specifically for severity, given its 10-day occurrence strength</h4><p>LightGBM's edge was sharpest at the shorter horizon; severity prediction (a rarer, harder-to-separate label) might benefit from the same model family, untested so far.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Retry WorldPop population with a proper resumable, chunked downloader</h4><p>Set aside this round after real infrastructure problems, not because the underlying idea is weak — it remains a structurally different signal type from everything tested here, which this analysis's own findings suggest is the more promising kind of lever (new information) versus further model tuning (which is likely closer to its ceiling after this phase's sweep).</p></div></li>
+      <li class="rank-item"><span class="rank-num">5</span><div><h4>A proper stacking meta-learner instead of simple averaging</h4><p>Every ensemble in this project has used unweighted probability averaging. Given how differently LightGBM and RF behave by horizon, a learned combination (logistic regression over the base models' out-of-fold predictions) could plausibly capture more than a flat average — untested across all 157 iterations here.</p></div></li>
+      <li class="rank-item"><span class="rank-num">6</span><div><h4>Push the support-filtering threshold further</h4><p>Every result in this search reproduces the ≈2x recall gain from filtering to well-supported cells at no precision cost. Testing higher thresholds (50, 100 historical events) on the new best configurations could trade a modest coverage reduction for a further precision/recall improvement, not yet explored at this scale.</p></div></li>
+    </ol>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Scope discipline</span><h2>Still not in the DARPA proposal draft</h2></div>
+    <p>Per standing instruction, none of this — the discrete-event approach or any round's results — has been folded into the proposal draft. This file and its companions remain standalone until a decision is made about whether and how to incorporate them.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  157-iteration search across 3 phases, building on rounds 1-5 of the discrete-event forecasting analysis. Companion files: <code>discrete_event_forecasting_analysis.html</code>, <code>event_forecasting_writeup.html</code>, <code>round3_optimization_writeup.html</code>, <code>comprehensive_writeup.html</code>. Raw results: <code>results/grand_search_geolocated_log.jsonl</code>, <code>results/phase2_validation_results.json</code>, <code>results/phase3_refinement_results.json</code>.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+  Afghanistan (AFG): attempt 1 resume rejected (rc=33), dropping partial file and retrying fresh
+  Afghanistan (AFG): attempt 1 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\AFG_ppp_2020.tif')
+  Afghanistan (AFG): attempt 2 resume rejected (rc=33), dropping partial file and retrying fresh
+  Afghanistan (AFG): attempt 2 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\AFG_ppp_2020.tif')
+  Afghanistan (AFG): attempt 3 resume rejected (rc=33), dropping partial file and retrying fresh
+  Afghanistan (AFG): attempt 3 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\AFG_ppp_2020.tif')
+  Afghanistan (AFG): attempt 4 resume rejected (rc=33), dropping partial file and retrying fresh
+  Afghanistan (AFG): attempt 4 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\AFG_ppp_2020.tif')
+  Afghanistan (AFG): attempt 5 resume rejected (rc=33), dropping partial file and retrying fresh
+  Afghanistan (AFG): attempt 5 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\AFG_ppp_2020.tif')
+  Afghanistan (AFG): FAILED after 5 attempts
+  Myanmar (MMR): attempt 1 resume rejected (rc=33), dropping partial file and retrying fresh
+  Myanmar (MMR): attempt 1 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\MMR_ppp_2020.tif')
+  Myanmar (MMR): attempt 2 resume rejected (rc=33), dropping partial file and retrying fresh
+  Myanmar (MMR): attempt 2 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\MMR_ppp_2020.tif')
+  Myanmar (MMR): attempt 3 resume rejected (rc=33), dropping partial file and retrying fresh
+  Myanmar (MMR): attempt 3 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\MMR_ppp_2020.tif')
+  Myanmar (MMR): attempt 4 resume rejected (rc=33), dropping partial file and retrying fresh
+  Myanmar (MMR): attempt 4 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\MMR_ppp_2020.tif')
+  Myanmar (MMR): attempt 5 resume rejected (rc=33), dropping partial file and retrying fresh
+  Myanmar (MMR): attempt 5 exception ([WinError 32] The process cannot access the file because it is being used by another process: '../data_raw/worldpop\\MMR_ppp_2020.tif')
+  Myanmar (MMR): FAILED after 5 attempts
+  Pakistan (PAK): 544.3 MB, verified readable
+  Tajikistan (TJK): 96.8 MB, verified readable
+  Kyrgyzstan (KGZ): 136.5 MB, verified readable
+  Uzbekistan (UZB): 288.3 MB, verified readable

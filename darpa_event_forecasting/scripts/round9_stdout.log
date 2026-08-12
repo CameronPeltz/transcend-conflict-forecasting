@@ -1,0 +1,74 @@
+Loading mega dataset...
+228851 rows, 60 cols
+
+===== GROUP A: severity target-precision fine grid (45/50/55/60/65/70%), both horizons =====
+[A_severity_target45_10day] label_10day severity @ target=0.45: HOLDOUT precision=0.249 recall=0.157 thr=0.4811 (8.2s)
+[A_severity_target45_14day] label_14day severity @ target=0.45: HOLDOUT precision=0.292 recall=0.260 thr=0.3942 (34.4s)
+[A_severity_target50_10day] label_10day severity @ target=0.5: HOLDOUT precision=0.273 recall=0.121 thr=0.5335 (6.6s)
+[A_severity_target50_14day] label_14day severity @ target=0.5: HOLDOUT precision=0.332 recall=0.209 thr=0.4441 (34.4s)
+[A_severity_target55_10day] label_10day severity @ target=0.55: HOLDOUT precision=0.293 recall=0.090 thr=0.5849 (6.8s)
+[A_severity_target55_14day] label_14day severity @ target=0.55: HOLDOUT precision=0.361 recall=0.161 thr=0.4899 (34.7s)
+[A_severity_target60_10day] label_10day severity @ target=0.6: HOLDOUT precision=0.349 recall=0.056 thr=0.6499 (6.8s)
+[A_severity_target60_14day] label_14day severity @ target=0.6: HOLDOUT precision=0.403 recall=0.116 thr=0.5432 (34.9s)
+[A_severity_target65_10day] label_10day severity @ target=0.65: HOLDOUT precision=0.933 recall=0.006 thr=0.9520 (6.7s)
+[A_severity_target65_14day] label_14day severity @ target=0.65: HOLDOUT precision=0.450 recall=0.076 thr=0.5984 (34.5s)
+[A_severity_target70_10day] label_10day severity @ target=0.7: HOLDOUT precision=0.933 recall=0.006 thr=0.9520 (6.9s)
+[A_severity_target70_14day] label_14day severity @ target=0.7: HOLDOUT precision=0.507 recall=0.048 thr=0.6471 (34.5s)
+
+  -- select-window chosen thresholds by target, 10-day (the diagnostic itself) --
+     target=0.45 -> chosen_threshold=0.4811, select_precision=0.450, holdout_precision=0.249
+     target=0.50 -> chosen_threshold=0.5335, select_precision=0.500, holdout_precision=0.273
+     target=0.55 -> chosen_threshold=0.5849, select_precision=0.550, holdout_precision=0.293
+     target=0.60 -> chosen_threshold=0.6499, select_precision=0.600, holdout_precision=0.349
+     target=0.65 -> chosen_threshold=0.9520, select_precision=0.600, holdout_precision=0.933
+     target=0.70 -> chosen_threshold=0.9520, select_precision=0.600, holdout_precision=0.933
+
+===== GROUP B: support-filter stability, 2 more split points (0.45, 0.75) =====
+[B_stability_split45_10day] label_10day: HOLDOUT precision=0.742 recall=0.155 n=137223 thr=0.902 (21.9s)
+[B_stability_split45_14day] label_14day: HOLDOUT precision=0.748 recall=0.204 n=137223 thr=0.850 (20.6s)
+[B_stability_split75_10day] label_10day: HOLDOUT precision=0.821 recall=0.085 n=65785 thr=0.915 (36.7s)
+[B_stability_split75_14day] label_14day: HOLDOUT precision=0.782 recall=0.130 n=65785 thr=0.866 (35.3s)
+
+===== GROUP C: WorldPop vs. event-history features -- a clean 3-way ablation on covered cells =====
+  254 covered cells (real WorldPop coverage, no new download)
+  Pearson correlation, worldpop_population vs. existing features (covered cells): {'cell_count_365d': 0.05844925121768921, 'neighbor_count_30d': -0.04879956614657462, 'n_hist_events_total': 0.07355951248747514}
+[C_worldpop_only_label_10day] label_10day: HOLDOUT precision=0.000 recall=0.000 n=56770 thr=0.958 (1.2s)
+[C_history_only_label_10day] label_10day: HOLDOUT precision=0.710 recall=0.087 n=56770 thr=0.911 (3.9s)
+[C_combined_label_10day] label_10day: HOLDOUT precision=0.717 recall=0.102 n=56770 thr=0.903 (4.0s)
+  label_10day: pop_only AP=0.091 (vs. history_only AP=0.386) -- combined adds +0.007 precision over history_only
+[C_worldpop_only_label_14day] label_14day: HOLDOUT precision=0.233 recall=0.083 n=56770 thr=0.855 (7.4s)
+[C_history_only_label_14day] label_14day: HOLDOUT precision=0.738 recall=0.139 n=56770 thr=0.833 (18.2s)
+[C_combined_label_14day] label_14day: HOLDOUT precision=0.733 recall=0.141 n=56770 thr=0.831 (18.0s)
+  label_14day: pop_only AP=0.121 (vs. history_only AP=0.477) -- combined adds -0.005 precision over history_only
+
+===== GROUP D: severity deploy configs, support-filter reporting added =====
+  10-day severity: choosing target=0.65 (best recall among targets with >=50% actual holdout precision; falls back to 0.70 if none qualify)
+[D_severity_deploy_10day] label_10day severity @ target=0.65: HOLDOUT precision=0.933 recall=0.006 thr=0.9520 (6.8s)
+[D_severity_deploy_14day] label_14day severity @ target=0.6: HOLDOUT precision=0.403 recall=0.116 thr=0.5432 (34.4s)
+
+===== GROUP E: multi-split ensemble -- 5 time-robust fits, averaged on one common eval window =====
+  common evaluation window: 78138 rows, split_date >= 2022-08-22
+[E_base_split50_label_10day] label_10day: HOLDOUT precision=0.838 recall=0.065 n=78138 thr=0.902 (23.9s)
+[E_base_split55_label_10day] label_10day: HOLDOUT precision=0.824 recall=0.065 n=78138 thr=0.901 (26.4s)
+[E_base_split60_label_10day] label_10day: HOLDOUT precision=0.840 recall=0.069 n=78138 thr=0.903 (28.4s)
+[E_base_split65_label_10day] label_10day: HOLDOUT precision=0.843 recall=0.068 n=78138 thr=0.904 (30.8s)
+[E_base_split70_label_10day] label_10day: HOLDOUT precision=0.815 recall=0.070 n=78138 thr=0.912 (33.3s)
+[E_ensemble_label_10day] label_10day: common-window precision=0.837 recall=0.066 n=78138 (vs. single-split-0.6 on same common window, see comparison below)
+     single 0.6-split model on same common window: precision=0.840 recall=0.069
+[E_base_split50_label_14day] label_14day: HOLDOUT precision=0.803 recall=0.090 n=78138 thr=0.863 (22.8s)
+[E_base_split55_label_14day] label_14day: HOLDOUT precision=0.795 recall=0.094 n=78138 thr=0.864 (25.3s)
+[E_base_split60_label_14day] label_14day: HOLDOUT precision=0.794 recall=0.102 n=78138 thr=0.860 (27.4s)
+[E_base_split65_label_14day] label_14day: HOLDOUT precision=0.798 recall=0.106 n=78138 thr=0.869 (30.0s)
+[E_base_split70_label_14day] label_14day: HOLDOUT precision=0.774 recall=0.112 n=78138 thr=0.869 (33.0s)
+[E_ensemble_label_14day] label_14day: common-window precision=0.793 recall=0.100 n=78138 (vs. single-split-0.6 on same common window, see comparison below)
+     single 0.6-split model on same common window: precision=0.794 recall=0.102
+
+===== GROUP F: final round-9 combined recipe =====
+[F_final_10day] label_10day: HOLDOUT precision=0.786 recall=0.078 n=102752 thr=0.903 (28.4s)
+[F_final_14day] label_14day: HOLDOUT precision=0.755 recall=0.109 n=102752 thr=0.860 (27.4s)
+
+===== GROUP G: adaptive follow-up =====
+
+
+TOTAL: 38 real iterations logged, 13.3 min
+Saved ../results/round9_results.json and ../results/round9_log.jsonl

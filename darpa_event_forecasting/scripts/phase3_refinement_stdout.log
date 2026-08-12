@@ -1,0 +1,23 @@
+Loading mega dataset...
+
+########## LightGBM hyperparameter sweep, 10-day ##########
+[1/8] {'n_estimators': 150, 'max_depth': 4, 'learning_rate': 0.08, 'num_leaves': 31}: HOLDOUT precision=0.757 recall=0.083 (5s)
+[2/8] {'n_estimators': 100, 'max_depth': 3, 'learning_rate': 0.1, 'num_leaves': 15}: HOLDOUT precision=0.724 recall=0.089 (3s)
+[3/8] {'n_estimators': 250, 'max_depth': 5, 'learning_rate': 0.05, 'num_leaves': 31}: HOLDOUT precision=0.761 recall=0.078 (6s)
+[4/8] {'n_estimators': 150, 'max_depth': 4, 'learning_rate': 0.08, 'num_leaves': 63}: HOLDOUT precision=0.757 recall=0.083 (3s)
+[5/8] {'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.03, 'num_leaves': 63}: HOLDOUT precision=0.760 recall=0.067 (8s)
+[6/8] {'n_estimators': 80, 'max_depth': 3, 'learning_rate': 0.15, 'num_leaves': 15}: HOLDOUT precision=0.749 recall=0.083 (2s)
+[7/8] {'n_estimators': 150, 'max_depth': 4, 'learning_rate': 0.08, 'num_leaves': 31, 'min_child_samples': 10}: HOLDOUT precision=0.744 recall=0.079 (3s)
+[8/8] {'n_estimators': 150, 'max_depth': 4, 'learning_rate': 0.08, 'num_leaves': 31, 'reg_alpha': 0.1, 'reg_lambda': 0.1}: HOLDOUT precision=0.756 recall=0.083 (3s)
+
+########## Random Forest hyperparameter sweep, 14-day ##########
+[1/8] {'n_estimators': 300, 'max_depth': 5, 'min_samples_leaf': 5}: HOLDOUT precision=0.716 recall=0.133 (17s)
+[2/8] {'n_estimators': 500, 'max_depth': 8, 'min_samples_leaf': 3}: HOLDOUT precision=0.740 recall=0.121 (38s)
+[3/8] {'n_estimators': 200, 'max_depth': 6, 'min_samples_leaf': 8}: HOLDOUT precision=0.718 recall=0.129 (14s)
+[4/8] {'n_estimators': 800, 'max_depth': 6, 'min_samples_leaf': 5}: HOLDOUT precision=0.720 recall=0.129 (49s)
+[5/8] {'n_estimators': 300, 'max_depth': 10, 'min_samples_leaf': 2}: HOLDOUT precision=0.755 recall=0.109 (28s)
+[6/8] {'n_estimators': 300, 'max_depth': 5, 'min_samples_leaf': 5, 'max_features': 'sqrt'}: HOLDOUT precision=0.716 recall=0.133 (17s)
+[7/8] {'n_estimators': 300, 'max_depth': 5, 'min_samples_leaf': 5, 'max_features': 0.5}: HOLDOUT precision=0.677 recall=0.138 (41s)
+[8/8] {'n_estimators': 400, 'max_depth': 7, 'min_samples_leaf': 4}: HOLDOUT precision=0.731 recall=0.124 (28s)
+
+Saved phase3_refinement_results.json. Total time 4.4 min

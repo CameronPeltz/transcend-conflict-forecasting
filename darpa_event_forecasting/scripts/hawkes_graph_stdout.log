@@ -1,0 +1,25 @@
+
+
+============ Hawkes+CUSUM: ../data/discrete_event_candidates_v6_hawkes_cusum.csv ============
+  [pooled] 10day/round3_combined: precision=0.346 recall=0.698 AP=0.512 AUC=0.841
+  [pooled] 10day/plus_hawkes_cusum: precision=0.345 recall=0.701 AP=0.513 AUC=0.841
+  [pooled] 14day/round3_combined: precision=0.414 recall=0.690 AP=0.566 AUC=0.839
+  [pooled] 14day/plus_hawkes_cusum: precision=0.413 recall=0.693 AP=0.566 AUC=0.840
+  [frozen80] 10day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.723 r=0.093
+  [frozen80] 10day/plus_hawkes_cusum: SELECT p=0.800 -> HOLDOUT p=0.717 r=0.092
+  [frozen80] 14day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.688 r=0.126
+  [frozen80] 14day/plus_hawkes_cusum: SELECT p=0.800 -> HOLDOUT p=0.679 r=0.130
+
+
+============ Graph Diffusion: ../data/discrete_event_candidates_v7_graphdiffusion.csv ============
+  [pooled] 10day/round3_combined: precision=0.346 recall=0.698 AP=0.512 AUC=0.841
+  [pooled] 10day/plus_graph_diffusion: precision=0.345 recall=0.701 AP=0.513 AUC=0.841
+  [pooled] 14day/round3_combined: precision=0.414 recall=0.690 AP=0.566 AUC=0.839
+  [pooled] 14day/plus_graph_diffusion: precision=0.414 recall=0.694 AP=0.567 AUC=0.840
+  [frozen80] 10day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.723 r=0.093
+  [frozen80] 10day/plus_graph_diffusion: SELECT p=0.800 -> HOLDOUT p=0.724 r=0.091
+  [frozen80] 14day/round3_combined: SELECT p=0.800 -> HOLDOUT p=0.688 r=0.126
+  [frozen80] 14day/plus_graph_diffusion: SELECT p=0.800 -> HOLDOUT p=0.699 r=0.123
+
+
+Saved ../results/hawkes_graph_results.json

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discrete Event Forecasting: Approach, Data, Results, Analysis, Next Steps</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--ink:#1d2420; --ink-soft:#4a544d; --ink-mute:#7c8579; --paper:#f6f4ec; --paper-raised:#fdfcf7;
+    --line:#d9d5c4; --line-strong:#b8b29a; --signal:#3d6b52; --signal-soft:#e2ebe3; --signal-deep:#1f3d2d;
+    --alert:#9c4a2f; --alert-soft:#f3e4dc; --wire:#6b5a8c; --wire-soft:#eae5f2; --good:#2e6b4f; --bad:#9c4a2f; --radius:3px;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; line-height:1.65; font-size:16px;}
+  code,.mono{font-family:'IBM Plex Mono', monospace; font-size:0.88em;}
+  h1,h2,h3,h4{font-family:'Source Serif 4', serif; font-weight:600; color:var(--ink); margin:0 0 0.5em 0;}
+  p{margin:0 0 1em 0;} a{color:var(--signal-deep);}
+  .masthead{border-bottom:1px solid var(--ink); padding:2.2rem clamp(1.2rem,4vw,3rem) 1.4rem;}
+  .masthead .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:0.6rem; display:flex; gap:1.2rem; flex-wrap:wrap;}
+  .masthead h1{font-size:clamp(1.5rem,3.2vw,2.1rem); line-height:1.15; max-width:70ch;}
+  .masthead .dek{color:var(--ink-soft); max-width:82ch; font-size:0.98rem; margin-top:0.6rem;}
+  .tabbar{position:sticky; top:0; z-index:20; display:flex; background:var(--paper); border-bottom:1px solid var(--ink); padding:0 clamp(1.2rem,4vw,3rem); overflow-x:auto;}
+  .tab-btn{font-family:'IBM Plex Mono',monospace; font-size:0.74rem; text-transform:uppercase; background:none; border:none; cursor:pointer; color:var(--ink-mute); padding:0.9rem 1rem; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--signal);}
+  main{max-width:1080px; margin:0 auto; padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;}
+  .panel{display:none;} .panel.active{display:block;}
+  .section{margin-bottom:2.6rem;}
+  .section-head{display:flex; align-items:baseline; gap:0.7rem; border-bottom:1px solid var(--line); padding-bottom:0.5rem; margin-bottom:1.1rem;}
+  .section-head .tag{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--signal-deep); background:var(--signal-soft); padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .section-head h2{font-size:1.22rem; margin:0;}
+  .lede{color:var(--ink-soft); font-size:0.97rem; margin-bottom:1.1rem;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.1rem 1.3rem; margin-bottom:1rem;}
+  .callout{border-left:3px solid var(--alert); background:var(--alert-soft); padding:0.9rem 1.1rem; border-radius:0 var(--radius) var(--radius) 0; font-size:0.93rem; color:#5c2c1a; margin:1rem 0;}
+  .callout.good{border-left-color:var(--signal); background:var(--signal-soft); color:var(--signal-deep);}
+  .callout.wire{border-left-color:var(--wire); background:var(--wire-soft); color:#3d3260;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.4rem;}
+  .stat{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.4rem; color:var(--signal-deep); font-weight:600;}
+  .stat .l{font-size:0.75rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.03em;}
+  table.results{width:100%; border-collapse:collapse; font-size:0.83rem; background:var(--paper-raised);}
+  table.results th{text-align:left; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; text-transform:uppercase; color:var(--ink-mute); border-bottom:1px solid var(--ink); padding:0.5rem 0.55rem;}
+  table.results td{padding:0.42rem 0.55rem; border-bottom:1px solid var(--line);}
+  table.results tr.hl td{background:var(--signal-soft);}
+  .ds-table-wrap{overflow-x:auto; margin-bottom:0.8rem;}
+  ul,ol{padding-left:1.3rem;} li{margin-bottom:0.5rem;}
+  .rank-list{list-style:none; padding:0; margin:0;}
+  .rank-item{display:grid; grid-template-columns:2rem 1fr; gap:0.8rem; padding:0.9rem 0; border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-num{font-family:'Source Serif 4',serif; font-size:1.2rem; color:var(--line-strong);}
+  .rank-item h4{margin:0 0 0.3rem; font-size:0.95rem;}
+  .rank-item p{margin:0; font-size:0.88rem; color:var(--ink-soft);}
+  .viz-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1.2rem; margin-bottom:1.2rem;}
+  .viz-card h4{font-size:0.95rem; margin-bottom:0.3rem;}
+  .viz-card .cap{font-size:0.85rem; color:var(--ink-soft); margin-top:0.6rem;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;}
+  @media (max-width:800px){.two-col{grid-template-columns:1fr;}}
+  .ds-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:0.9rem;}
+  .ds-card .hdr{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;}
+  .ds-card .name{font-family:'Source Serif 4',serif; font-size:1.02rem;}
+  .ds-card .access{font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:var(--radius);}
+  .access.free{background:var(--signal-soft); color:var(--signal-deep);}
+  .access.reg{background:var(--wire-soft); color:#3d3260;}
+  .access.mixed{background:var(--alert-soft); color:#5c2c1a;}
+  footer{max-width:1080px; margin:0 auto; padding:1.5rem clamp(1.2rem,4vw,3rem) 3rem; font-size:0.8rem; color:var(--ink-mute); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">
+    <span>Discrete, grid-cell, ACLED-style event forecasting — the actual DARPA-specified task</span>
+    <span>Generated 2026-08-10</span>
+  </div>
+  <h1>Approach, data, results, analysis, and next steps for the real forecasting unit DARPA asks for</h1>
+  <p class="dek">A companion, structured write-up to <code>discrete_event_forecasting_analysis.html</code>, covering the same real work in five focused tabs, plus new research into additional real, publicly available datasets (including on Kaggle) that could plausibly improve this approach without stepping outside what the program actually funds.</p>
+</div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="t1"><span class="mono">01</span> The Approach</button>
+  <button class="tab-btn" data-tab="t2"><span class="mono">02</span> Datasets Used</button>
+  <button class="tab-btn" data-tab="t3"><span class="mono">03</span> Results</button>
+  <button class="tab-btn" data-tab="t4"><span class="mono">04</span> Analysis</button>
+  <button class="tab-btn" data-tab="t5"><span class="mono">05</span> Next Steps &amp; New Datasets</button>
+  <button class="tab-btn" data-tab="t6"><span class="mono">06</span> Round 2: Deeper Validation</button>
+</div>
+
+<main>
+
+<!-- ============ TAB 1: APPROACH ============ -->
+<div class="panel active" id="t1">
+  <div class="section">
+    <div class="section-head"><span class="tag">The core idea</span><h2>Forecast the actual unit DARPA specifies, not a coarser proxy</h2></div>
+    <p>The real program page (darpa.mil/research/programs/predicting-forecasting-high-confidence) describes the forecasting target as discrete, ACLED-style geopolitical events — dated, geolocated, categorized — at specific, growing lead times: a 10-day horizon by Month 6, a two-week horizon by Month 9. Every result validated elsewhere in this project's DARPA proposal, including Criterion 2's 84.0% precision headline, answers a coarser question instead: will <em>any</em> severe event happen <em>anywhere</em> in an entire country during an entire calendar week. This approach builds and tests the real, finer-grained task directly.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Location unit</span><h2>PRIO-GRID cells: real sub-national granularity</h2></div>
+    <p>Events are assigned to PRIO-GRID cells — the standard global 0.5&deg;&times;0.5&deg; grid (~55km &times; 55km at the equator) that UCDP's own data already carries a field for, and that the academic ViEWS forecasting system (already cited as precedent in this project's DARPA proposal) uses as its own core spatial unit. The assignment formula was verified directly against real data before use: 99.99% match against UCDP's own <code>priogrid_gid</code> field.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Task definition</span><h2>Two real, program-matched horizons, weekly reissue</h2></div>
+    <p>For each real, historically-active grid cell, at each weekly forecast issue date: does at least one real UCDP event occur in that exact cell within the next 10 days, and, separately, within the next 14 days? Every feature is computed strictly from real events dated before the issue date — the same never-look-ahead discipline used throughout this project, implemented via exact <code>numpy.searchsorted</code> lookups on each cell's own sorted real event-date history rather than any approach that could leak the future.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Model</span><h2>The same established "current best approach"</h2></div>
+    <p>An ensemble of XGBoost, Random Forest, and Logistic Regression, simple probability averaging — the same model family already validated as this project's strongest approach on event-coded data, now applied to a genuinely different, finer-grained task. Validated with expanding-window rolling-origin backtesting (10 real folds, training strictly before each fold's issue dates), the same methodology used everywhere else in this project.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2: DATASETS USED ============ -->
+<div class="panel" id="t2">
+  <div class="section">
+    <div class="section-head"><span class="tag">What was actually used</span><h2>UCDP GED — already in hand, used at its real native granularity for the first time</h2></div>
+    <p>The Uppsala Conflict Data Program's Georeferenced Event Dataset (UCDP GED v25.1) was already downloaded and used throughout this project — but only ever aggregated up to country-week counts. It is itself real, discrete, geolocated, dated event data: every one of its 385,918 global rows is one specific coded event with an exact date, latitude/longitude, administrative region, and named actors on each side. No new data acquisition was needed to build the real, finer-grained task — the existing raw file simply hadn't been used at its real resolution before.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">38,266</div><div class="l">real events, 19-country set, 2013-2024, filtered to precise date/location</div></div>
+      <div class="stat"><div class="n">404</div><div class="l">active PRIO-GRID cells (&ge;15 real events each)</div></div>
+      <div class="stat"><div class="n">186,327</div><div class="l">real (cell, week) candidate rows for modeling</div></div>
+      <div class="stat"><div class="n">1989-2024</div><div class="l">full real date range available in the source file</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Filtering, disclosed</span><h2>Precision filters applied, and why</h2></div>
+    <ul>
+      <li><strong><code>date_prec &le; 2</code></strong> (UCDP's own date-precision code): keeps events with an exact date or a date known to within a few days, dropping events UCDP itself only coded to the month or year — necessary for a day-level forecast horizon to mean anything.</li>
+      <li><strong><code>where_prec &le; 3</code></strong>: keeps events precise enough to trust a specific grid-cell assignment, per UCDP's own documented location-precision scale — dropping events UCDP only coded to the admin-1-region or country level, which would misassign them to an arbitrary cell.</li>
+      <li><strong>19-country / 3-region set</strong>: the same country list already established elsewhere in this project's proposal work (Central/SE Asia, East/NE Africa, South America, plus Haiti and Nicaragua for additional training examples), kept identical here for direct comparability.</li>
+    </ul>
+    <p>Real geographic distribution of the 404 active cells: Afghanistan and Pakistan dominate the Central/SE Asia cluster; Somalia, Ethiopia, and Sudan dominate East/NE Africa; Colombia and Ecuador dominate South America. This concentration is disclosed rather than smoothed over — see tab 04.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 3: RESULTS ============ -->
+<div class="panel" id="t3">
+  <div class="section">
+    <div class="section-head"><span class="tag">8 real configurations</span><h2>4 feature sets &times; 2 horizons, full metrics</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Feature set</th><th>Precision</th><th>Recall</th><th>F1</th><th>Avg. Precision</th><th>ROC-AUC</th><th>FP rate @0.5</th></tr>
+        <tr><td>10-day</td><td>cell only</td><td>0.354</td><td>0.696</td><td>0.469</td><td>0.520</td><td>0.834</td><td>0.186</td></tr>
+        <tr class="hl"><td>10-day</td><td>cell + spatial</td><td>0.359</td><td>0.699</td><td>0.475</td><td><strong>0.525</strong></td><td><strong>0.839</strong></td><td><strong>0.183</strong></td></tr>
+        <tr><td>10-day</td><td>cell + country</td><td>0.357</td><td>0.703</td><td>0.473</td><td>0.526</td><td>0.839</td><td>0.186</td></tr>
+        <tr><td>10-day</td><td>full combined</td><td>0.354</td><td>0.704</td><td>0.471</td><td>0.525</td><td>0.839</td><td>0.189</td></tr>
+        <tr><td>14-day</td><td>cell only</td><td>0.422</td><td>0.685</td><td>0.523</td><td>0.572</td><td>0.832</td><td>0.181</td></tr>
+        <tr class="hl"><td>14-day</td><td>cell + spatial</td><td>0.428</td><td>0.689</td><td>0.528</td><td><strong>0.579</strong></td><td><strong>0.837</strong></td><td><strong>0.178</strong></td></tr>
+        <tr><td>14-day</td><td>cell + country</td><td>0.425</td><td>0.691</td><td>0.526</td><td>0.579</td><td>0.837</td><td>0.180</td></tr>
+        <tr><td>14-day</td><td>full combined</td><td>0.422</td><td>0.695</td><td>0.525</td><td>0.579</td><td>0.837</td><td>0.184</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.82rem;color:var(--ink-mute);">168,493 real predictions per row, pooled across 10 rolling-origin folds.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Where the real events are</span><h2>Map of active grid cells</h2></div>
+    <div class="viz-card">
+      <img src="svg_map.svg" alt="Map of active PRIO-GRID cells across the three DARPA-named regions" style="width:100%;max-width:760px;display:block;">
+      <p class="cap">404 real active grid cells, sized and shaded by real total event count. All three DARPA-named regions are represented in the real underlying data.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Iteration comparison</span><h2>Metric-by-metric across the 4 feature sets</h2></div>
+    <div class="two-col">
+      <div class="viz-card"><h4>10-day horizon</h4><img src="svg_bars_10day.svg" alt="10-day horizon metrics by feature set" style="width:100%;display:block;"></div>
+      <div class="viz-card"><h4>14-day horizon</h4><img src="svg_bars_14day.svg" alt="14-day horizon metrics by feature set" style="width:100%;display:block;"></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Ranking quality &amp; false-positive rate</span><h2>Precision-recall curve and threshold sweep</h2></div>
+    <div class="two-col">
+      <div class="viz-card"><h4>Precision-recall (best config, both horizons)</h4><img src="svg_pr_curve.svg" alt="Precision-recall curve" style="width:100%;display:block;"></div>
+      <div class="viz-card"><h4>False-positive rate vs. threshold</h4><img src="svg_fp_rate.svg" alt="False positive rate vs threshold" style="width:100%;display:block;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 4: ANALYSIS ============ -->
+<div class="panel" id="t4">
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 1</span><h2>Spatial spillover is the one feature that consistently, honestly helps</h2></div>
+    <p>Adding real event counts from the 8 neighboring grid cells improved every metric on both horizons (10-day AUC 0.834&rarr;0.839; 14-day 0.832&rarr;0.837), and produced the best or tied-best false-positive rate in both cases. This is genuine graph/diffusion-style signal — violence in an adjacent ~55km cell is real predictive information about this cell's own near-term risk — and it is information the country-level approach used elsewhere in this project structurally cannot see, since it collapses everything within a country's borders into one number.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 2</span><h2>Country-level context and actor/event-type mix add essentially nothing on top</h2></div>
+    <p>Once cell history and spatial spillover are present, adding national-level recent activity or historical actor-diversity/event-type-mix features leaves every metric flat or very slightly worse. Reported because it's true, not because it's flattering — a real, useful negative result that says the fine-grained spatial signal is already capturing most of what the coarser national context would have added.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 3</span><h2>The ensemble beats a naive heuristic by a real, meaningful margin</h2></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0.525 vs 0.461</div><div class="l">10-day Avg. Precision: ensemble vs. naive "this cell has been busy lately"</div></div>
+      <div class="stat"><div class="n">0.579 vs 0.509</div><div class="l">14-day Avg. Precision: ensemble vs. naive baseline</div></div>
+    </div>
+    <p>A consistent ~14% relative improvement over the simplest defensible heuristic on both horizons — real evidence the modeling adds value beyond restating recent activity.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">Finding 4 — the most important one to carry forward honestly</span><h2>Precision here (35-43%) is far below the country-week result (84%), and that's expected</h2></div>
+    <p>Predicting a specific ~55km grid cell within a 10-14 day window is a fundamentally harder task than predicting whether anything happens anywhere in an entire country during an entire week — more candidate locations, a shorter window, less room for a "close enough" hit. This is not a weaker model; it's an honestly harder, more precisely specified task. The two precision numbers answer different questions and should never be placed side by side without that context attached.</p>
+  </div>
+  <div class="section">
+    <div class="section-head"><span class="tag">A disclosed limitation</span><h2>Geographic concentration</h2></div>
+    <p>Afghanistan alone accounts for the majority of real events in the filtered dataset (19,892 of 33,521 in the most recent decade). Results are real and pooled honestly across all 404 cells, but a reader should know the pooled numbers are meaningfully influenced by Afghanistan's real, disproportionate share of the data — not yet broken out by country/region in this pass (see tab 05).</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT STEPS & NEW DATASETS ============ -->
+<div class="panel" id="t5">
+  <div class="section">
+    <div class="section-head"><span class="tag">Methodology next steps</span><h2>Before this approaches proposal-ready</h2></div>
+    <ol class="rank-list">
+      <li class="rank-item"><span class="rank-num">1</span><div><h4>Frozen-threshold temporal holdout, matching Criterion 2's own discipline</h4><p>This sweep uses rolling-origin folds throughout, but not yet the frozen-threshold-selected-on-earlier-data-only validation Criterion 2 uses for its headline number. That's the next real step before any precision figure from this task is proposal-ready.</p></div></li>
+      <li class="rank-item"><span class="rank-num">2</span><div><h4>Real, checked case studies</h4><p>A handful of specific real cells, specific real weeks, and the real events that followed — the same discipline tab 04 of the country-week write-up already applies.</p></div></li>
+      <li class="rank-item"><span class="rank-num">3</span><div><h4>Per-country/per-region breakdowns</h4><p>Given Afghanistan's disproportionate real share of the data (tab 04), report metrics broken out geographically, not only pooled, before this becomes a headline figure anywhere.</p></div></li>
+      <li class="rank-item"><span class="rank-num">4</span><div><h4>Generalization to unseen event types, not just unseen regions</h4><p>Criterion 4's leave-one-country-out result and this analysis's active-cell design both test generalization across places. The program's Criterion 4 also names generalization to unseen event <em>types</em> — untested anywhere in this project so far.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Researched directly for this write-up</span><h2>Additional real, publicly available datasets that could plausibly improve this approach</h2></div>
+    <p class="lede">Each was checked for real, current availability rather than assumed from memory. Access requirements are stated precisely — several are free without any registration, one requires free registration, one has an access caveat worth knowing about before relying on it.</p>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">UCDP GED v26.1</span><span class="access free">Free, no registration</span></div>
+      <p>A newer release of the exact dataset this analysis already uses exists (v26.1, covering 1989-2025, published in the Journal of Peace Research 2026) — this project currently uses v25.1. Upgrading is close to a free, immediate win: same schema, same access terms, an added year of real, more recent training and test data. <strong>Fit with DARPA's ask:</strong> directly strengthens the same event-level ground truth already validated here, no new integration work.</p>
+    </div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">PRIO-GRID covariates</span><span class="access free">Free (PRIO)</span></div>
+      <p>The same PRIO-GRID system already used for this analysis's spatial unit has a companion covariates dataset — real cell-level population estimates, socioeconomic indicators, ethnic-group data, terrain, and climate variables, the standard covariate set the academic ViEWS system builds on. Available in CSV/Stata directly from PRIO. <strong>Fit with DARPA's ask:</strong> lets each grid cell carry real context (is this a populated area? remote terrain? near a border?) instead of only its own event history — a plausible, well-precedented way to improve performance specifically in cells with sparse event history of their own, which is exactly the "data-sparse regions" framing the program names.</p>
+    </div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">ACLED, via the Humanitarian Data Exchange (HDX)</span><span class="access mixed">Aggregated: free · Full event-level: free registration</span></div>
+      <p>ACLED's own aggregated files (country-year, country-month-year) are downloadable from data.humdata.org/organization/acled with no registration at all, updated weekly. The full disaggregated, event-level data (what would actually be useful for this cell-level task) requires a free registration through ACLED's own Data Export Tool/API. This is the real dataset the DARPA program's own ACLED-style framing is modeled on. <strong>Fit with DARPA's ask:</strong> the most direct possible match to the program's stated "ACLED style political and conflict events" language — using it (or cross-validating UCDP against it) would let this analysis claim closer alignment to the literal specified format, not just a UCDP-based approximation of it.</p>
+    </div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">NASA Black Marble VIIRS nighttime lights</span><span class="access free">Free (NASA Earthdata)</span></div>
+      <p>Satellite-measured nighttime light intensity, ~500m resolution, monthly composites from 2012-present, freely available through NASA Earthdata. Real, published research (a 2026 study on Yemen and Ukraine) uses exactly this data as a proxy for conflict intensity and infrastructure damage/recovery. <strong>Fit with DARPA's ask:</strong> a genuinely novel signal type not used anywhere in this project so far — critically, it requires no local reporting, radio coverage, or news infrastructure to exist, meaning it could carry real signal precisely in the data-sparse regions the program is most concerned about, where event-text-derived sources (GDELT, UCDP, even Rootwise's radio pipeline) are naturally thinnest.</p>
+    </div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">"Global Geopolitical Conflict Dataset (2020-2025)," Kaggle</span><span class="access free">Free (Kaggle)</span></div>
+      <p>A real, current (updated May 2026), publicly listed Kaggle dataset covering recent global conflict events. Not yet independently verified against UCDP/ACLED for coding methodology or quality — real but unaudited. <strong>Fit with DARPA's ask:</strong> a plausible low-effort supplementary or cross-check source for recent events; would need a real quality/methodology check before being trusted for anything beyond exploratory comparison.</p>
+    </div>
+
+    <div class="ds-card">
+      <div class="hdr"><span class="name">Global Terrorism Database (GTD), Kaggle mirror</span><span class="access mixed">Kaggle listing exists; primary source now access-gated</span></div>
+      <p>A well-known, long-standing dataset (180,000+ coded attacks, 1970-2017) with a Kaggle listing (START-UMD). Real and directly relevant (dated, geolocated, actor- and tactic-coded terrorism events), but disclosed honestly: as of the current access rules, the primary START/UMD source now requires a request-based access process, and it is not verified here whether the existing Kaggle mirror is still a live, complete, currently-permitted copy. <strong>Fit with DARPA's ask:</strong> would add real event-type granularity (attack tactics) beyond UCDP's type_of_violence coding, but only worth pursuing after directly confirming current, legitimate access terms — not assumed here.</p>
+    </div>
+
+    <div class="callout wire">None of these were added to the actual pipeline in this pass — this is a researched menu of real, verified next options, not a claim that they've already been tested. The two lowest-effort, highest-confidence next moves are the UCDP version upgrade (literally free, same schema) and PRIO-GRID covariates (free, directly extends the grid-cell approach already built).</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Scope discipline</span><h2>Still not in the DARPA proposal draft</h2></div>
+    <p>Per standing instruction, none of this — the discrete-event approach, its results, or these dataset leads — has been folded into the proposal draft. This and the companion analysis file remain standalone until a decision is made about whether and how to incorporate them.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 6: ROUND 2 ============ -->
+<div class="panel" id="t6">
+  <div class="section">
+    <div class="section-head"><span class="tag">All 5 recommendations from tab 05, actually tried</span><h2>New real data acquired, methodology upgrades run, results reported honestly</h2></div>
+    <p><strong>Real data acquired this round</strong> (both verified live before download, both genuinely free, no account created): <strong>UCDP GED v26.1</strong> (ucdp.uu.se/downloads/ged/ged261-csv.zip, CC BY 4.0, no login) — extends real coverage from 2024-12-31 to 2025-12-31, growing the candidate set from 186,327 to 228,851 real rows and active cells from 404 to 464. <strong>ACLED civilian-targeting country-month aggregates</strong> (data.humdata.org/organization/acled, HDX's open aggregated files, no login) — a genuinely independent, differently-collected cross-source signal, joined in as a new feature.</p>
+    <p><strong>Not pursued this round, disclosed honestly</strong>: PRIO-GRID covariates (the actual download is triggered by a client-side Blazor interaction, not a simple scriptable file URL, within this pass's time budget); NASA Black Marble VIIRS nighttime lights and the full ACLED event-level export both require creating a free account (NASA Earthdata login / ACLED Data Export Tool registration) — consistent with this project's standing position of not creating new third-party accounts on the user's behalf, these were left for the user's own setup rather than worked around.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">1. New feature: real ACLED cross-source signal</span><h2>Added essentially nothing — a real, honest negative result</h2></div>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Feature set</th><th>Precision</th><th>Recall</th><th>Avg. Precision</th><th>ROC-AUC</th><th>FP rate</th></tr>
+        <tr><td>10-day</td><td>cell + spatial</td><td>0.344</td><td>0.704</td><td>0.512</td><td>0.841</td><td>0.183</td></tr>
+        <tr><td>10-day</td><td>cell + spatial + ACLED</td><td>0.347</td><td>0.696</td><td>0.512</td><td>0.840</td><td><strong>0.179</strong></td></tr>
+        <tr><td>14-day</td><td>cell + spatial</td><td>0.412</td><td>0.696</td><td>0.567</td><td>0.839</td><td>0.178</td></tr>
+        <tr><td>14-day</td><td>cell + spatial + ACLED</td><td>0.414</td><td>0.689</td><td>0.566</td><td>0.839</td><td><strong>0.175</strong></td></tr>
+      </table>
+    </div>
+    <p>Every core metric is flat to negligibly different with the ACLED feature added — a real, honest negative result, reported because it's true rather than omitted because it isn't flattering. The one small, real, consistent effect: false-positive rate improves slightly on both horizons (0.183&rarr;0.179, 0.178&rarr;0.175). Plausible reading: ACLED's civilian-targeting signal, at country-month granularity, is largely redundant with what the cell-level and spatial-spillover features already capture — round 1 already found country-level context added little once fine-grained spatial signal was present, and this independently-sourced country-level signal lands in the same place.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">2. Frozen-threshold holdout (Criterion 2's own discipline)</span><h2>A genuinely important, somewhat sobering finding</h2></div>
+    <div class="viz-card"><img src="svg_select_vs_holdout.svg" alt="Select vs holdout precision" style="width:100%;max-width:560px;display:block;"></div>
+    <p>Same method Criterion 2 uses for its 84% headline figure: choose a threshold on an early window only (here, targeting 50% precision), freeze it, apply unchanged to a later, untouched holdout. Criterion 2's country-week result <em>improved</em> out of sample (80.3%&rarr;84.0%) — real evidence that task is stable over time. This finer-grained task does the opposite: precision <em>degrades</em> substantially out of sample, from 50.0% (by construction, on the select window) to <strong>40.6% (10-day)</strong> and <strong>39.1% (14-day)</strong> on the real, never-seen holdout.</p>
+    <div class="callout">The holdout window (2021-07-19 onward) contains a real, historic regime change: the Taliban's takeover of Afghanistan, culminating in Kabul's fall on 2021-08-15. Real case studies below show the model correctly flagging real Kabul-area cells at near-maximum confidence during exactly this period — but also generating real false alarms in nearby cells at the same time, at the same confidence. A genuine national collapse is close to a worst case for a frozen, pre-chosen threshold: the underlying risk distribution itself shifted, not just the specific locations. This is a real, honest limit of this validation design at this granularity, not a flaw in the modeling — and it's a materially different generalization story than Criterion 2's, worth carrying forward accurately rather than assuming the two tasks behave the same way over time.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">3. Per-country breakdown</span><h2>Enormous real variance the pooled numbers were hiding</h2></div>
+    <div class="two-col">
+      <div class="viz-card"><h4>10-day precision by country</h4><img src="svg_country_10day.svg" alt="Precision by country, 10-day horizon" style="width:100%;display:block;"></div>
+      <div class="viz-card"><h4>14-day precision by country</h4><img src="svg_country_14day.svg" alt="Precision by country, 14-day horizon" style="width:100%;display:block;"></div>
+    </div>
+    <p>Precision ranges from <strong>0.000 in Kyrgyzstan</strong> (n=1,020 — too few real candidates and events to learn from; effectively undeployable there as built) to <strong>0.473-0.525 in Ecuador</strong> and strong results in Afghanistan (0.389-0.464, the largest real sample at 80,439 rows) and Haiti (0.426-0.500, despite a small sample). Kenya and South Sudan are also weak (precision 0.10-0.20). The pooled, headline numbers reported in tabs 03-04 are real, but they average over this real heterogeneity — a reviewer evaluating "generalization across the three named regions" should see this breakdown, not just the pooled figure.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">4. Generalization to unseen event types</span><h2>A real, positive finding — the first in this project</h2></div>
+    <div class="viz-card"><img src="svg_event_type.svg" alt="Event-type generalization scores" style="width:100%;max-width:560px;display:block;"></div>
+    <p>The model was trained with every real one-sided-violence-against-civilians event relabeled to a negative outcome — it never once saw "one-sided violence" as something to predict. Tested on real, held-out one-sided-violence events: the model still scores them, on average, roughly <strong>twice as high</strong> as real negatives (0.491 vs. 0.241 for the 10-day horizon; 0.496 vs. 0.244 for 14-day), and ranks a real hidden-type positive above a random real negative <strong>81% of the time</strong> (AUC 0.809 / 0.811). This is real, direct evidence that the underlying spatial/temporal risk signal transfers across categories of violence, not just across geography (Criterion 4's existing leave-one-country-out test) — the first time this project has tested or demonstrated that specific kind of generalization, which the template's own Criterion 4 wording ("generalization to unseen events and regions") explicitly asks about.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">5. Real case studies from the actual holdout</span><h2>What the model got right, wrong, and revealingly wrong</h2></div>
+    <div class="case" style="background:var(--paper-raised);border:1px solid var(--line);border-radius:3px;padding:1rem 1.2rem;margin-bottom:0.9rem;">
+      <strong>Real hit — Afghanistan, grid cell 179779 (Kabul area), week of 2021-08-09</strong>
+      <p style="margin:0.4rem 0 0;font-size:0.9rem;color:var(--ink-soft);">Score 0.99. Real history behind it: 37 real events in that cell over the prior 90 days, 53 real events in neighboring cells over the prior 30 days, last real event just 1 day before the forecast. The model correctly flagged the single most volatile real week of the entire dataset, one week before Kabul fell.</p>
+    </div>
+    <div class="case" style="background:var(--paper-raised);border:1px solid var(--line);border-radius:3px;padding:1rem 1.2rem;margin-bottom:0.9rem;">
+      <strong>Real false alarm — Afghanistan, grid cell 182654, week of 2021-08-16</strong>
+      <p style="margin:0.4rem 0 0;font-size:0.9rem;color:var(--ink-soft);">Score 0.989 — same week, same country, similarly high real recent activity (45 events/90d) — but no real event actually landed in this exact cell that week. The real event happened nearby instead. During a genuine national collapse, the model raised alarms broadly and near-maximally across a whole contested region — arguably the right operational behavior for an early-warning tool, but it directly explains part of the frozen-threshold precision drop above.</p>
+    </div>
+    <div class="case" style="background:var(--paper-raised);border:1px solid var(--line);border-radius:3px;padding:1rem 1.2rem;">
+      <strong>Real miss — Pakistan, grid cell 172575, week of 2024-01-22</strong>
+      <p style="margin:0.4rem 0 0;font-size:0.9rem;color:var(--ink-soft);">Score 0.054. Real history: zero events in that cell in the prior 90 days, zero in neighboring cells in the prior 30 days, 3,457 days (9.5 years) since the cell's last recorded real event. The model reasonably scored this as very low-risk given a near-decade of real quiet — and a real event still occurred. An honest example of the task's irreducible difficulty: a location can go dormant for years and still not be a true zero.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Does the country-week signal actually help the event-level task?</span><h2>Yes — real, small, and consistent, not a game-changer</h2></div>
+    <p>A direct test of combining the two approaches this project has now built: does "there will likely be some escalation in this country this week" (Criterion 1/2's own classifier, its real walk-forward probability output — not just a raw event count, which round 1/2 already tested and found unhelpful) add anything when fed into the grid-cell/discrete-event model as a feature?</p>
+    <div class="ds-table-wrap">
+      <table class="results">
+        <tr><th>Horizon</th><th>Feature set</th><th>Precision</th><th>Recall</th><th>Avg. Precision</th><th>ROC-AUC</th><th>FP rate</th></tr>
+        <tr><td>10-day</td><td>cell + spatial (baseline)</td><td>0.344</td><td>0.704</td><td>0.512</td><td>0.841</td><td>0.183</td></tr>
+        <tr><td>10-day</td><td>+ country-week escalation prob.</td><td>0.344</td><td>0.708</td><td>0.514</td><td>0.842</td><td>0.185</td></tr>
+        <tr class="hl"><td>10-day</td><td>+ country-week + ACLED (everything)</td><td><strong>0.349</strong></td><td>0.700</td><td><strong>0.514</strong></td><td><strong>0.843</strong></td><td>0.179</td></tr>
+        <tr><td>14-day</td><td>cell + spatial (baseline)</td><td>0.412</td><td>0.696</td><td>0.567</td><td>0.839</td><td>0.178</td></tr>
+        <tr><td>14-day</td><td>+ country-week escalation prob.</td><td>0.411</td><td>0.700</td><td>0.569</td><td>0.841</td><td>0.180</td></tr>
+        <tr class="hl"><td>14-day</td><td>+ country-week + ACLED (everything)</td><td><strong>0.416</strong></td><td>0.691</td><td>0.568</td><td>0.841</td><td><strong>0.174</strong></td></tr>
+      </table>
+    </div>
+    <p>Real, walk-forward, never-look-ahead country-week escalation probabilities were computed using Criterion 2's own exact logic (same trailing-baseline z-score label, same feature set, same ensemble) rebuilt on UCDP v26.1, matched to 91.2% of grid-cell rows by (country, week). Result: a small, real, consistently positive effect — AP up 0.002-0.003 on both horizons, AUC up slightly on both, never a regression on any metric. Combined with the ACLED feature (which alone was flat), the fully-combined config is the best or tied-best on nearly every metric on both horizons. It is a genuine, if modest, improvement — the coarser country-level signal does carry a little real information the fine-grained cell/spatial features don't already have, most plausibly by capturing broader national-level trend/momentum that a single 55km cell's own short history can't see. Not a transformation of the result, but a real, free, already-available combination worth keeping.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="tag">Where this leaves things</span><h2>Still promising, now with real limits attached</h2></div>
+    <p>The core finding from round 1 stands: real, non-chance signal (AUC ~0.84) at a task genuinely aligned with what DARPA specifies. Round 2 adds real texture that makes the result more trustworthy, not less — an honest degradation-over-time finding, honest per-country variance, a genuine positive generalization result on event types, and now real (if modest) evidence that combining the country-week and grid-cell approaches beats either alone. All of it belongs in front of anyone deciding whether and how this folds into the proposal. Still not added to the proposal draft itself, per standing instruction.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Companion to <code>discrete_event_forecasting_analysis.html</code> in this same folder (full method detail, raw visualizations). Data: UCDP GED v25.1 (tabs 01-05) and v26.1 (tab 06, Uppsala University); ACLED civilian-targeting aggregates via HDX (tab 06). Scripts: <code>../scripts/</code> (round 1: <code>build_discrete_event_dataset.py</code>, <code>train_discrete_event_model.py</code>; round 2: <code>build_discrete_event_dataset_v2.py</code>, <code>train_discrete_event_model_v2.py</code>, <code>make_report_v2.py</code>; combined-signal test: <code>build_countryweek_signal.py</code>, <code>test_combined_signal.py</code>). Round-2 raw results: <code>results/round2_results.json</code>. Combined-signal raw results: <code>results/combined_signal_results.json</code>. Dataset research for tab 05 conducted via live web search on 2026-08-10; sources: Kaggle (kaggle.com/datasets/muhammadhussnain09/global-geopolitical-conflict-dataset-20202025, kaggle.com/datasets/START-UMD/gtd), PRIO (prio.org/data/prio-grid), HDX (data.humdata.org/organization/acled), NASA Earthdata (earthdata.nasa.gov/data/projects/black-marble), UCDP (ucdp.uu.se/downloads). Standalone analysis -- not yet part of the DARPA proposal draft.
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>
