@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "threshold": 0.777551022443167,
+      "n": 1130,
+      "n_pos": 121,
+      "n_flagged": 3,
+      "precision": 0.6666666666666666,
+      "recall": 0.01652892561983471,
+      "specificity": 0.9990089197224975,
+      "accuracy": 0.8938053097345132,
+      "tp": 2,
+      "fp": 1,
+      "fn": 119,
+      "tn": 1008,
+      "tag": "HG_03_structural_frozen_threshold",
+      "select_n": 1695,
+      "holdout_n": 1130,
+      "reached_80pct_target_on_select": false,
+      "select_split_week": "2025-06-09 00:00:00",
+      "elapsed_sec": 62.3
+    },
+    {
+      "threshold": 0.20408163265306123,
+      "n": 596,
+      "n_pos": 52,
+      "n_flagged": 162,
+      "precision": 0.09876543209876543,
+      "recall": 0.3076923076923077,
+      "specificity": 0.7316176470588235,
+      "accuracy": 0.6946308724832215,
+      "tp": 16,
+      "fp": 146,
+      "fn": 36,
+      "tn": 398,
+      "tag": "HG_11_frozen_calibrated_threshold",
+      "select_n": 595,
+      "holdout_n": 596,
+      "reached_80pct_target_on_select": false,
+      "elapsed_sec": 0.3
+    }
+  ]
+}

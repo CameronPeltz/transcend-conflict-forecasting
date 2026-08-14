@@ -1,0 +1,86 @@
+{
+  "real_select_n": 28123,
+  "real_full_holdout_n": 858,
+  "real_full_holdout_n_pos": 324,
+  "subsample_n": 172,
+  "subsample_n_pos": 71,
+  "subsample_stride": 5,
+  "results": {
+    "ICL_UCDP_01_chain_of_thought": {
+      "tag": "ICL_UCDP_01_chain_of_thought",
+      "kwargs": {
+        "k_analogs": 5,
+        "use_llm": true,
+        "prompt_style": "chain_of_thought"
+      },
+      "compliance": {
+        "verdict": "COMPLIANT",
+        "reason": "No parameters are fit via gradient descent or any other learning procedure; fit() only builds a retrieval index over the real UCDP select window. The LLM's own weights are never touched."
+      },
+      "raw_metrics": {
+        "n": 172,
+        "n_pos": 71,
+        "brier": 0.18439065116297096,
+        "ap": 0.731488397174615,
+        "roc_auc": 0.7877562404127736
+      },
+      "calibrated_metrics_on_later_30pct": {
+        "n": 52,
+        "n_pos": 23,
+        "brier": 0.16487637436706015,
+        "ap": 0.7804586717630195,
+        "roc_auc": 0.7923538230884558
+      },
+      "frozen_threshold_result": {
+        "threshold": 0.8421052631578947,
+        "n": 52,
+        "n_pos": 23,
+        "n_flagged": 7,
+        "precision": 1.0,
+        "recall": 0.30434782608695654,
+        "specificity": 1.0,
+        "accuracy": 0.6923076923076923,
+        "reached_80pct_on_select": true
+      },
+      "elapsed_sec": 616.6
+    },
+    "ICL_UCDP_02_baseline_k5": {
+      "tag": "ICL_UCDP_02_baseline_k5",
+      "kwargs": {
+        "k_analogs": 5,
+        "use_llm": true
+      },
+      "compliance": {
+        "verdict": "COMPLIANT",
+        "reason": "No parameters are fit via gradient descent or any other learning procedure; fit() only builds a retrieval index over the real UCDP select window. The LLM's own weights are never touched."
+      },
+      "raw_metrics": {
+        "n": 172,
+        "n_pos": 71,
+        "brier": 0.19713708139567446,
+        "ap": 0.7213437137165613,
+        "roc_auc": 0.7753451401478175
+      },
+      "calibrated_metrics_on_later_30pct": {
+        "n": 52,
+        "n_pos": 23,
+        "brier": 0.19314851994189242,
+        "ap": 0.6997344088136926,
+        "roc_auc": 0.7593703148425787
+      },
+      "frozen_threshold_result": {
+        "threshold": 0.8,
+        "n": 52,
+        "n_pos": 23,
+        "n_flagged": 17,
+        "precision": 0.7647058823529411,
+        "recall": 0.5652173913043478,
+        "specificity": 0.8620689655172413,
+        "accuracy": 0.7307692307692307,
+        "reached_80pct_on_select": true
+      },
+      "elapsed_sec": 725.9
+    }
+  },
+  "elapsed_min": 22.377790192763012
+}

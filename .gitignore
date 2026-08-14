@@ -53,3 +53,55 @@ scripts_darpa_review/
 # reads, and every number in it is reproducible from what's tracked.
 darpa_event_forecasting/data_raw/
 darpa_event_forecasting/data/discrete_event_candidates*.csv
+
+# UCDP v26.1 raw pull (discrete-event track) -- same policy as v25.1 above:
+# large, regenerable from the documented UCDP download, not tracked.
+data/pure_ucdp_v26/GEDEvent_v26_1.csv
+data/pure_ucdp_v26/ged_full.zip
+
+# Google-Doc/PDF pulls of the live proposal draft, cost workbook, and this
+# session's internal drafting/planning HTML files -- same "evidence base,
+# not the proposal or the process that produced it" policy as above.
+08_*_26*DARPA_SBIR_Volume_2_Technical_Template*.pdf
+Transcend_DARPA_DP2_Cost_Proposal_*.xlsx
+last_edits_to_make_to_draft.html
+comment_triage_and_criterion3_rewrite.html
+cost-estimate-compute-realism-review.html
+criterion1_icl_ucdp_writeup.html
+criterion1_icl_ucdp_concise.html
+icl_hypergraph_compliance_search_writeup.html
+github_repo_cleanup_execution_prompt.html
+results_v2/darpa-v3-draft-evaluation.html
+
+# Abandoned link-prediction experiment line -- real work, but not part of
+# what the current draft claims or cites; out of scope for "replicate what's
+# in the PDF." Kept locally, never tracked.
+scripts/icl_link_forecaster*.py
+scripts/link_prediction*.py
+data/link_prediction/
+results_v2/icl_link_forecaster*
+results_v2/icl-vs-classical-link-forecasting.html
+results_v2/link-prediction-temporal-graph.html
+results_v2/link_prediction_*
+*.log
+template_criteria_dump.txt
+results_v2/icl_logprob_endpoint_test.json
+
+# Round-1/round-3 ICL search results computed against the small original
+# GDELT pilot panel, which was mislabeled "Track A" in these scripts before
+# the correction to the real UCDP-sourced Track A (icl_ucdp_track_a_
+# corrected.py). Superseded, not part of what the current draft cites --
+# kept locally for this project's own record, not pushed to avoid a public
+# reader seeing pre-correction numbers with no context. icl_hypergraph_
+# compliance_search.py itself IS kept (below the keep-list, not ignored)
+# since icl_ucdp_track_a_corrected.py depends on its ConfigurableICL class.
+results_v2/icl_optimization_search_*
+results_v2/icl_round3_*
+results_v2/icl_scores_with_country.json
+results_v2/icl_threshold_comparison_results.json
+results_v2/icl_threshold_raw_predictions_checkpoint.json
+results_v2/cross_track_ensemble_results.json
+scripts/icl_round3_extended.py
+scripts/icl_threshold_comparison.py
+scripts/icl_scores_with_country.py
+scripts/cross_track_ensemble.py
