@@ -27,7 +27,7 @@ A real-data prototype and validation suite covering all five of the topic's Dire
 
 ![ICL over UCDP real precision/recall](results_v2/charts/icl_ucdp_precision_recall.svg)
 
-*The Criterion 1 no-retraining mechanism's real result against Track A's real (but non-compliant — it retrains every fold) headline number.*
+*The Criterion 1 no-retraining mechanism's real result alongside Track A's real headline number (a separate Criterion 2 model) for scale.*
 
 ![DRC radio error reduction](results_v2/charts/drc_radio_error_reduction.svg)
 
